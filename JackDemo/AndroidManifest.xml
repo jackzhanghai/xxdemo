@@ -47,8 +47,8 @@
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.LocationInfoActivity"
-            android:label="@string/title_activity_location_info" 
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:label="@string/title_activity_location_info"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.CampusNoticeActivity"
@@ -64,8 +64,24 @@
             android:label="@string/title_activity_official_site"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <activity
+            android:name="com.dingxi.jackdemo.EditHomeWorkActivity"
+            android:label="@string/title_activity_edit_home_work" >
+        </activity>
+        <activity
+            android:name="com.dingxi.jackdemo.EditCampusNoticeActivity"
+            android:label="@string/title_activity_edit_campus_notice" >
+        </activity>
+        <activity
+            android:name="com.dingxi.jackdemo.HomeWorkDetailActivity"
+            android:label="@string/title_activity_home_work_detail" >
+        </activity>
+        <activity
+            android:name="com.dingxi.jackdemo.SearchMessageActivity"
+            android:label="@string/title_activity_search_message" >
+        </activity>
     </application>
-    
+
     <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" >
     </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >

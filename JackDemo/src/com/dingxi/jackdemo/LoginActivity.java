@@ -483,67 +483,74 @@ public class LoginActivity extends Activity {
 			if (!TextUtils.isEmpty(loginInfo)) {
 
 				try {
-					if (JSONParser.getIntByTag(loginInfo,
-							RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+				    if(loginInfo.startsWith("{") && loginInfo.endsWith("}")){
+				        if (JSONParser.getIntByTag(loginInfo,
+	                            RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
 
-						// to do save userinfo;
-						String id = JSONParser.getStringByTag(loginInfo, "id");
-						String ticket = JSONParser.getStringByTag(loginInfo,
-								"ticket");
-						String fkSchoolId = JSONParser.getStringByTag(loginInfo,
-								"fkSchoolId");
-						String fkClassId = JSONParser.getStringByTag(loginInfo,
-								"fkClassId");
+	                        // to do save userinfo;
+	                        String id = JSONParser.getStringByTag(loginInfo, "id");
+	                        String ticket = JSONParser.getStringByTag(loginInfo,
+	                                "ticket");
+	                        String fkSchoolId = JSONParser.getStringByTag(loginInfo,
+	                                "fkSchoolId");
+	                        String fkClassId = JSONParser.getStringByTag(loginInfo,
+	                                "fkClassId");
 
-						xyt = (XiaoYunTongApplication) getApplication();
-						xyt.userInfo.id = id;
-						Log.d(TAG, "userInfo.id " + id);
-						xyt.userInfo.ticket = ticket;
-						Log.d(TAG, "userInfo.ticket " + ticket);
-						if(TextUtils.isEmpty(fkSchoolId)){
-							
-							xyt.userInfo.fkSchoolId = mSchoolId;
-						} else {
-							xyt.userInfo.fkSchoolId = fkSchoolId ;
-						}
-						
-						Log.d(TAG, "userInfo.fkSchoolId " + xyt.userInfo.fkSchoolId);
-						xyt.userInfo.fkClassId = fkClassId;
-						Log.d(TAG, "userInfo.fkClassId " + fkClassId);
-						xyt.userInfo.roleType =  mUserType;
-						Log.d(TAG, "userInfo.roleType " + mUserType);
+	                        xyt = (XiaoYunTongApplication) getApplication();
+	                        xyt.userInfo.id = id;
+	                        Log.d(TAG, "userInfo.id " + id);
+	                        xyt.userInfo.ticket = ticket;
+	                        Log.d(TAG, "userInfo.ticket " + ticket);
+	                        if(TextUtils.isEmpty(fkSchoolId)){
+	                            
+	                            xyt.userInfo.fkSchoolId = mSchoolId;
+	                        } else {
+	                            xyt.userInfo.fkSchoolId = fkSchoolId ;
+	                        }
+	                        
+	                        Log.d(TAG, "userInfo.fkSchoolId " + xyt.userInfo.fkSchoolId);
+	                        xyt.userInfo.fkClassId = fkClassId;
+	                        Log.d(TAG, "userInfo.fkClassId " + fkClassId);
+	                        xyt.userInfo.roleType =  mUserType;
+	                        Log.d(TAG, "userInfo.roleType " + mUserType);
 
-						SharedPreferences settings = getSharedPreferences(
-								PREFS_USER_INFO, 0);
-						SharedPreferences.Editor editor = settings.edit();
-						editor.putString(LOGIN_SCHOOL_ID, mSchoolId);
-						editor.putString(LOGIN_SCHOOL_NAME, mSchoolName);
-						editor.putString(lOGIN_USER_NAME, mUserName);
-						editor.putString(LOGIN_PASSWORD, mPassword);
-						editor.putString(LOGIN_ROLE_ID, mUserType.toString());
-						editor.putBoolean(IS_AUTO_LOGIN, isAutoLogin);
-						editor.putBoolean(IS_REMEMBER_PASSWORD,
-								isRemberPassWord);
+	                        SharedPreferences settings = getSharedPreferences(
+	                                PREFS_USER_INFO, 0);
+	                        SharedPreferences.Editor editor = settings.edit();
+	                        editor.putString(LOGIN_SCHOOL_ID, mSchoolId);
+	                        editor.putString(LOGIN_SCHOOL_NAME, mSchoolName);
+	                        editor.putString(lOGIN_USER_NAME, mUserName);
+	                        editor.putString(LOGIN_PASSWORD, mPassword);
+	                        editor.putString(LOGIN_ROLE_ID, mUserType.toString());
+	                        editor.putBoolean(IS_AUTO_LOGIN, isAutoLogin);
+	                        editor.putBoolean(IS_REMEMBER_PASSWORD,
+	                                isRemberPassWord);
 
-						editor.commit();
+	                        editor.commit();
 
-						mProgressDialog.dismiss();
-						Intent loginIntent = new Intent(LoginActivity.this,
-								HomePageActivity.class);
-						startActivity(loginIntent);
-						finish();
-					} else {
-						mProgressDialog.dismiss();
-						String errorMessage = JSONParser.getStringByTag(
-								loginInfo, RestClient.RESULT_TAG_MESSAGE);
-						if (!TextUtils.isEmpty(errorMessage)) {
-							Toast.makeText(LoginActivity.this, errorMessage,
-									Toast.LENGTH_LONG).show();
-						} else {
-							Toast.makeText(LoginActivity.this, loginInfo,
-									Toast.LENGTH_LONG).show();
-						}
-					}
+	                        mProgressDialog.dismiss();
+	                        Intent loginIntent = new Intent(LoginActivity.this,
+	                                HomePageActivity.class);
+	                        startActivity(loginIntent);
+	                        finish();
+	                    } else {
+	                        mProgressDialog.dismiss();
+	                        String errorMessage = JSONParser.getStringByTag(
+	                                loginInfo, RestClient.RESULT_TAG_MESSAGE);
+	                        if (!TextUtils.isEmpty(errorMessage)) {
+	                            Toast.makeText(LoginActivity.this, errorMessage,
+	                                    Toast.LENGTH_LONG).show();
+	                        } else {
+	                            Toast.makeText(LoginActivity.this, loginInfo,
+	                                    Toast.LENGTH_LONG).show();
+	                        }
+	                    } 
+				    } else {
+				        mProgressDialog.dismiss();
+	                    Toast.makeText(LoginActivity.this, loginInfo,
+	                            Toast.LENGTH_LONG).show();
+				    }
+					 
 				} catch (JSONException e) {
 					mProgressDialog.dismiss();
 					Toast.makeText(LoginActivity.this, loginInfo,

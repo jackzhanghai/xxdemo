@@ -1,5 +1,7 @@
 package com.dingxi.jackdemo.model;
 
+import android.provider.BaseColumns;
+
 public class HomeWorkInfo {
 
     private static final long serialVersionUID = -5452191060956188291L;
@@ -18,13 +20,11 @@ public class HomeWorkInfo {
 
     public String fkStudentId;// 学生ID
 
-    //public String fkParentId;// 家长ID
-
     public Integer fkSubjectId;// 科目
 
     public String content;// 短信内容
 
-    public java.util.Date optTime;// 操作时间
+    public String optTime;// 操作时间
 
     //public java.util.Date sendTime;// 发送时间
 
@@ -32,8 +32,26 @@ public class HomeWorkInfo {
 
     public String className;
 
-    public String stuName;
 
+    public static abstract class HomeWorkEntry implements BaseColumns {
+        public static final String TABLE_NAME = "home_work";
+        public static final String COLUMN_NAME_ENTRY_ID = "hid";
+        public static final String COLUMN_NAME_CONTENT = "content";
+        public static final String COLUMN_NAME_OPT_TIME = "optTime";
+        public static final String COLUMN_NAME_GRADE_ID = "fkGradeId";
+        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_CLASS_ID = "fkClassId";
+        public static final String COLUMN_NAME_SUBJECT_ID = "fkSubjectId";
+        public static final String COLUMN_NAME_SMS_TYPE = "smsType";
+        public static final String COLUMN_NAME_SCHOOL_ID = "fkSchoolId";
+        public static final String COLUMN_NAME_CLASS_NAME = "className";
+        public static final String COLUMN_NAME_SEND_TYPE = "sendType";
+        public static final String COLUMN_NAME_STUDDENT_ID = "fkStudentId";
+        public static final String COLUMN_NAME_NULLABLE = null;
+  
+    }
+    
+    
     // Constructors
 
     /** default constructor */
@@ -43,7 +61,7 @@ public class HomeWorkInfo {
     /** full constructor */
     public HomeWorkInfo(Integer smsType, Integer sendType, Integer fkSchoolId, Integer fkGradeId,
             Integer fkClassId, String fkStudentId, Integer fkSubjectId, String content,
-            java.util.Date optTime, java.util.Date sendTime, String status, String fkParentId) {
+            String optTime, java.util.Date sendTime, String status, String fkParentId) {
         this.smsType = smsType;
         this.sendType = sendType;
         this.fkSchoolId = fkSchoolId;
@@ -132,11 +150,11 @@ public class HomeWorkInfo {
         this.content = content;
     }
 
-    public java.util.Date getOptTime() {
+    public String getOptTime() {
         return this.optTime;
     }
 
-    public void setOptTime(java.util.Date optTime) {
+    public void setOptTime(String optTime) {
         this.optTime = optTime;
     }
 

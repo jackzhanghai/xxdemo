@@ -21,11 +21,16 @@
             android:src="@drawable/notifition_icon" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/roll_note_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:layout_marginRight="10dp"
             android:layout_marginLeft="6dp"
-            android:text="TextView" />
+             />
     </LinearLayout>
 
     <GridView

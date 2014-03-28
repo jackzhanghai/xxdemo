@@ -11,9 +11,9 @@ public class CampusNotice {
     public String optTime;
     public String className;
     public int fkSchoolId;
-    public int fkStudentId;
+    public String fkStudentId;
     public int fkClassId;
-    public int fkSubjectId;
+    public String stuName;
     public int fkGradeId;
 
 

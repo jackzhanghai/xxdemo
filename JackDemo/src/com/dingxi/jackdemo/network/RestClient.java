@@ -21,11 +21,9 @@ public class RestClient {
     private static final String TAG = "RestClient";
     private static String nameSpace = "http://webservice.school.htht.com";// http://webservice.school.htht.com
     // http://webservice.school.htht.com
-    private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
-    //private static String servicePoint = "http://hcyforget.vicp.cc:9009/M-School/phoneService.ws";
+    //private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
+    private static String servicePoint = "http://hcyforget.vicp.cc:9009/M-School/phoneService.ws";
     // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
-
-    // private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
 
     public static int RESULT_TAG_SUCCESS = 0;
     public static String RESULT_TAG_CODE = "code";
@@ -43,7 +41,7 @@ public class RestClient {
 
         envelope.bodyOut = rpc;
 
-        HttpTransportSE transport = new HttpTransportSE(servicePoint);
+        AndroidHttpTransportSE transport = new AndroidHttpTransportSE(servicePoint,60000);
 
         transport.call(soapAction, envelope);
 
@@ -74,7 +72,8 @@ public class RestClient {
 
         envelope.bodyOut = rpc;
 
-        HttpTransportSE transport = new HttpTransportSE(servicePoint);
+        AndroidHttpTransportSE transport = new AndroidHttpTransportSE(servicePoint,60000);
+        
 
         transport.call(soapAction, envelope);
 

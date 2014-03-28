@@ -1,7 +1,8 @@
 package com.dingxi.jackdemo.dao;
 
-import com.dingxi.jackdemo.db.FeedReaderContract.FeedEntry;
 import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
+import com.dingxi.jackdemo.model.HomeWorkInfo;
+import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,38 +20,57 @@ public class HomeWorkDao {
     }
     
     
-    private void insert(String id, String title, String content) {
+    private long addHomeWork(HomeWorkInfo homeWork) {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(FeedEntry.COLUMN_NAME_ENTRY_ID, id);
-        values.put(FeedEntry.COLUMN_NAME_TITLE, title);
-        //values.put(FeedEntry.COLUMN_NAME_CONTENT, content);
+        values.put(HomeWorkEntry.COLUMN_NAME_ENTRY_ID, homeWork.id);
+        values.put(HomeWorkEntry.COLUMN_NAME_CONTENT, homeWork.content);
+        values.put(HomeWorkEntry.COLUMN_NAME_OPT_TIME, homeWork.optTime);
+        values.put(HomeWorkEntry.COLUMN_NAME_GRADE_ID, homeWork.fkGradeId);
+        values.put(HomeWorkEntry.COLUMN_NAME_STATUS, homeWork.status);
+        values.put(HomeWorkEntry.COLUMN_NAME_CLASS_ID, homeWork.fkClassId);
+        values.put(HomeWorkEntry.COLUMN_NAME_SUBJECT_ID, homeWork.fkSubjectId);
+        values.put(HomeWorkEntry.COLUMN_NAME_SMS_TYPE, homeWork.smsType);
+        values.put(HomeWorkEntry.COLUMN_NAME_SCHOOL_ID, homeWork.fkSchoolId);
+        values.put(HomeWorkEntry.COLUMN_NAME_CLASS_NAME, homeWork.className);
+        values.put(HomeWorkEntry.COLUMN_NAME_SCHOOL_ID, homeWork.sendType);
+        values.put(HomeWorkEntry.COLUMN_NAME_STUDDENT_ID, homeWork.fkStudentId);
+        
 
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId;
-        newRowId = db.insert(FeedEntry.TABLE_NAME, FeedEntry.COLUMN_NAME_NULLABLE, values);
+        return db.insert(HomeWorkEntry.TABLE_NAME, HomeWorkEntry.COLUMN_NAME_NULLABLE, values);
     }
 
-    private void query() {
+    private void queryHomeWorkByDate() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
-        String[] projection = { FeedEntry._ID, FeedEntry.COLUMN_NAME_TITLE, FeedEntry.COLUMN_NAME_UPDATED, };
+        String[] projection = { HomeWorkEntry.COLUMN_NAME_ENTRY_ID, HomeWorkEntry.COLUMN_NAME_CONTENT, HomeWorkEntry.COLUMN_NAME_OPT_TIME };
         String selection = null;
         String[] selectionArgs = null;
         // How you want the results sorted in the resulting Cursor
-        String sortOrder = FeedEntry.COLUMN_NAME_UPDATED + " DESC";
+       // String sortOrder = FeedEntry.COLUMN_NAME_UPDATED + " DESC";
 
-        Cursor c = db.query(FeedEntry.TABLE_NAME, // The table to query
+        Cursor c = db.query(HomeWorkEntry.TABLE_NAME, // The table to query
                 projection, // The columns to return
                 selection, // The columns for the WHERE clause
                 selectionArgs, // The values for the WHERE clause
                 null, // don't group the rows
                 null, // don't filter by row groups
-                sortOrder // The sort order
+                null // The sort order
                 );
+    }
+    
+    private void deleteHomeWork(int rowId){
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+     // Define 'where' part of query.
+        String selection = "" + " LIKE ?";
+        // Specify arguments in placeholder order.
+        String[] selectionArgs = { String.valueOf(rowId) };
+        // Issue SQL statement.
+        db.delete(HomeWorkEntry.TABLE_NAME, selection, selectionArgs);
+        
     }
 }
