@@ -20,7 +20,7 @@ public class HomeWorkDao {
     }
     
     
-    private long addHomeWork(HomeWorkInfo homeWork) {
+    public long addHomeWork(HomeWorkInfo homeWork) {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         // Create a new map of values, where column names are the keys
@@ -42,7 +42,7 @@ public class HomeWorkDao {
         return db.insert(HomeWorkEntry.TABLE_NAME, HomeWorkEntry.COLUMN_NAME_NULLABLE, values);
     }
 
-    private void queryHomeWorkByDate() {
+    public void queryHomeWorkByDate() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
@@ -72,5 +72,11 @@ public class HomeWorkDao {
         // Issue SQL statement.
         db.delete(HomeWorkEntry.TABLE_NAME, selection, selectionArgs);
         
+    }
+    
+    public void colseDb(){
+    	if(mDbHelper!=null){
+    		mDbHelper.close();
+    	}
     }
 }

@@ -21,6 +21,7 @@ import com.dingxi.jackdemo.network.RestClient;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
@@ -112,6 +115,20 @@ public class HomeWorkActivity extends Activity {
         loadingImageView.setBackgroundResource(R.drawable.loading_howework_animation);
         loadingAnimation = (AnimationDrawable) loadingImageView.getBackground();
         mHomeWorkListView.setAdapter(mHomeWorkAdapter);
+        mHomeWorkListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				// TODO Auto-generated method stub
+				
+				
+				
+				Intent intent = new Intent(HomeWorkActivity.this,HomeWorkDetailActivity.class);
+				startActivity(intent);
+			}
+        	
+		});
         
 
         if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {

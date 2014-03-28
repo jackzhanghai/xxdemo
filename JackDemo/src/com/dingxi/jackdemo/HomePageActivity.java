@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.dingxi.jackdemo.dao.HomeWorkDao;
+import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
 import com.dingxi.jackdemo.model.CampusNotice;
 import com.dingxi.jackdemo.model.ClassInfo;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
@@ -73,7 +75,8 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
     private int campusNotieTotal;
     private ImageAdapter mImageAdapter;
     private TextView rollNoteText;
-    private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();;
+    private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();
+    private XiaoyuantongDbHelper xiaoyuantongDbHelper;
     
 
     @Override
@@ -104,7 +107,7 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
         });
         
         
-      
+        xiaoyuantongDbHelper = new XiaoyuantongDbHelper(getApplicationContext());
 
         // editButton = (ImageButton) findViewById(R.id.edit_button);
         // editButton.setOnClickListener(new OnClickListener() {
@@ -141,6 +144,8 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
         }
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
+        
+      
 
         gridview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -244,7 +249,15 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
 
      // Create the AlertDialog
      AlertDialog dialog = builder.create();
+     dialog.show();
         
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	// TODO Auto-generated method stub
+    	super.onDestroy();
+    	xiaoyuantongDbHelper.close();
     }
 
     class RollTextThread extends Thread {
@@ -638,9 +651,16 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
 
                     homeWorkInfoList.add(homeWorkInfo);
                 }
-                if (homeWorkInfoList.size() > 0) {
-
+                
+                
+                if(homeWorkInfoList!=null && homeWorkInfoList.size()>0){
+                	for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
+                    	HomeWorkDao homeWorkDao = new HomeWorkDao(HomePageActivity.this);
+                    	homeWorkDao.addHomeWork(homeWorkInfo);
+    				}
                 }
+                
+                
             }
 
         }

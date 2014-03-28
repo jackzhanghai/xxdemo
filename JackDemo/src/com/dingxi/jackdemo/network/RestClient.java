@@ -21,8 +21,8 @@ public class RestClient {
     private static final String TAG = "RestClient";
     private static String nameSpace = "http://webservice.school.htht.com";// http://webservice.school.htht.com
     // http://webservice.school.htht.com
-    //private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
-    private static String servicePoint = "http://hcyforget.vicp.cc:9009/M-School/phoneService.ws";
+    private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
+    //private static String servicePoint = "http://hcyforget.vicp.cc:9009/M-School/phoneService.ws";
     // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
 
     public static int RESULT_TAG_SUCCESS = 0;
