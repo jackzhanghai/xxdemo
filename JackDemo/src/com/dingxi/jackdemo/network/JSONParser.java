@@ -14,7 +14,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.dingxi.jackdemo.model.ClassInfo;
+import com.dingxi.jackdemo.model.GradeInfo;
 import com.dingxi.jackdemo.model.School;
+import com.dingxi.jackdemo.model.StudentInfo;
+
 import android.content.Context;
 
 public class JSONParser {
@@ -103,6 +107,69 @@ public class JSONParser {
             }
         }
         return schoolList;
+    }
+
+    public static ArrayList<StudentInfo> toParserStudentInfoList(String searchTypeReslut) throws JSONException {
+        JSONObject jsonObj = new JSONObject(searchTypeReslut);
+        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+
+        ArrayList<StudentInfo> schoolList = new ArrayList<StudentInfo>(total);
+
+        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                StudentInfo studentInfo = new StudentInfo();
+
+                studentInfo.name = obj.getString("stuName");
+                studentInfo.id = obj.getString("id");
+                schoolList.add(studentInfo);
+            }
+        }
+        return schoolList;
+    }
+
+    public static ArrayList<ClassInfo> toParserCalssInfoList(String searchTypeReslut) throws JSONException {
+        JSONObject jsonObj = new JSONObject(searchTypeReslut);
+        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+
+        ArrayList<ClassInfo> classInfoList = new ArrayList<ClassInfo>(total);
+
+        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                ClassInfo classInfo = new ClassInfo();
+
+                classInfo.name = obj.getString("name");
+                classInfo.id = obj.getString("id");
+                classInfoList.add(classInfo);
+            }
+        }
+        return classInfoList;
+    }
+
+    public static ArrayList<GradeInfo> toParserGradeInfoList(String searchTypeReslut) throws JSONException {
+        JSONObject jsonObj = new JSONObject(searchTypeReslut);
+        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+
+        ArrayList<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>(total);
+
+        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                GradeInfo school = new GradeInfo();
+
+                school.name = obj.getString("name");
+                school.id = obj.getString("id");
+                gradeInfoList.add(school);
+            }
+        }
+        return gradeInfoList;
     }
 
 //    public static ArrayList<SetFolderBean> toParserImageFileList(String json) throws JSONException {

@@ -23,6 +23,7 @@
         android:layout_marginRight="10dp"
         android:layout_toRightOf="@id/back_button"
         android:background="@drawable/main_spinner_selector" 
+        android:visibility="gone"
         android:paddingLeft="4dp" />
 
     <!-- 
@@ -33,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:paddingRight="6dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/edit_message_selector"
         android:visibility="gone" />

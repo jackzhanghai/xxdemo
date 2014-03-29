@@ -16,12 +16,22 @@
     <string name="input_new_password_again">输入新密码： </string>
     <string name="now_modiy_password">正在修改密码...</string>
     <string name="modify_password_sucess">修改密码成功 </string>
-    <string name="now_loading_locaton">正在加位置信息...</string>
+    <string name="now_loading_locaton">正在加载位置信息...</string>
     <string name="not_location_data">没有位置信息</string>
     <string name="exit_app">退出应用?</string>
-     <string name="ok_exit_app">取消</string>
+     <string name="ok_exit_app">确定</string>
     <string name="cancel_exit_app">取消</string>
     <string name="no_home_work_data">没有家庭作业</string>
+    <string name="edit_homewok_title">标题</string>
+    <string name="edit_homewok_hint">点此录入信息正文</string>
+    <string name="select_class">请选择班级</string>
+    <string name="select_grade">请选择年纪</string>
+    <string name="select_student">请选择学生</string>
+    <string name="select_time">请选择时间</string>
+    <string name="now_loading_grade">正在加载年纪信息...</string>
+     <string name="now_loading_class">正在加载班级息...</string>
+      <string name="now_loading_student">正在加载学生信息...</string>
+    
     <string name="title_activity_attendance_info">AttendanceInfoActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

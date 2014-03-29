@@ -13,7 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class HomeWorkDetailActivity extends Activity {
+public class CampusNoticeDetailActivity extends Activity {
 
     private View parentHeader;
     private ImageButton mBackButton;
@@ -29,7 +29,7 @@ public class HomeWorkDetailActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_work_detail);
+        setContentView(R.layout.activity_campusnotice_detail);
         
         parentHeader = findViewById(R.id.main_title_bar);
         mBackButton = (ImageButton) findViewById(R.id.back_button);

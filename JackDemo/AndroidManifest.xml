@@ -52,7 +52,8 @@
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.CampusNoticeActivity"
-            android:label="@string/title_activity_campus_notice" >
+            android:label="@string/title_activity_campus_notice"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.ModifyPassWordActivity"
@@ -66,19 +67,23 @@
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.EditHomeWorkActivity"
-            android:label="@string/title_activity_edit_home_work" >
+            android:label="@string/title_activity_edit_home_work"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.EditCampusNoticeActivity"
-            android:label="@string/title_activity_edit_campus_notice" >
+            android:label="@string/title_activity_edit_campus_notice"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.HomeWorkDetailActivity"
-            android:label="@string/title_activity_home_work_detail" >
+            android:label="@string/title_activity_home_work_detail"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.SearchMessageActivity"
-            android:label="@string/title_activity_search_message" >
+            android:label="@string/title_activity_search_message"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
     </application>
 

@@ -14,7 +14,7 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "xiaoyuantong.db";
 
-    private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + "table name";
+   
 	private static final String TAG = "XiaoyuantongDbHelper";
 	
 
@@ -30,12 +30,12 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
     	Log.d(TAG, "onCreat()");
     	
     	try{
-    		db.execSQL("CREATE TABLE IF NOT EXISTS CampusNotice (id integer primary key autoincrement,cid integer, content varchar(600),optTime varchar(60), sendType integer,status varchar(60), "
-                    + "smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkGradeId integer,stuName varchar(60),fkStudentId integer)");
+    		db.execSQL("CREATE TABLE IF NOT EXISTS campus_notice (id integer primary key autoincrement,cid integer unique, content varchar(600),optTime varchar(60), sendType integer,status varchar(60), "
+                    + "smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkGradeId integer,stuName varchar(60),fkStudentId integer,is_read integer)");
             
             
-            db.execSQL("CREATE TABLE IF NOT EXISTS home_work (id integer primary key autoincrement,hid integer, content varchar(600), optTime varchar(60), sendType integer,status varchar(60), " +
-            		"smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkSubjectId integer,fkGradeId integer,fkStudentId integer)");
+            db.execSQL("CREATE TABLE IF NOT EXISTS home_work (id integer primary key autoincrement,hid integer unique, content varchar(600), optTime varchar(60), sendType integer,status varchar(60), " +
+            		"smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkSubjectId integer,fkGradeId integer,fkStudentId integer ,is_read integer)");
             // db.execSQL("CREATE TABLE IF NOT EXISTS AttendanceInfo (id integer primary key autoincrement, na varchar(60), it varchar(60),d varchar(60))");
     	}catch(SQLException sQLException){
     		sQLException.printStackTrace();
@@ -49,8 +49,11 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-       // db.execSQL(SQL_DELETE_ENTRIES);
-       // onCreate(db);
+        String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + "campus_notice";
+        db.execSQL(SQL_DELETE_ENTRIES);
+        SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + "home_work";
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
     }
     
     

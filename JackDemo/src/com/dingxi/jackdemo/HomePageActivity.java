@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.dingxi.jackdemo.dao.CampusNoticeDao;
 import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
 import com.dingxi.jackdemo.model.CampusNotice;
@@ -52,7 +53,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HomePageActivity extends Activity implements OnItemSelectedListener {
+public class HomePageActivity extends Activity {
 
     protected static final String TAG = "HomePageActivity";
     private Spinner mSpinner;
@@ -69,15 +70,15 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
     private ArrayList<StudentInfo> mStudentList;
     private ArrayList<String> mSpinnerInfo;
     private ArrayAdapter<String> mAdapter;
-   
+
     private GetAllNoteTask mGetAllNoteTask;
     private int homeWorkTotal;
     private int campusNotieTotal;
     private ImageAdapter mImageAdapter;
     private TextView rollNoteText;
-    private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();
+    // private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();
+    private ArrayList<String> campusNoticeContentList = new ArrayList<String>();
     private XiaoyuantongDbHelper xiaoyuantongDbHelper;
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +106,7 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
                 finish();
             }
         });
-        
-        
+
         xiaoyuantongDbHelper = new XiaoyuantongDbHelper(getApplicationContext());
 
         // editButton = (ImageButton) findViewById(R.id.edit_button);
@@ -124,7 +124,27 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
         // queryButton = (ImageButton) findViewById(R.id.query_button);
 
         mSpinner = (Spinner) findViewById(R.id.main_spinner);
-        mSpinner.setOnItemSelectedListener(this);
+        mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // TODO Auto-generated method stub
+                Log.i(TAG, " position " + position + " id " + id);
+                
+               homeWorkTotal = 0;
+               campusNotieTotal = 0;
+               mXiaoYunTongApplication.deflutStudentInfo = mStudentList.get(position); 
+               mImageAdapter.notifyDataSetChanged();
+               mGetAllNoteTask = new GetAllNoteTask();
+               mGetAllNoteTask.execute((Void) null);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+                Log.i(TAG, " onNothingSelected() ");
+            }
+        });
         // mSpinner.setEmptyView(emptyView)
 
         mSpinnerInfo = new ArrayList<String>();
@@ -144,8 +164,6 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
         }
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mAdapter);
-        
-      
 
         gridview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -168,9 +186,12 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
                     if (!TextUtils.isEmpty("imei")) {
                         Intent intent = new Intent(HomePageActivity.this,
                                 LocationInfoActivity.class);
-                        Log.i(TAG, "deflutStudentInfo.name " + mXiaoYunTongApplication.deflutStudentInfo.name);
-                        Log.i(TAG, "deflutStudentInfo.imei " + mXiaoYunTongApplication.deflutStudentInfo.imei);
-                        Log.i(TAG, "deflutStudentInfo.id " + mXiaoYunTongApplication.deflutStudentInfo.id);
+                        Log.i(TAG, "deflutStudentInfo.name "
+                                + mXiaoYunTongApplication.deflutStudentInfo.name);
+                        Log.i(TAG, "deflutStudentInfo.imei "
+                                + mXiaoYunTongApplication.deflutStudentInfo.imei);
+                        Log.i(TAG, "deflutStudentInfo.id "
+                                + mXiaoYunTongApplication.deflutStudentInfo.id);
 
                         intent.putExtra("imei", mXiaoYunTongApplication.deflutStudentInfo.imei);
                         startActivity(intent);
@@ -230,34 +251,32 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
     @Override
     public void onBackPressed() {
         // TODO Auto-generated method stub
-        super.onBackPressed();
+        //super.onBackPressed();
         AlertDialog.Builder builder = new AlertDialog.Builder(HomePageActivity.this);
         builder.setTitle(R.string.exit_app);
-     // Add the buttons
-     builder.setPositiveButton(R.string.ok_exit_app, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked OK button
-                    HomePageActivity.this.finish();
-                }
-            });
-     builder.setNegativeButton(R.string.cancel_exit_app, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User cancelled the dialog
-                }
-            });
-     // Set other dialog properties
+        // Add the buttons
+        builder.setPositiveButton(R.string.ok_exit_app, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                HomePageActivity.this.finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel_exit_app, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
 
-     // Create the AlertDialog
-     AlertDialog dialog = builder.create();
-     dialog.show();
-        
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
-    
+
     @Override
     protected void onDestroy() {
-    	// TODO Auto-generated method stub
-    	super.onDestroy();
-    	xiaoyuantongDbHelper.close();
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        xiaoyuantongDbHelper.close();
     }
 
     class RollTextThread extends Thread {
@@ -511,7 +530,7 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
                 try {
                     if (JSONParser.getIntByTag(homeWorksInfo, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
 
-                        homeWorkTotal = JSONParser.getIntByTag(homeWorksInfo, "total");
+                        int total = JSONParser.getIntByTag(homeWorksInfo, "total");
                         try {
                             if (JSONParser.getStringByTag(homeWorksInfo, "datas") != null) {
                                 praseHomeWorks(homeWorksInfo);
@@ -577,91 +596,118 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
 
         private void praseMessageInfos(String messageInfos) throws JSONException {
             // TODO Auto-generated method stub
-            JSONObject jsonObj = new JSONObject(messageInfos);
-            int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
-
-            if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-                JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
-                campusNoticeList.clear();
+            CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
+            JSONObject jsonObj;
+            try {
+                jsonObj = new JSONObject(messageInfos);
                 
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject obj = (JSONObject) data.get(i);
+                int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
 
-                    CampusNotice campusNotice = new CampusNotice();
-                    campusNotice.content = obj.getString("content");
-                    campusNotice.id = obj.getString("id");                   
-                    campusNotice.optTime = obj.getString("optTime");
-                    campusNotice.fkGradeId = obj.getInt("fkGradeId");
-                    campusNotice.status = obj.getString("status");
-                    campusNotice.fkClassId = obj.getInt("fkClassId");
-                    campusNotice.smsType = obj.getInt("smsType");
-                    campusNotice.fkSchoolId = obj.getInt("fkSchoolId");
-                    campusNotice.className = obj.getString("className");
-                    campusNotice.sendType = obj.getInt("sendType");
-                    campusNotice.stuName = obj.getString("stuName");
-                    campusNotice.fkStudentId = obj.getString("fkStudentId");
-                   
-                    
-                    
-                    
-                    
-                    
-                    
+                if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
+                    JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+                    ArrayList<CampusNotice> campusNoticeList = null;
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject obj = (JSONObject) data.get(i);
 
-                    campusNoticeList.add(campusNotice);
+                        CampusNotice campusNotice = new CampusNotice();
+                        campusNotice.content = obj.getString("content");
+                        campusNotice.id = obj.getString("id");
+                        campusNotice.optTime = obj.getString("optTime");
+                        campusNotice.fkGradeId = obj.getInt("fkGradeId");
+                        campusNotice.status = obj.getString("status");
+                        campusNotice.fkClassId = obj.getInt("fkClassId");
+                        campusNotice.smsType = obj.getInt("smsType");
+                        campusNotice.fkSchoolId = obj.getInt("fkSchoolId");
+                        campusNotice.className = obj.getString("className");
+                        campusNotice.sendType = obj.getInt("sendType");
+                        campusNotice.stuName = obj.getString("stuName");
+                        campusNotice.fkStudentId = obj.getString("fkStudentId");
+
+                        campusNoticeList.add(campusNotice);
+                    }
+                    Log.i(TAG, "campusNoticeList.size() " + campusNoticeList.size());
+                  
+                    if (campusNoticeList != null && campusNoticeList.size() > 0) {
+
+                        for (CampusNotice campusNotice : campusNoticeList) {
+                            long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
+                            Log.i(TAG, "campusNotice insertResult " + insertResult);
+                        }
+
+                    };
+                    
                 }
-                Log.i(TAG, "campusNoticeList.size() " + campusNoticeList.size());
-                if (campusNoticeList.size() > 0) {
+            } catch (JSONException e) {
+                e.printStackTrace();
 
-                }
+                throw e;
+               
+            } finally{
+                campusNotieTotal = campusNoticeDao.queryReadOrNotReadCount(0);
+                campusNoticeContentList = campusNoticeDao.queryNotReadCampusNoticeContents();
+                campusNoticeDao.colseDb();
+                campusNoticeDao = null;  
             }
-
+            
         }
 
-        private void praseHomeWorks(String homeWorksInfo) throws JSONException {
+        private void praseHomeWorks(String homeWorksInfo) {
             // TODO Auto-generated method stub
-            JSONObject jsonObj = new JSONObject(homeWorksInfo);
-            int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+            JSONObject jsonObj;
+            HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+            try {
+                jsonObj = new JSONObject(homeWorksInfo);
+                int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
 
-            if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-                JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+                if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
+                    JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
 
-                ArrayList<HomeWorkInfo> homeWorkInfoList = new ArrayList<HomeWorkInfo>();
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject obj = (JSONObject) data.get(i);
+                    ArrayList<HomeWorkInfo> homeWorkInfoList = new ArrayList<HomeWorkInfo>();
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject obj = (JSONObject) data.get(i);
 
-                    // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
-                    // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
-                    // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
-                    HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
+                        // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
+                        // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
+                        // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
+                        HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
 
-                    homeWorkInfo.content = obj.getString("content");
-                    homeWorkInfo.id = obj.getString("id");
-                    homeWorkInfo.optTime = obj.getString("optTime");
-                    homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
-                    homeWorkInfo.status = obj.getString("status");
-                    homeWorkInfo.fkClassId = obj.getInt("fkClassId");
-                    homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
-                    homeWorkInfo.smsType = obj.getInt("smsType");
-                    homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
-                    homeWorkInfo.className = obj.getString("className");
-                    homeWorkInfo.sendType = obj.getInt("sendType");
-                    homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
-                    
+                        homeWorkInfo.content = obj.getString("content");
+                        homeWorkInfo.id = obj.getString("id");
+                        homeWorkInfo.optTime = obj.getString("optTime");
+                        homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
+                        homeWorkInfo.status = obj.getString("status");
+                        homeWorkInfo.fkClassId = obj.getInt("fkClassId");
+                        homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
+                        homeWorkInfo.smsType = obj.getInt("smsType");
+                        homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
+                        homeWorkInfo.className = obj.getString("className");
+                        homeWorkInfo.sendType = obj.getInt("sendType");
+                        homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
 
-                    homeWorkInfoList.add(homeWorkInfo);
+                        homeWorkInfoList.add(homeWorkInfo);
+                    }
+
+                  
+                    if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
+
+                        for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
+                            long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
+                            Log.i(TAG, "HomeWork insertResult " + insertResult);
+                        }
+                    }
+                   
                 }
-                
-                
-                if(homeWorkInfoList!=null && homeWorkInfoList.size()>0){
-                	for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
-                    	HomeWorkDao homeWorkDao = new HomeWorkDao(HomePageActivity.this);
-                    	homeWorkDao.addHomeWork(homeWorkInfo);
-    				}
-                }
-                
-                
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally{
+                homeWorkTotal = homeWorkDao.queryReadOrNotReadCount(0);
+                homeWorkDao.colseDb();
+                homeWorkDao = null;
             }
+            
+            
+           
 
         }
 
@@ -671,7 +717,6 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
             super.onPreExecute();
             Log.i(TAG, "GetAllNoteTask run()");
         }
-     
 
         @Override
         protected void onPostExecute(String schoolsInfo) {
@@ -679,20 +724,20 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
             Log.d(TAG, "result " + schoolsInfo);
             Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
             Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
-            Log.i(TAG, "campusNoticeList.size() " + campusNoticeList.size());
-            
-            if(campusNoticeList!=null && campusNoticeList.size()>0){
-                
-                if (campusNoticeList.size() > 1) {
+            Log.i(TAG, "campusNoticeContentList.size() " + campusNoticeContentList.size());
+
+            if (campusNoticeContentList != null && campusNoticeContentList.size() > 0) {
+
+                if (campusNoticeContentList.size() > 1) {
                     new Thread(new Runnable() {
                         public void run() {
                             rollNoteText.post(new Runnable() {
                                 public void run() {
 
-                                    
-                                    for (int i = 0; i < campusNoticeList.size(); i++) {
-                                        CampusNotice campusNotice =  campusNoticeList.get(i);
-                                        rollNoteText.setText(campusNotice.content);
+                                    for (int i = 0; i < campusNoticeContentList.size(); i++) {
+                                        String content = campusNoticeContentList.get(i);
+                                        Log.i(TAG, "content " + content);
+                                        rollNoteText.setText(content);
                                         try {
                                             Thread.sleep(10000);
                                         } catch (InterruptedException e) {
@@ -700,23 +745,24 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
                                             e.printStackTrace();
                                         }
                                     }
-                                    
+
                                 }
                             });
                         }
                     }).start();
-                } else if (campusNoticeList.size() == 1) {
-                    CampusNotice campusNotice = campusNoticeList.get(0);
-                    rollNoteText.setText(campusNotice.content);
+                } else if (campusNoticeContentList.size() == 1) {
+                    String content = campusNoticeContentList.get(0);
+                    Log.i(TAG, "content " + content);
+                    rollNoteText.setText(content);
                 }
-                
+
             }
-            
 
             if (homeWorkTotal > 0 || campusNotieTotal > 0) {
 
                 mImageAdapter.notifyDataSetChanged();
             }
+
             if (!TextUtils.isEmpty(schoolsInfo)) {
 
                 try {
@@ -908,26 +954,6 @@ public class HomePageActivity extends Activity implements OnItemSelectedListener
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // TODO Auto-generated method stub
-        Log.i(TAG, " position " + position + " id " + id);
-        if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-            if (mStudentList.size() < 0) {
-                mSpinnerInfo.add("请选择孩子");
-            } else {
-
-            }
-            mXiaoYunTongApplication.deflutStudentInfo = mStudentList.get(position);
-        } else {
-
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
-        Log.i(TAG, " onNothingSelected() ");
-    }
+    
 
 }

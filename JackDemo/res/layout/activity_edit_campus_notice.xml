@@ -1,8 +1,65 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dingxi.jackdemo.EditCampusNoticeActivity"
-    tools:ignore="MergeRootFrame" />
+    android:background="@drawable/home_page"
+    android:orientation="vertical" >
+    <include layout="@layout/home_page_title_bar" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/new_message_tittle_background"
+        android:orientation="vertical" >
 
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/edit_homewok_title" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/new_massage_tittleline" />
+
+        <EditText
+            android:id="@+id/edit_homework_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+           
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:ems="10" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/newmessage_background" >
+
+        <EditText
+            android:id="@+id/edit_homework_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+             android:hint="@string/edit_homewok_hint"
+            android:singleLine="false" >
+
+        </EditText>
+    </LinearLayout>
+
+</LinearLayout>

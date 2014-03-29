@@ -26,12 +26,13 @@ public class HomeWorkInfo {
 
     public String optTime;// 操作时间
 
-    //public java.util.Date sendTime;// 发送时间
+    // public java.util.Date sendTime;// 发送时间
 
     public String status;// 作业评分
 
     public String className;
 
+    public Integer isRead = 0;
 
     public static abstract class HomeWorkEntry implements BaseColumns {
         public static final String TABLE_NAME = "home_work";
@@ -47,11 +48,11 @@ public class HomeWorkInfo {
         public static final String COLUMN_NAME_CLASS_NAME = "className";
         public static final String COLUMN_NAME_SEND_TYPE = "sendType";
         public static final String COLUMN_NAME_STUDDENT_ID = "fkStudentId";
+        public static final String COLUMN_NAME_IS_READ = "is_read";
         public static final String COLUMN_NAME_NULLABLE = null;
-  
+
     }
-    
-    
+
     // Constructors
 
     /** default constructor */
@@ -71,115 +72,10 @@ public class HomeWorkInfo {
         this.fkSubjectId = fkSubjectId;
         this.content = content;
         this.optTime = optTime;
-//        this.sendTime = sendTime;
-//        this.fkParentId = fkParentId;
+        // this.sendTime = sendTime;
+        // this.fkParentId = fkParentId;
         this.status = status;
     }
 
-    // Property accessors
-
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Integer getSmsType() {
-        return this.smsType;
-    }
-
-    public void setSmsType(Integer smsType) {
-        this.smsType = smsType;
-    }
-
-    public Integer getSendType() {
-        return this.sendType;
-    }
-
-    public void setSendType(Integer sendType) {
-        this.sendType = sendType;
-    }
-
-    public Integer getFkSchoolId() {
-        return this.fkSchoolId;
-    }
-
-    public void setFkSchoolId(Integer fkSchoolId) {
-        this.fkSchoolId = fkSchoolId;
-    }
-
-    public Integer getFkGradeId() {
-        return this.fkGradeId;
-    }
-
-    public void setFkGradeId(Integer fkGradeId) {
-        this.fkGradeId = fkGradeId;
-    }
-
-    public Integer getFkClassId() {
-        return this.fkClassId;
-    }
-
-    public void setFkClassId(Integer fkClassId) {
-        this.fkClassId = fkClassId;
-    }
-
-    public String getFkStudentId() {
-        return this.fkStudentId;
-    }
-
-    public void setFkStudentId(String fkStudentId) {
-        this.fkStudentId = fkStudentId;
-    }
-
-    public Integer getFkSubjectId() {
-        return this.fkSubjectId;
-    }
-
-    public void setFkSubjectId(Integer fkSubjectId) {
-        this.fkSubjectId = fkSubjectId;
-    }
-
-    public String getContent() {
-        return this.content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getOptTime() {
-        return this.optTime;
-    }
-
-    public void setOptTime(String optTime) {
-        this.optTime = optTime;
-    }
-
-//    public java.util.Date getSendTime() {
-//        return this.sendTime;
-//    }
-//
-//    public void setSendTime(java.util.Date sendTime) {
-//        this.sendTime = sendTime;
-//    }
-
-    public String getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-//    public String getFkParentId() {
-//        return fkParentId;
-//    }
-//
-//    public void setFkParentId(String fkParentId) {
-//        this.fkParentId = fkParentId;
-//    }
 
 }

@@ -93,7 +93,7 @@
             android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel_login"
+            android:text="@string/cancel"
              android:onClick="cancelModifyPassWordClick"
             android:background="@drawable/login_button_selector" />
     </LinearLayout>

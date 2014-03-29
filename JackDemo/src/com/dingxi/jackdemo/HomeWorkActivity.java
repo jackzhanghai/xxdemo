@@ -15,6 +15,7 @@ import com.dingxi.jackdemo.HomePageActivity.ImageAdapter.ViewHolder;
 import com.dingxi.jackdemo.LoginActivity.UserLoginTask;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
 import com.dingxi.jackdemo.model.UserInfo;
+import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
 import com.dingxi.jackdemo.model.UserInfo.UserType;
 import com.dingxi.jackdemo.network.JSONParser;
 import com.dingxi.jackdemo.network.RestClient;
@@ -49,7 +50,7 @@ import android.widget.Toast;
 public class HomeWorkActivity extends Activity {
 
     public static final String TAG = "HomeWorkActivity";
-    private View parentHeader;
+    private View emptyView;
     private ImageButton mBackButton;
     private ImageButton mQueryMessageButton;
     private ImageButton mEditMessageButton;
@@ -69,8 +70,6 @@ public class HomeWorkActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_work);
-
-        parentHeader = findViewById(R.id.main_title_bar);
         mBackButton = (ImageButton) findViewById(R.id.back_button);
         mBackButton.setOnClickListener(new OnClickListener() {
             
@@ -92,7 +91,8 @@ public class HomeWorkActivity extends Activity {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+                Intent intent = new Intent(HomeWorkActivity.this,SearchMessageActivity.class);
+                startActivityForResult(intent, R.layout.activity_search_message);
                 
             }
         });
@@ -103,12 +103,15 @@ public class HomeWorkActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                Intent intent = new Intent(HomeWorkActivity.this,EditHomeWorkActivity.class);
+                startActivity(intent);
                 
             }
         });
         
+        emptyView = findViewById(R.id.empty);
         mHomeWorkListView = (ListView) findViewById(R.id.home_work_list);
-        mHomeWorkListView.setEmptyView(findViewById(R.id.empty));
+        mHomeWorkListView.setEmptyView(emptyView);
         mHomeWorkList = new ArrayList<HomeWorkInfo>();
         mHomeWorkAdapter = new HomeWorkAdapter(HomeWorkActivity.this, mHomeWorkList);
         loadingImageView = (ImageView) findViewById(R.id.loading_message_image);
@@ -121,10 +124,11 @@ public class HomeWorkActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				
-				
-				
+			    Log.i(TAG, "arg2 " +arg2 + " arg3 " + arg3);
+			    String id = mHomeWorkList.get(arg2).id;
+			    Log.i(TAG, "id " + id );
 				Intent intent = new Intent(HomeWorkActivity.this,HomeWorkDetailActivity.class);
+				intent.putExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID, id);
 				startActivity(intent);
 			}
         	
@@ -142,8 +146,14 @@ public class HomeWorkActivity extends Activity {
         }
 
         loadingImageView.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
         loadingAnimation.start();
-        mHomeWorTask = new GetHomeWorTask(1, 5, "");
+        if(curretUserInfo.roleType == UserType.ROLE_TEACHER){
+            mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, curretUserInfo.fkClassId, "", "", "");
+        } else  if(curretUserInfo.roleType == UserType.ROLE_PARENT){
+            mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, "", "", mXiaoYunTongApplication.deflutStudentInfo.id, "");
+        }
+       
         mHomeWorTask.execute((Void) null);
     }
 
@@ -178,7 +188,7 @@ public class HomeWorkActivity extends Activity {
         @Override
         public long getItemId(int position) {
             // TODO Auto-generated method stub
-            String id = homeWorkList.get(position).getId();
+            String id = homeWorkList.get(position).id;
             //Long.parseLong(id)
             return 0;
         }
@@ -197,10 +207,10 @@ public class HomeWorkActivity extends Activity {
                 viewHolder = (HomeWorkHolder) convertView.getTag();
             }
 
-            Log.i(TAG, "homeWorkList.get(position).getId() " + homeWorkList.get(position).getId());
-            viewHolder.headerText.setText(homeWorkList.get(position).getId());
-            Log.i(TAG, "homeWorkList.get(position).getContent() " + homeWorkList.get(position).getContent());
-            viewHolder.bodyText.setText(homeWorkList.get(position).getContent());
+            Log.i(TAG, "homeWorkList.get(position).getId() " + homeWorkList.get(position).id);
+            viewHolder.headerText.setText(homeWorkList.get(position).id);
+            Log.i(TAG, "homeWorkList.get(position).getContent() " + homeWorkList.get(position).content);
+            viewHolder.bodyText.setText(homeWorkList.get(position).content);
 
             return convertView;
         }
@@ -214,55 +224,52 @@ public class HomeWorkActivity extends Activity {
     }
 
     
-    private void praseHomeWorks(String homeWorksInfo) throws JSONException {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
-        JSONObject jsonObj = new JSONObject(homeWorksInfo);
-        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
-
-        if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
-
-
-            for (int i = 0; i < data.length(); i++) {
-                JSONObject obj = (JSONObject) data.get(i);
-                mHomeWorkList.clear();
-                // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
-                // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
-                // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
-                HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
-
-                homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
-                homeWorkInfo.id = obj.getString("id");
-                homeWorkInfo.content = obj.getString("content");
-                homeWorkInfo.sendType = obj.getInt("sendType");
-                homeWorkInfo.status = obj.getString("status");
-                homeWorkInfo.fkClassId = obj.getInt("fkClassId");
-                homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
-                homeWorkInfo.smsType = obj.getInt("smsType");
-                homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
-                homeWorkInfo.className = obj.getString("id");
-                homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
-                //homeWorkInfo.stuName = obj.getString("stuName");
-                // studentInfo.optTime = obj.getInt("optTime");
-
-                mHomeWorkList.add(homeWorkInfo);
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if(resultCode == RESULT_OK && requestCode == R.layout.activity_search_message){
+            Bundle  searchBundle =   data.getExtras();           
+            searchBundle.getString("mGradeId");
+           String classId2 = searchBundle.getString("mClassId");
+          String studentId =  searchBundle.getString("mStudentId");
+          String date =  searchBundle.getString("mData");
+            mHomeWorkList.clear();
+            mHomeWorkAdapter.notifyDataSetChanged();
+            
+            loadingImageView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+            loadingAnimation.start();
+            if(curretUserInfo.roleType == UserType.ROLE_TEACHER){
+                mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, curretUserInfo.fkClassId, classId2, studentId, date);
+            } else {
+                mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, "", "", mXiaoYunTongApplication.deflutStudentInfo.id, date);
             }
-            if (mHomeWorkList.size() > 0) {
-
-            }
+            mHomeWorTask.execute((Void) null);
+            
         }
-
     }
+    
+    
     
     public class GetHomeWorTask extends AsyncTask<Void, Void, String> {
         
         int page,row;
+        String fkSchoolId ;
+        String fkClassId;
+        String fkClassId2;
+        String fkStudentId;
         String queryTime;
         
-        public GetHomeWorTask(int page, int rows, String queryTime) {
+        public GetHomeWorTask(int page, int rows, String fkSchoolId, String fkClassId,String fkClassId2, String fkStudentId, String queryTime) {
            this.page = page;
            this.row = rows;
            this.queryTime =  queryTime;
+           this.fkSchoolId =  fkSchoolId;
+           this.fkClassId =  fkClassId;
+           this.fkClassId2 =  fkClassId2;
+           this.fkStudentId =  fkStudentId;
         }
         
         
@@ -273,15 +280,15 @@ public class HomeWorkActivity extends Activity {
             StringBuilder info = new StringBuilder();
             info.append("{");
             info.append("\"fkSchoolId\":");
-            info.append("\"" + curretUserInfo.fkSchoolId + "\"");
+            info.append("\"" + fkSchoolId + "\"");
             info.append(",");
             if (curretUserInfo.roleType == UserInfo.UserType.ROLE_TEACHER) {
                 info.append("\"fkClassId\":");
-                info.append("\"" + curretUserInfo.fkClassId + "\"");
+                info.append("\"" + fkClassId + "\"");
                 info.append(",");
 
                 info.append("\"fkClassId2\":");
-                info.append("\"\"");
+                info.append("\"" + fkClassId2 + "\"");
                 info.append(",");
             } else if (curretUserInfo.roleType == UserInfo.UserType.ROLE_PARENT) {
                 info.append("\"fkStudentId\":");
@@ -297,7 +304,7 @@ public class HomeWorkActivity extends Activity {
             
             String homeWorkInfo;
             try {
-                homeWorkInfo = RestClient.getHomeWorks(curretUserInfo.id, curretUserInfo.ticket, curretUserInfo.roleType.toString(), info.toString(), 1, 5);
+                homeWorkInfo = RestClient.getHomeWorks(curretUserInfo.id, curretUserInfo.ticket, curretUserInfo.roleType.toString(), info.toString(), page, row);
             } catch (ConnectTimeoutException stex) {
                 homeWorkInfo = getString(R.string.request_time_out);
             } catch (SocketTimeoutException stex) {
@@ -342,6 +349,7 @@ public class HomeWorkActivity extends Activity {
                     } else {
                         loadingAnimation.stop();
                         loadingImageView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
                         String errorMessage = JSONParser.getStringByTag(homeWorkInfo,
                                 RestClient.RESULT_TAG_MESSAGE);
                         if (!TextUtils.isEmpty(errorMessage)) {
@@ -355,12 +363,14 @@ public class HomeWorkActivity extends Activity {
                 } catch (JSONException e) {
                     loadingAnimation.stop();
                     loadingImageView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
                     Toast.makeText(HomeWorkActivity.this, homeWorkInfo, Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             } else {
                 loadingAnimation.stop();
                 loadingImageView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
 
             }
         }
@@ -370,6 +380,47 @@ public class HomeWorkActivity extends Activity {
             mHomeWorTask = null;
 
         }
+    }
+    
+    
+    private void praseHomeWorks(String homeWorksInfo) throws JSONException {
+        // TODO Auto-generated method stub
+        JSONObject jsonObj = new JSONObject(homeWorksInfo);
+        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+
+        if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
+            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+
+
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+                mHomeWorkList.clear();
+                // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
+                // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
+                // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
+                HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
+
+                homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
+                homeWorkInfo.id = obj.getString("id");
+                homeWorkInfo.content = obj.getString("content");
+                homeWorkInfo.sendType = obj.getInt("sendType");
+                homeWorkInfo.status = obj.getString("status");
+                homeWorkInfo.fkClassId = obj.getInt("fkClassId");
+                homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
+                homeWorkInfo.smsType = obj.getInt("smsType");
+                homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
+                homeWorkInfo.className = obj.getString("id");
+                homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
+                //homeWorkInfo.stuName = obj.getString("stuName");
+                homeWorkInfo.optTime = obj.getString("optTime");
+
+                mHomeWorkList.add(homeWorkInfo);
+            }
+            if (mHomeWorkList.size() > 0) {
+
+            }
+        }
+
     }
 
 }
