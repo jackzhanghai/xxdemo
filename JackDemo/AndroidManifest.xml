@@ -38,7 +38,13 @@
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.AttendanceInfoActivity"
-            android:label="@string/title_activity_attendance_info" >
+            android:label="@string/title_activity_attendance_info"
+             android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.dingxi.jackdemo.UpdateAttendanceInfoActivity"
+            android:label="@string/title_activity_attendance_info"
+             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.HomeWorkActivity"
@@ -52,6 +58,11 @@
         </activity>
         <activity
             android:name="com.dingxi.jackdemo.CampusNoticeActivity"
+            android:label="@string/title_activity_campus_notice"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.dingxi.jackdemo.CampusNoticeDetailActivity"
             android:label="@string/title_activity_campus_notice"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
