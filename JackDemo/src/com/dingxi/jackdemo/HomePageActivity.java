@@ -730,12 +730,15 @@ public class HomePageActivity extends Activity {
             	
             	if (mStudentList.size() > 0) {
             		ParentInfo parentInfo = (ParentInfo) userInfo;
+            		
+            		parentInfo.childList = mStudentList;
                     parentInfo.defalutChild = mStudentList.get(0);
                     mSpinnerInfo.clear();
                     for (StudentInfo studentInfo : mStudentList) {
                         mSpinnerInfo.add(studentInfo.name);
-                        mSpinnerAdapter.notifyDataSetChanged();
                     }
+                    parentInfo.nameList = mSpinnerInfo;
+                    mSpinnerAdapter.notifyDataSetChanged();
                 }
             	 mProgressDialog.dismiss();
             	

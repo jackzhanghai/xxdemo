@@ -11,11 +11,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.dingxi.jackdemo.HomePageActivity.GetAllNoteTask;
 import com.dingxi.jackdemo.HomePageActivity.ImageAdapter.ViewHolder;
 import com.dingxi.jackdemo.LoginActivity.UserLoginTask;
 import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
 import com.dingxi.jackdemo.model.ParentInfo;
+import com.dingxi.jackdemo.model.StudentInfo;
 import com.dingxi.jackdemo.model.TeacherInfo;
 import com.dingxi.jackdemo.model.UserInfo;
 import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
@@ -60,6 +62,8 @@ public class HomeWorkActivity extends Activity {
 	private ImageButton mQueryMessageButton;
 	private ImageButton mEditMessageButton;
 	private Spinner mSpinner;
+	private ArrayAdapter<String> mSpinnerAdapter;
+	private ArrayList<String> mSpinnerInfo;
 	private ListView mHomeWorkListView;
 	private HomeWorkAdapter mHomeWorkAdapter;
 	private ArrayList<HomeWorkInfo> mHomeWorkList;
@@ -67,6 +71,7 @@ public class HomeWorkActivity extends Activity {
 	private AnimationDrawable loadingAnimation;
 	private static UserInfo curretUserInfo;
 	private XiaoYunTongApplication mXiaoYunTongApplication;
+	private ArrayList<StudentInfo> mStudentList;
 
 	public GetHomeWorTask mHomeWorTask;
 
@@ -96,7 +101,22 @@ public class HomeWorkActivity extends Activity {
 					int arg2, long arg3) {
 				Log.d(TAG, "mSpinner onItemSelected()");
 				// TODO Auto-generated method stub
+				ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+				parentInfo.defalutChild = mStudentList.get(arg2);
 
+				mHomeWorkList.clear();
+				mHomeWorkAdapter.notifyDataSetChanged();
+
+				loadingImageView.setVisibility(View.VISIBLE);
+				emptyView.setVisibility(View.GONE);
+				loadingAnimation.start();
+
+				// ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+				mHomeWorTask = new GetHomeWorTask(1, 5,
+						curretUserInfo.fkSchoolId, "", "",
+						parentInfo.defalutChild.id, "", true);
+
+				mHomeWorTask.execute((Void) null);
 			}
 
 			@Override
@@ -105,6 +125,28 @@ public class HomeWorkActivity extends Activity {
 				Log.d(TAG, "mSpinner onNothingSelected()");
 			}
 		});
+
+		ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+
+		if (parentInfo.childList != null) {
+			mStudentList = parentInfo.childList;
+		} else {
+			mStudentList = new ArrayList<StudentInfo>();
+		}
+
+		if (parentInfo.nameList != null) {
+			mSpinnerInfo = parentInfo.nameList;
+		} else {
+			mSpinnerInfo = new ArrayList<String>();
+		}
+
+		mSpinnerAdapter = new ArrayAdapter<String>(HomeWorkActivity.this,
+				android.R.layout.simple_spinner_item, mSpinnerInfo);
+		mSpinnerAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSpinner.setAdapter(mSpinnerAdapter);
+
+		mSpinner.setAdapter(mSpinnerAdapter);
 
 		mQueryMessageButton = (ImageButton) findViewById(R.id.query_button);
 		mQueryMessageButton.setOnClickListener(new OnClickListener() {
@@ -175,11 +217,11 @@ public class HomeWorkActivity extends Activity {
 		if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
 			TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
-					teacherInfo.defalutClassId, "", "", "",false);
+					teacherInfo.defalutClassId, "", "", "", false);
 		} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-			ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+			// ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
-					"", "", parentInfo.defalutChild.id, "",false);
+					"", "", parentInfo.defalutChild.id, "", false);
 		}
 
 		mHomeWorTask.execute((Void) null);
@@ -284,12 +326,12 @@ public class HomeWorkActivity extends Activity {
 
 				mHomeWorTask = new GetHomeWorTask(1, 5,
 						curretUserInfo.fkSchoolId, teacherInfo.defalutClassId,
-						classId2, studentId, date,true);
+						classId2, studentId, date, true);
 			} else {
 				ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 				mHomeWorTask = new GetHomeWorTask(1, 5,
 						curretUserInfo.fkSchoolId, "", "",
-						parentInfo.defalutChild.id, date,true);
+						parentInfo.defalutChild.id, date, true);
 			}
 			mHomeWorTask.execute((Void) null);
 
@@ -308,7 +350,7 @@ public class HomeWorkActivity extends Activity {
 
 		public GetHomeWorTask(int page, int rows, String fkSchoolId,
 				String fkClassId, String fkClassId2, String fkStudentId,
-				String queryTime,boolean isCustomSearch) {
+				String queryTime, boolean isCustomSearch) {
 			this.page = page;
 			this.row = rows;
 			this.queryTime = queryTime;
@@ -385,13 +427,14 @@ public class HomeWorkActivity extends Activity {
 					&& responseMessage.total > 0) {
 				ArrayList<HomeWorkInfo> homeWorkInfoList = null;
 				try {
-					homeWorkInfoList = JSONParser.praseHomeWorks(responseMessage.body);
-					
+					homeWorkInfoList = JSONParser
+							.praseHomeWorks(responseMessage.body);
+
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
 
 					for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
@@ -399,9 +442,8 @@ public class HomeWorkActivity extends Activity {
 								.addHomeWork(homeWorkInfo);
 						Log.i(TAG, "HomeWork insertResult " + insertResult);
 					}
-					
-					
-					if(isCustomSearch){
+
+					if (isCustomSearch) {
 						mHomeWorkList.clear();
 						mHomeWorkList.addAll(homeWorkInfoList);
 					} else {
@@ -410,9 +452,9 @@ public class HomeWorkActivity extends Activity {
 						Log.i(TAG, "homeWork.size() " + homeWork.size());
 						mHomeWorkList.clear();
 						mHomeWorkList.addAll(homeWork);
-							
+
 					}
-					
+
 				}
 
 				homeWorkDao.colseDb();
