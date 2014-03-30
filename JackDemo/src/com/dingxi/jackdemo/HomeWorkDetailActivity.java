@@ -41,13 +41,15 @@ public class HomeWorkDetailActivity extends Activity {
                 finish();
             }
         });
+        mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
+
+        curretUserInfo = mXiaoYunTongApplication.userInfo;
+        
         
         homeWorkTite = (TextView) findViewById(R.id.homework_header);
         homeWorkDate = (TextView) findViewById(R.id.homework_date);
         homeWorkContent = (TextView) findViewById(R.id.homework_content);
-        mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
-
-        curretUserInfo = mXiaoYunTongApplication.userInfo;
+        
         
        String homeWorkID =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID);
        curretHomeDao =  new HomeWorkDao(mXiaoYunTongApplication);

@@ -25,11 +25,6 @@ public class RestClient {
     //private static String servicePoint = "http://hcyforget.vicp.cc:9009/M-School/phoneService.ws";
     // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
 
-    public static int RESULT_TAG_SUCCESS = 0;
-    public static String RESULT_TAG_CODE = "code";
-    public static final String RESULT_TAG_MESSAGE = "message";
-    public static final String RESULT_TAG_TOTAL = "total";
-    public static final String RESULT_TAG_DATAS = "datas";
 
     public static String getAllSchool() throws IOException, XmlPullParserException {
 
@@ -276,13 +271,39 @@ public class RestClient {
     // 获取科目
     public static String getSubjectInfoT(String id, String ticket, String fkSchoolId)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("fkSchoolId", fkSchoolId);
-        map.put("ticket", ticket);
+     
+    	 Log.i(TAG, "getSubjectInfoT");
+        String soapAction = nameSpace + "/getSubjectInfoT";
 
-        String response = requestData(map, "getSubjectInfoT");
-        return response;
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getSubjectInfoT");
+        rpc.addProperty("id", id);       
+        rpc.addProperty("ticket", ticket);
+        rpc.addProperty("fkSchoolId", fkSchoolId);
+       
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(servicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getSubjectInfoT result " + result);
+        return result;
     }
 
     // 获取家庭作业
@@ -316,7 +337,7 @@ public class RestClient {
             for (int i = 0; i < count; i++) {
 
                 String property = object.getProperty(i).toString();
-                Log.i(TAG, "requestData property " + property);
+                //Log.i(TAG, "requestData property " + property);
             }
             result = object.getProperty(0).toString();
         }
@@ -325,15 +346,40 @@ public class RestClient {
     }
 
     // 添加家庭作业
-    public static String addHomeWorks(String id, String ticket, String fkRoleId, String info)
+    public static String addHomeWorks(String id, String ticket, String info)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("fkRoleId", fkRoleId);
-        map.put("ticket", ticket);
-        map.put("info", info);
-        String response = requestData(map, "addHomeWorks");
-        return response;
+  
+    	Log.i(TAG, "addHomeWorks()");
+        String soapAction = nameSpace + "/addHomeWorks";
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "addHomeWorks");
+        rpc.addProperty("id", id);
+        rpc.addProperty("ticket", ticket);
+        rpc.addProperty("info", info);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(servicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+               // Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "addHomeWorks result " + result);
+        return result;
     }
 
     // 获取校园通知
@@ -366,7 +412,6 @@ public class RestClient {
             for (int i = 0; i < count; i++) {
 
                 String property = object.getProperty(i).toString();
-                Log.i(TAG, "requestData property " + property);
             }
             result = object.getProperty(0).toString();
         }
@@ -375,11 +420,10 @@ public class RestClient {
     }
 
     // 添加校园通知
-    public static String addMessageInfos(String id, String fkRoleId, String ticket, String info)
+    public static String addMessageInfos(String id, String ticket, String info)
             throws IOException, XmlPullParserException {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", id);
-        map.put("fkRoleId", fkRoleId);
         map.put("ticket", ticket);
         map.put("info", info);
         String response = requestData(map, "addMessageInfos");
@@ -387,17 +431,41 @@ public class RestClient {
     }
 
     // 获取考勤信息
-    public static String getAttendanceInfos(String id, String fkRoleId, String ticket, int page,
+    public static String getAttendanceInfos(String id, String fkRoleId, String ticket, String info,int page,
             int rows, String queryTime) throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("fkRoleId", fkRoleId);
-        map.put("ticket", ticket);
-        map.put("page", String.valueOf(page));
-        map.put("rows", String.valueOf(rows));
-        map.put("queryTime", queryTime);
-        String response = requestData(map, "getAttendanceInfos");
-        return response;
+      
+        String soapAction = nameSpace + "/getAttendanceInfos";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getAttendanceInfos");
+        rpc.addProperty("id", id);        
+        rpc.addProperty("fkRoleId", fkRoleId);
+        rpc.addProperty("ticket", ticket);
+        rpc.addProperty("info", info);
+        rpc.addProperty("page", page);//String.valueOf(page)
+        rpc.addProperty("rows", rows);//String.valueOf(rows)
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(servicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getAttendanceInfos result " + result);
+        return result;
     }
 
     // 修改考勤信息

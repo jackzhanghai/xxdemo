@@ -6,21 +6,21 @@ import java.util.ArrayList;
 
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
 import com.dingxi.jackdemo.dao.CampusNoticeDao;
 import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
 import com.dingxi.jackdemo.model.CampusNotice;
-import com.dingxi.jackdemo.model.ClassInfo;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
+import com.dingxi.jackdemo.model.ParentInfo;
 import com.dingxi.jackdemo.model.StudentInfo;
+import com.dingxi.jackdemo.model.TeacherInfo;
 import com.dingxi.jackdemo.model.UserInfo;
 import com.dingxi.jackdemo.model.UserInfo.UserType;
 import com.dingxi.jackdemo.network.JSONParser;
+import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
 
 import android.app.Activity;
@@ -32,14 +32,13 @@ import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -56,29 +55,45 @@ import android.widget.Toast;
 public class HomePageActivity extends Activity {
 
     protected static final String TAG = "HomePageActivity";
+    
+    private static final int MSG_ROLL_TEXT = 0;
     private Spinner mSpinner;
-    // private String mRoleId = "0";
     private ImageButton backButton;
-    // private ImageButton editButton;
-    // private ImageButton queryButton;
-    private XiaoYunTongApplication mXiaoYunTongApplication;
-    private static UserInfo curretUserInfo;
-    private GetAllClassTask mGetAllClassTask;
-    private GetAllChildTask mGetAllChildTask;
-    private ProgressDialog mProgressDialog;
-    private ArrayList<ClassInfo> mClassInfoList;
-    private ArrayList<StudentInfo> mStudentList;
-    private ArrayList<String> mSpinnerInfo;
-    private ArrayAdapter<String> mAdapter;
-
+    private UserInfo userInfo;
+    
+    private ProgressDialog mProgressDialog;  
+    private ArrayAdapter<String> mSpinnerAdapter;
+    private ImageAdapter mImageAdapter;
     private GetAllNoteTask mGetAllNoteTask;
+    private GetAllChildTask mGetAllChildTask;
     private int homeWorkTotal;
     private int campusNotieTotal;
-    private ImageAdapter mImageAdapter;
+    private RollTextThread rollTextThread;
+    
     private TextView rollNoteText;
+    private ArrayList<StudentInfo> mStudentList;
+    private ArrayList<String> mSpinnerInfo;
     // private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();
-    private ArrayList<String> campusNoticeContentList = new ArrayList<String>();
+    private ArrayList<String> campusNoticeContentList;
     private XiaoyuantongDbHelper xiaoyuantongDbHelper;
+    private XiaoYunTongApplication mXiaoYunTongApplication;
+    private Handler rollTextHandler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			super.handleMessage(msg);
+			
+			String text = (String) msg.obj;
+			Log.d(TAG, "text " + text);
+			rollNoteText.setText(text);
+			
+		}
+    	
+    	
+    };
+    
+   
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +101,15 @@ public class HomePageActivity extends Activity {
         setContentView(R.layout.activity_home_page);
 
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
+        userInfo = mXiaoYunTongApplication.userInfo;
 
-        curretUserInfo = mXiaoYunTongApplication.userInfo;
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         rollNoteText = (TextView) findViewById(R.id.roll_note_text);
         mImageAdapter = new ImageAdapter(this);
+        mSpinnerInfo = new ArrayList<String>();
+        mStudentList = new ArrayList<StudentInfo>();
+        campusNoticeContentList = new ArrayList<String>();
         gridview.setAdapter(mImageAdapter);
 
         backButton = (ImageButton) findViewById(R.id.back_button);
@@ -108,20 +126,7 @@ public class HomePageActivity extends Activity {
         });
 
         xiaoyuantongDbHelper = new XiaoyuantongDbHelper(getApplicationContext());
-
-        // editButton = (ImageButton) findViewById(R.id.edit_button);
-        // editButton.setOnClickListener(new OnClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // // TODO Auto-generated method stub
-        //
-        // }
-        // });
-        //
-        //
-        //
-        // queryButton = (ImageButton) findViewById(R.id.query_button);
+      
 
         mSpinner = (Spinner) findViewById(R.id.main_spinner);
         mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -133,7 +138,9 @@ public class HomePageActivity extends Activity {
                 
                homeWorkTotal = 0;
                campusNotieTotal = 0;
-               mXiaoYunTongApplication.deflutStudentInfo = mStudentList.get(position); 
+               
+               ParentInfo parentInfo = (ParentInfo) userInfo;
+               parentInfo.defalutChild = mStudentList.get(position); 
                mImageAdapter.notifyDataSetChanged();
                mGetAllNoteTask = new GetAllNoteTask();
                mGetAllNoteTask.execute((Void) null);
@@ -147,23 +154,23 @@ public class HomePageActivity extends Activity {
         });
         // mSpinner.setEmptyView(emptyView)
 
-        mSpinnerInfo = new ArrayList<String>();
+       
 
-        if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+        if (userInfo.roleType == UserType.ROLE_PARENT) {
             mSpinner.setVisibility(View.VISIBLE);
-            mSpinner.setPromptId(R.string.please_check_child);
-            mStudentList = new ArrayList<StudentInfo>();
-            mAdapter = new ArrayAdapter<String>(HomePageActivity.this,
+            mSpinner.setPromptId(R.string.please_check_child);         
+            mSpinnerAdapter = new ArrayAdapter<String>(HomePageActivity.this,
                     android.R.layout.simple_spinner_item, mSpinnerInfo);
+            mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSpinner.setAdapter(mSpinnerAdapter);
         } else {// if (curretUserInfo.roleType == UserType.ROLE_TEACHER)
-            mClassInfoList = new ArrayList<ClassInfo>();
+           // mClassInfoList = new ArrayList<ClassInfo>();
             mSpinner.setVisibility(View.GONE);
-            mSpinner.setPromptId(R.string.please_check_class);
-            mAdapter = new ArrayAdapter<String>(HomePageActivity.this,
-                    android.R.layout.simple_spinner_item, mSpinnerInfo);
+//            mSpinner.setPromptId(R.string.please_check_class);
+//            mAdapter = new ArrayAdapter<String>(HomePageActivity.this,
+//                    android.R.layout.simple_spinner_item, mSpinnerInfo);
         }
-        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(mAdapter);
+        
 
         gridview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -186,14 +193,16 @@ public class HomePageActivity extends Activity {
                     if (!TextUtils.isEmpty("imei")) {
                         Intent intent = new Intent(HomePageActivity.this,
                                 LocationInfoActivity.class);
+                        
+                        ParentInfo parentInfo = (ParentInfo) userInfo;
                         Log.i(TAG, "deflutStudentInfo.name "
-                                + mXiaoYunTongApplication.deflutStudentInfo.name);
+                                + parentInfo.defalutChild.name);
                         Log.i(TAG, "deflutStudentInfo.imei "
-                                + mXiaoYunTongApplication.deflutStudentInfo.imei);
+                                + parentInfo.defalutChild.imei);
                         Log.i(TAG, "deflutStudentInfo.id "
-                                + mXiaoYunTongApplication.deflutStudentInfo.id);
+                                + parentInfo.defalutChild.id);
 
-                        intent.putExtra("imei", mXiaoYunTongApplication.deflutStudentInfo.imei);
+                        intent.putExtra("imei", parentInfo.defalutChild.imei);
                         startActivity(intent);
                     }
 
@@ -204,9 +213,8 @@ public class HomePageActivity extends Activity {
 
         mProgressDialog = new ProgressDialog(HomePageActivity.this);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+        if (userInfo.roleType == UserType.ROLE_PARENT) {
             mProgressDialog.setMessage(getString(R.string.now_geting_childinfo));
-
             mProgressDialog.setOnCancelListener(new OnCancelListener() {
 
                 @Override
@@ -222,7 +230,7 @@ public class HomePageActivity extends Activity {
             mProgressDialog.show();
             mGetAllChildTask = new GetAllChildTask();
             mGetAllChildTask.execute((Void) null);
-        } else if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+        } else if (userInfo.roleType == UserType.ROLE_TEACHER) {
 
             mGetAllNoteTask = new GetAllNoteTask();
             mGetAllNoteTask.execute((Void) null);
@@ -279,13 +287,35 @@ public class HomePageActivity extends Activity {
         xiaoyuantongDbHelper.close();
     }
 
-    class RollTextThread extends Thread {
 
-        @Override
-        public void run() {
-            super.run();
+ class RollTextThread extends Thread{
+    	
+    	@Override
+    	public void run() {
+    		// TODO Auto-generated method stub
+    		super.run();
+    		
+    		while (campusNoticeContentList!=null && campusNoticeContentList.size()>0) {
+    			for (int i = 0; i < campusNoticeContentList.size(); i++) {
+    				
+    				Message message = Message.obtain();
+    				message.what = MSG_ROLL_TEXT;
+    				message.obj = campusNoticeContentList.get(i);
+    				Log.d(TAG, "rollText " +campusNoticeContentList.get(i));
+    				rollTextHandler.sendMessage(message);
+    				try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    				
+				}
+				
+			}
 
-        }
+    		
+    	}
     }
 
     public class ImageAdapter extends BaseAdapter {
@@ -297,7 +327,7 @@ public class HomePageActivity extends Activity {
 
         public int getCount() {
             int count = 0;
-            if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+            if (userInfo.roleType == UserType.ROLE_PARENT) {
                 count = parentPictures.length;
             } else {
                 count = teacherPictures.length;
@@ -311,7 +341,7 @@ public class HomePageActivity extends Activity {
 
         public long getItemId(int position) {
             int itemId;
-            if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+            if (userInfo.roleType == UserType.ROLE_PARENT) {
                 itemId = parentTitles[position];
             } else {
                 itemId = teacherTitles[position];
@@ -350,7 +380,7 @@ public class HomePageActivity extends Activity {
                 convertView.setBackgroundResource(R.drawable.button_down);
             }
 
-            if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+            if (userInfo.roleType == UserType.ROLE_PARENT) {
                 viewHolder.title.setText(parentTitles[position]);
                 viewHolder.image.setImageResource(parentPictures[position]);
 
@@ -381,125 +411,116 @@ public class HomePageActivity extends Activity {
                 R.string.position_orientation };
     }
 
-    public class GetAllClassTask extends AsyncTask<Void, Void, String> {
+//    public class GetAllClassTask extends AsyncTask<Void, Void, String> {
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            // TODO: attempt authentication against a network service.
+//            String schoolsInfo = null;
+//            try {
+//                schoolsInfo = ResponseMessage.getClassInfos(curretUserInfo.id, curretUserInfo.ticket,
+//                        curretUserInfo.fkClassId);
+//            } catch (ConnectTimeoutException stex) {
+//                schoolsInfo = getString(R.string.request_time_out);
+//            } catch (SocketTimeoutException stex) {
+//                schoolsInfo = getString(R.string.server_time_out);
+//            } catch (HttpHostConnectException hhce) {
+//                schoolsInfo = getString(R.string.connection_server_error);
+//            } catch (XmlPullParserException e) {
+//                schoolsInfo = getString(R.string.connection_error);
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                schoolsInfo = getString(R.string.connection_error);
+//                e.printStackTrace();
+//            }
+//
+//            // TODO: register the new account here.
+//            return schoolsInfo;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String schoolsInfo) {
+//            mGetAllClassTask = null;
+//            Log.d(TAG, "result " + schoolsInfo);
+//            if (!TextUtils.isEmpty(schoolsInfo)) {
+//
+//                try {
+//                    if (JSONParser.getIntByTag(schoolsInfo, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
+//
+//                        try {
+//                            if (JSONParser.getStringByTag(schoolsInfo, "datas") != null) {
+//
+//                            }
+//                        } catch (JSONException e) {
+//                            // TODO Auto-generated catch block
+//                            e.printStackTrace();
+//                        }
+//                        parseClassInfo(schoolsInfo);
+//
+//                        mProgressDialog.dismiss();
+//
+//                    } else {
+//                        mProgressDialog.dismiss();
+//                        String errorMessage = JSONParser.getStringByTag(schoolsInfo,
+//                                ResponseMessage.RESULT_TAG_MESSAGE);
+//                        if (!TextUtils.isEmpty(errorMessage)) {
+//                            Toast.makeText(HomePageActivity.this, errorMessage, Toast.LENGTH_LONG)
+//                                    .show();
+//                        } else {
+//                            Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG)
+//                                    .show();
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    if (mProgressDialog != null) {
+//                        mProgressDialog.dismiss();
+//                    }
+//
+//                    Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG).show();
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                mProgressDialog.dismiss();
+//
+//            }
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            mGetAllClassTask = null;
+//
+//        }
+//    }
+
+    public class GetAllNoteTask extends AsyncTask<Void, String, ResponseMessage> {
         @Override
-        protected String doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            String schoolsInfo = null;
-            try {
-                schoolsInfo = RestClient.getClassInfos(curretUserInfo.id, curretUserInfo.ticket,
-                        curretUserInfo.fkClassId);
-            } catch (ConnectTimeoutException stex) {
-                schoolsInfo = getString(R.string.request_time_out);
-            } catch (SocketTimeoutException stex) {
-                schoolsInfo = getString(R.string.server_time_out);
-            } catch (HttpHostConnectException hhce) {
-                schoolsInfo = getString(R.string.connection_server_error);
-            } catch (XmlPullParserException e) {
-                schoolsInfo = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (IOException e) {
-                schoolsInfo = getString(R.string.connection_error);
-                e.printStackTrace();
-            }
-
-            // TODO: register the new account here.
-            return schoolsInfo;
-        }
-
-        @Override
-        protected void onPostExecute(String schoolsInfo) {
-            mGetAllClassTask = null;
-            Log.d(TAG, "result " + schoolsInfo);
-            if (!TextUtils.isEmpty(schoolsInfo)) {
-
-                try {
-                    if (JSONParser.getIntByTag(schoolsInfo, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
-
-                        try {
-                            if (JSONParser.getStringByTag(schoolsInfo, "datas") != null) {
-
-                            }
-                        } catch (JSONException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        parseClassInfo(schoolsInfo);
-
-                        mProgressDialog.dismiss();
-
-                    } else {
-                        mProgressDialog.dismiss();
-                        String errorMessage = JSONParser.getStringByTag(schoolsInfo,
-                                RestClient.RESULT_TAG_MESSAGE);
-                        if (!TextUtils.isEmpty(errorMessage)) {
-                            Toast.makeText(HomePageActivity.this, errorMessage, Toast.LENGTH_LONG)
-                                    .show();
-                        } else {
-                            Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    }
-                } catch (JSONException e) {
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                    }
-
-                    Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            } else {
-                mProgressDialog.dismiss();
-
-            }
-        }
-
-        private void parseClassInfo(String schoolsInfo) {
-            // TODO Auto-generated method stub
-            try {
-                if (JSONParser.getStringByTag(schoolsInfo, "") != null) {
-
-                }
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mGetAllClassTask = null;
-
-        }
-    }
-
-    public class GetAllNoteTask extends AsyncTask<Void, String, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            String homeWorksInfo = null;
-            String messageInfos = null;
+        protected ResponseMessage doInBackground(Void... params) {
+        	
+            ResponseMessage responseMessage = null;
             StringBuilder info = new StringBuilder();
             try {
-
+            	 responseMessage = new ResponseMessage();
                 // 老师info：
                 // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime”:”2014-03-24”}
                 // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime”:”2014-03-24”}
 
                 info.append("{");
                 info.append("\"fkSchoolId\":");
-                info.append("\"" + curretUserInfo.fkSchoolId + "\"");
+                info.append("\"" + mXiaoYunTongApplication.userInfo.fkSchoolId + "\"");
                 info.append(",");
-                if (curretUserInfo.roleType == UserInfo.UserType.ROLE_TEACHER) {
-                    info.append("\"fkClassId\":");
-                    info.append("\"" + curretUserInfo.fkClassId + "\"");
+                if (userInfo.roleType == UserInfo.UserType.ROLE_TEACHER) {
+                	
+                	TeacherInfo teacherInfo = (TeacherInfo) userInfo;
+                    info.append("\"fkClassId\":");                  
+                    info.append("\"" + teacherInfo.defalutClassId + "\"");//curretUserInfo.fkClassId
                     info.append(",");
 
                     info.append("\"fkClassId2\":");
                     info.append("\"\"");
                     info.append(",");
-                } else if (curretUserInfo.roleType == UserInfo.UserType.ROLE_PARENT) {
+                } else if (userInfo.roleType == UserInfo.UserType.ROLE_PARENT) {
+                	 ParentInfo parentInfo = (ParentInfo) userInfo;
                     info.append("\"fkStudentId\":");
-                    info.append("\"" + mXiaoYunTongApplication.deflutStudentInfo.id + "\"");
+                    info.append("\"" + parentInfo.defalutChild.id + "\"");
                     info.append(",");
                 }
 
@@ -507,208 +528,108 @@ public class HomePageActivity extends Activity {
                 info.append("\"\"");
                 info.append("}");
 
-                Log.d(TAG, "info.toString() " + info.toString());
+                Log.d(TAG, " HomeWorks info.toString() " + info.toString());
 
-                homeWorksInfo = RestClient.getHomeWorks(curretUserInfo.id, curretUserInfo.ticket,
-                        curretUserInfo.roleType.toString(), info.toString(), 1, 5);
+                responseMessage.body = RestClient.getHomeWorks(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket,
+                		userInfo.roleType.toString(), info.toString(), 1, 5);
+				responseMessage.praseBody();
+
             } catch (ConnectTimeoutException stex) {
-                homeWorksInfo = getString(R.string.request_time_out);
+            	responseMessage.message = getString(R.string.request_time_out);
             } catch (SocketTimeoutException stex) {
-                homeWorksInfo = getString(R.string.server_time_out);
+            	responseMessage.message = getString(R.string.server_time_out);
             } catch (HttpHostConnectException hhce) {
-                homeWorksInfo = getString(R.string.connection_server_error);
-            } catch (XmlPullParserException e) {
-                homeWorksInfo = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (IOException e) {
-                homeWorksInfo = getString(R.string.connection_error);
-                e.printStackTrace();
-            }
-
-            if (!TextUtils.isEmpty(homeWorksInfo)) {
-
-                try {
-                    if (JSONParser.getIntByTag(homeWorksInfo, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
-
-                        int total = JSONParser.getIntByTag(homeWorksInfo, "total");
-                        try {
-                            if (JSONParser.getStringByTag(homeWorksInfo, "datas") != null) {
-                                praseHomeWorks(homeWorksInfo);
-                            }
-                        } catch (JSONException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                    }
-                } catch (Exception exception) {
-
-                }
-            }
-            Log.i(TAG, "homeWorksinfo " + homeWorksInfo);
-
-            // 老师info：
-            // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime”:”2014-03-24”}
-            // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime”:”2014-03-24”}
-            try {
-
-                messageInfos = RestClient.getMessageInfos(curretUserInfo.id, curretUserInfo.ticket,
-                        curretUserInfo.roleType.toString(), info.toString(), 1, 5);
-            } catch (ConnectTimeoutException stex) {
-                messageInfos = getString(R.string.request_time_out);
-            } catch (SocketTimeoutException stex) {
-                messageInfos = getString(R.string.server_time_out);
-            } catch (HttpHostConnectException hhce) {
-                messageInfos = getString(R.string.connection_server_error);
-            } catch (XmlPullParserException e) {
-                messageInfos = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (IOException e) {
-                messageInfos = getString(R.string.connection_error);
-                e.printStackTrace();
-            }
-
-            if (!TextUtils.isEmpty(homeWorksInfo)) {
-
-                try {
-                    if (JSONParser.getIntByTag(messageInfos, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
-
-                        campusNotieTotal = JSONParser.getIntByTag(messageInfos, "total");
-                        try {
-                            if (JSONParser.getStringByTag(homeWorksInfo, "datas") != null) {
-                                praseMessageInfos(messageInfos);
-                            }
-                        } catch (JSONException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                    }
-                } catch (Exception exception) {
-
-                }
-            }
-            Log.i(TAG, "MessageInfos " + messageInfos);
-
-            // TODO: register the new account here.
-            return messageInfos;
-        }
-
-        private void praseMessageInfos(String messageInfos) throws JSONException {
-            // TODO Auto-generated method stub
-            CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
-            JSONObject jsonObj;
-            try {
-                jsonObj = new JSONObject(messageInfos);
-                
-                int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
-
-                if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-                    JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
-                    ArrayList<CampusNotice> campusNoticeList = null;
-                    for (int i = 0; i < data.length(); i++) {
-                        JSONObject obj = (JSONObject) data.get(i);
-
-                        CampusNotice campusNotice = new CampusNotice();
-                        campusNotice.content = obj.getString("content");
-                        campusNotice.id = obj.getString("id");
-                        campusNotice.optTime = obj.getString("optTime");
-                        campusNotice.fkGradeId = obj.getInt("fkGradeId");
-                        campusNotice.status = obj.getString("status");
-                        campusNotice.fkClassId = obj.getInt("fkClassId");
-                        campusNotice.smsType = obj.getInt("smsType");
-                        campusNotice.fkSchoolId = obj.getInt("fkSchoolId");
-                        campusNotice.className = obj.getString("className");
-                        campusNotice.sendType = obj.getInt("sendType");
-                        campusNotice.stuName = obj.getString("stuName");
-                        campusNotice.fkStudentId = obj.getString("fkStudentId");
-
-                        campusNoticeList.add(campusNotice);
-                    }
-                    Log.i(TAG, "campusNoticeList.size() " + campusNoticeList.size());
-                  
-                    if (campusNoticeList != null && campusNoticeList.size() > 0) {
-
-                        for (CampusNotice campusNotice : campusNoticeList) {
-                            long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
-                            Log.i(TAG, "campusNotice insertResult " + insertResult);
-                        }
-
-                    };
-                    
-                }
+            	responseMessage.message = getString(R.string.connection_server_error);
             } catch (JSONException e) {
+            	responseMessage.message = getString(R.string.connection_error);
+				e.printStackTrace();
+			}catch (XmlPullParserException e) {
+            	responseMessage.message = getString(R.string.connection_error);
                 e.printStackTrace();
-
-                throw e;
-               
-            } finally{
-                campusNotieTotal = campusNoticeDao.queryReadOrNotReadCount(0);
-                campusNoticeContentList = campusNoticeDao.queryNotReadCampusNoticeContents();
-                campusNoticeDao.colseDb();
-                campusNoticeDao = null;  
+            } catch (IOException e) {
+            	responseMessage.message = getString(R.string.connection_error);
+                e.printStackTrace();
             }
-            
-        }
-
-        private void praseHomeWorks(String homeWorksInfo) {
-            // TODO Auto-generated method stub
-            JSONObject jsonObj;
             HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
-            try {
-                jsonObj = new JSONObject(homeWorksInfo);
-                int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
-
-                if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-                    JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
-
-                    ArrayList<HomeWorkInfo> homeWorkInfoList = new ArrayList<HomeWorkInfo>();
-                    for (int i = 0; i < data.length(); i++) {
-                        JSONObject obj = (JSONObject) data.get(i);
-
-                        // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
-                        // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
-                        // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
-                        HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
-
-                        homeWorkInfo.content = obj.getString("content");
-                        homeWorkInfo.id = obj.getString("id");
-                        homeWorkInfo.optTime = obj.getString("optTime");
-                        homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
-                        homeWorkInfo.status = obj.getString("status");
-                        homeWorkInfo.fkClassId = obj.getInt("fkClassId");
-                        homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
-                        homeWorkInfo.smsType = obj.getInt("smsType");
-                        homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
-                        homeWorkInfo.className = obj.getString("className");
-                        homeWorkInfo.sendType = obj.getInt("sendType");
-                        homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
-
-                        homeWorkInfoList.add(homeWorkInfo);
-                    }
-
-                  
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS && responseMessage.total>0){
+            	
+            	try {
+            		ArrayList<HomeWorkInfo> homeWorkInfoList = JSONParser.praseHomeWorks(responseMessage.body);
                     if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
 
                         for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
                             long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
                             Log.i(TAG, "HomeWork insertResult " + insertResult);
                         }
-                    }
-                   
+                    } 
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
+
+            }   
+            homeWorkTotal = homeWorkDao.queryReadOrNotReadCount(0);
+            homeWorkDao.colseDb();
+            homeWorkDao = null;
+           
+           
+            responseMessage = null;
+            // 老师info：
+            // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime”:”2014-03-24”}
+            // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime”:”2014-03-24”}
+            try {           	
+            	 responseMessage = new ResponseMessage();
+            	 responseMessage.body = RestClient.getMessageInfos(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket,
+                		userInfo.roleType.toString(), info.toString(), 1, 5);
+				 responseMessage.praseBody();
+
+            } catch (ConnectTimeoutException stex) {
+            	responseMessage.message = getString(R.string.request_time_out);
+            } catch (SocketTimeoutException stex) {
+            	responseMessage.message = getString(R.string.server_time_out);
+            } catch (HttpHostConnectException hhce) {
+            	responseMessage.message = getString(R.string.connection_server_error);
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
+            	responseMessage.message = getString(R.string.connection_error);
+				e.printStackTrace();
+			}catch (XmlPullParserException e) {
+            	responseMessage.message = getString(R.string.connection_error);
                 e.printStackTrace();
-            } finally{
-                homeWorkTotal = homeWorkDao.queryReadOrNotReadCount(0);
-                homeWorkDao.colseDb();
-                homeWorkDao = null;
+            } catch (IOException e) {
+            	responseMessage.message = getString(R.string.connection_error);
+                e.printStackTrace();
             }
             
             
-           
+            CampusNoticeDao campusNoticeDao = new CampusNoticeDao(HomePageActivity.this);
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS && responseMessage.total>0){
+            	
+            	try {
+            		
+                	ArrayList<CampusNotice>	campusNoticeList = JSONParser.praseCampusNotice(responseMessage.body);
+                	
+                	if (campusNoticeList != null && campusNoticeList.size() > 0) {
 
+                        for (CampusNotice campusNotice : campusNoticeList) {
+                            long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
+                            Log.i(TAG, "campusNotice insertResult " + insertResult);
+                        }
+
+                    };                           	 
+                	                      
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            campusNotieTotal = campusNoticeDao.queryReadOrNotReadCount(0);
+            campusNoticeContentList = campusNoticeDao.queryNotReadCampusNoticeContents();
+            campusNoticeDao.colseDb();
+            campusNoticeDao = null; 
+            
+
+            // TODO: register the new account here.
+            return responseMessage;
         }
 
         @Override
@@ -719,9 +640,8 @@ public class HomePageActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(String schoolsInfo) {
+        protected void onPostExecute(ResponseMessage ResponseMessage) {
             mGetAllNoteTask = null;
-            Log.d(TAG, "result " + schoolsInfo);
             Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
             Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
             Log.i(TAG, "campusNoticeContentList.size() " + campusNoticeContentList.size());
@@ -729,27 +649,16 @@ public class HomePageActivity extends Activity {
             if (campusNoticeContentList != null && campusNoticeContentList.size() > 0) {
 
                 if (campusNoticeContentList.size() > 1) {
-                    new Thread(new Runnable() {
-                        public void run() {
-                            rollNoteText.post(new Runnable() {
-                                public void run() {
-
-                                    for (int i = 0; i < campusNoticeContentList.size(); i++) {
-                                        String content = campusNoticeContentList.get(i);
-                                        Log.i(TAG, "content " + content);
-                                        rollNoteText.setText(content);
-                                        try {
-                                            Thread.sleep(10000);
-                                        } catch (InterruptedException e) {
-                                            // TODO Auto-generated catch block
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                }
-                            });
-                        }
-                    }).start();
+                	
+                	
+                	if(rollTextThread!=null && rollTextThread.isAlive()){
+                		
+                	} else {
+                		rollTextThread = new RollTextThread();
+                    	rollTextThread.start();
+                	}
+                	
+                	               
                 } else if (campusNoticeContentList.size() == 1) {
                     String content = campusNoticeContentList.get(0);
                     Log.i(TAG, "content " + content);
@@ -759,82 +668,12 @@ public class HomePageActivity extends Activity {
             }
 
             if (homeWorkTotal > 0 || campusNotieTotal > 0) {
-
                 mImageAdapter.notifyDataSetChanged();
             }
 
-            if (!TextUtils.isEmpty(schoolsInfo)) {
-
-                try {
-                    if (JSONParser.getIntByTag(schoolsInfo, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
-
-                        try {
-                            if (JSONParser.getStringByTag(schoolsInfo, "datas") != null) {
-                                // parseChildInfo(schoolsInfo);
-                            }
-                        } catch (JSONException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                        mProgressDialog.dismiss();
-
-                    } else {
-                        mProgressDialog.dismiss();
-                        String errorMessage = JSONParser.getStringByTag(schoolsInfo,
-                                RestClient.RESULT_TAG_MESSAGE);
-                        if (!TextUtils.isEmpty(errorMessage)) {
-                            Toast.makeText(HomePageActivity.this, errorMessage, Toast.LENGTH_LONG)
-                                    .show();
-                        } else {
-                            Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    }
-                } catch (JSONException e) {
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                    }
-
-                    Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            } else {
-                mProgressDialog.dismiss();
-
-            }
+            
         }
-
-        private void parseChildInfo(String childInfo) throws JSONException {
-            // TODO Auto-generated method stub
-            JSONObject jsonObj = new JSONObject(childInfo);
-            int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
-
-            if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-                JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
-                mStudentList.clear();
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject obj = (JSONObject) data.get(i);
-
-                    StudentInfo studentInfo = new StudentInfo();
-
-                    studentInfo.imei = obj.getString("imei");
-                    studentInfo.id = obj.getString("id");
-                    studentInfo.name = obj.getString("stuName");
-                    mStudentList.add(studentInfo);
-                }
-            }
-
-            if (mStudentList.size() > 0) {
-                mXiaoYunTongApplication.deflutStudentInfo = mStudentList.get(0);
-                mSpinnerInfo.clear();
-                for (StudentInfo studentInfo : mStudentList) {
-                    mSpinnerInfo.add(studentInfo.name);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        }
-
+        
         @Override
         protected void onCancelled() {
             mGetAllNoteTask = null;
@@ -842,110 +681,71 @@ public class HomePageActivity extends Activity {
         }
     }
 
-    public class GetAllChildTask extends AsyncTask<Void, Void, String> {
+    public class GetAllChildTask extends AsyncTask<Void, Void, ResponseMessage> {
         @Override
-        protected String doInBackground(Void... params) {
+        protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            String schoolsInfo = null;
+        	
+        	ResponseMessage responseMessage = new ResponseMessage();
             try {
 
-                schoolsInfo = RestClient.getAllChilds(curretUserInfo.id, curretUserInfo.fkSchoolId,
-                        curretUserInfo.ticket);
+            	responseMessage.body = RestClient.getAllChilds(userInfo.id, userInfo.fkSchoolId,
+            			userInfo.ticket);
+				responseMessage.praseBody();
+            	
             } catch (ConnectTimeoutException stex) {
-                schoolsInfo = getString(R.string.request_time_out);
+            	responseMessage.message = getString(R.string.request_time_out);
             } catch (SocketTimeoutException stex) {
-                schoolsInfo = getString(R.string.server_time_out);
+            	responseMessage.message = getString(R.string.server_time_out);
             } catch (HttpHostConnectException hhce) {
-                schoolsInfo = getString(R.string.connection_server_error);
-            } catch (XmlPullParserException e) {
-                schoolsInfo = getString(R.string.connection_error);
+            	responseMessage.message = getString(R.string.connection_server_error);
+            } catch (JSONException e) {
+            	responseMessage.message = getString(R.string.connection_error);
+				e.printStackTrace();
+			}catch (XmlPullParserException e) {
+            	responseMessage.message = getString(R.string.connection_error);
                 e.printStackTrace();
             } catch (IOException e) {
-                schoolsInfo = getString(R.string.connection_error);
+            	responseMessage.message = getString(R.string.connection_error);
                 e.printStackTrace();
             }
 
             // TODO: register the new account here.
-            return schoolsInfo;
+            return responseMessage;
         }
 
         @Override
-        protected void onPostExecute(String schoolsInfo) {
+        protected void onPostExecute(ResponseMessage responseMessage) {
             mGetAllChildTask = null;
-            Log.d(TAG, "result " + schoolsInfo);
-            if (!TextUtils.isEmpty(schoolsInfo)) {
-
-                try {
-                    if (JSONParser.getIntByTag(schoolsInfo, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
-
-                        try {
-                            if (JSONParser.getStringByTag(schoolsInfo, "datas") != null) {
-                                parseChildInfo(schoolsInfo);
-                            }
-                        } catch (JSONException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        mGetAllNoteTask = new GetAllNoteTask();
-                        mGetAllNoteTask.execute((Void) null);
-
-                        mProgressDialog.dismiss();
-
-                    } else {
-                        mProgressDialog.dismiss();
-                        String errorMessage = JSONParser.getStringByTag(schoolsInfo,
-                                RestClient.RESULT_TAG_MESSAGE);
-                        if (!TextUtils.isEmpty(errorMessage)) {
-                            Toast.makeText(HomePageActivity.this, errorMessage, Toast.LENGTH_LONG)
-                                    .show();
-                        } else {
-                            Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG)
-                                    .show();
-                        }
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS){
+            	
+            	mStudentList.clear();
+            	
+            	try{
+            		ArrayList<StudentInfo> studentList = JSONParser.parseChildInfo(responseMessage.body);
+                	mStudentList.addAll(studentList);
+            	} catch (JSONException exception) {
+            		exception.printStackTrace();
+            	}
+            	
+            	if (mStudentList.size() > 0) {
+            		ParentInfo parentInfo = (ParentInfo) userInfo;
+                    parentInfo.defalutChild = mStudentList.get(0);
+                    mSpinnerInfo.clear();
+                    for (StudentInfo studentInfo : mStudentList) {
+                        mSpinnerInfo.add(studentInfo.name);
+                        mSpinnerAdapter.notifyDataSetChanged();
                     }
-                } catch (JSONException e) {
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                    }
-
-                    Toast.makeText(HomePageActivity.this, schoolsInfo, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
                 }
-            } else {
-                mProgressDialog.dismiss();
-
-            }
-        }
-
-        private void parseChildInfo(String childInfo) throws JSONException {
-            // TODO Auto-generated method stub
-            JSONObject jsonObj = new JSONObject(childInfo);
-            int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
-
-            if (jsonObj.has(RestClient.RESULT_TAG_DATAS) && total > 0) {
-                JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
-                mStudentList.clear();
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject obj = (JSONObject) data.get(i);
-
-                    StudentInfo studentInfo = new StudentInfo();
-
-                    studentInfo.imei = obj.getString("imei");
-                    studentInfo.id = obj.getString("id");
-                    studentInfo.name = obj.getString("stuName");
-                    mStudentList.add(studentInfo);
-                }
+            	 mProgressDialog.dismiss();
+            	
+            }  else  {
+            	 mProgressDialog.dismiss();
+            	Toast.makeText(HomePageActivity.this, responseMessage.message, Toast.LENGTH_LONG)
+                .show();
             }
 
-            if (mStudentList.size() > 0) {
-                mXiaoYunTongApplication.deflutStudentInfo = mStudentList.get(0);
-                mSpinnerInfo.clear();
-                for (StudentInfo studentInfo : mStudentList) {
-                    mSpinnerInfo.add(studentInfo.name);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        }
+        }  
 
         @Override
         protected void onCancelled() {

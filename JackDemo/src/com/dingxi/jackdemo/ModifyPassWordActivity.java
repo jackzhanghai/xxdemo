@@ -16,6 +16,7 @@ import com.dingxi.jackdemo.model.StudentInfo;
 import com.dingxi.jackdemo.model.UserInfo;
 import com.dingxi.jackdemo.model.UserInfo.UserType;
 import com.dingxi.jackdemo.network.JSONParser;
+import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
 
 import android.app.Activity;
@@ -178,7 +179,7 @@ public class ModifyPassWordActivity extends Activity {
 
 				try {
 					if (JSONParser.getIntByTag(schoolsInfo,
-							RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+							ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 					    mProgressDialog.dismiss();
 						    Toast.makeText(ModifyPassWordActivity.this, R.string.modify_password_sucess,
                                     Toast.LENGTH_LONG).show();						
@@ -187,7 +188,7 @@ public class ModifyPassWordActivity extends Activity {
 					} else {
 						mProgressDialog.dismiss();
 						String errorMessage = JSONParser.getStringByTag(
-								schoolsInfo, RestClient.RESULT_TAG_MESSAGE);
+								schoolsInfo, ResponseMessage.RESULT_TAG_MESSAGE);
 						if (!TextUtils.isEmpty(errorMessage)) {
 							Toast.makeText(ModifyPassWordActivity.this, errorMessage,
 									Toast.LENGTH_LONG).show();

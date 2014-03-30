@@ -14,12 +14,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.dingxi.jackdemo.model.AttendanceInfo;
+import com.dingxi.jackdemo.model.CampusNotice;
 import com.dingxi.jackdemo.model.ClassInfo;
 import com.dingxi.jackdemo.model.GradeInfo;
-import com.dingxi.jackdemo.model.School;
+import com.dingxi.jackdemo.model.HomeWorkInfo;
+import com.dingxi.jackdemo.model.LocationInfo;
+import com.dingxi.jackdemo.model.SchoolInfo;
 import com.dingxi.jackdemo.model.StudentInfo;
+import com.dingxi.jackdemo.model.SubjectInfo;
 
 import android.content.Context;
+import android.util.Log;
 
 public class JSONParser {
 
@@ -66,7 +72,7 @@ public class JSONParser {
 
 //    public static String toParserError(String json) throws JSONException {
 //        JSONObject jsonObj = new JSONObject(json);
-//        if (!jsonObj.isNull(RestClient.RESULT_TAG_CODE))
+//        if (!jsonObj.isNull(ResponseMessage.RESULT_TAG_CODE))
 //            return jsonObj.getString(HttpRequest.HUB_TAG_MESSAGE);
 //        else
 //            return jsonObj.getString(HttpRequest.SERVER_TAG_ERRMSG);
@@ -88,18 +94,18 @@ public class JSONParser {
         return null;
     }
 
-    public static ArrayList<School> toParserSchoolList(String json) throws JSONException {
+    public static ArrayList<SchoolInfo> toParserSchoolList(String json) throws JSONException {
         JSONObject jsonObj = new JSONObject(json);
-        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-        ArrayList<School> schoolList = new ArrayList<School>(total);
+        ArrayList<SchoolInfo> schoolList = new ArrayList<SchoolInfo>(total);
 
-        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
-            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = (JSONObject) data.get(i);
 
-                School school = new School();
+                SchoolInfo school = new SchoolInfo();
 
                 school.name = obj.getString("name");
                 school.id = obj.getString("id");
@@ -111,12 +117,12 @@ public class JSONParser {
 
     public static ArrayList<StudentInfo> toParserStudentInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);
-        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
         ArrayList<StudentInfo> schoolList = new ArrayList<StudentInfo>(total);
 
-        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
-            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = (JSONObject) data.get(i);
 
@@ -130,14 +136,51 @@ public class JSONParser {
         return schoolList;
     }
 
+    public static ArrayList<StudentInfo>  parseChildInfo(String childInfo) throws JSONException {
+        // TODO Auto-generated method stub
+        JSONObject jsonObj = new JSONObject(childInfo);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        ArrayList<StudentInfo> studentList = new ArrayList<StudentInfo>();
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                StudentInfo studentInfo = new StudentInfo();
+
+                studentInfo.imei = obj.getString("imei");
+                studentInfo.id = obj.getString("id");
+                studentInfo.name = obj.getString("stuName");
+                studentList.add(studentInfo);
+            }
+        }
+		return studentList;
+
+        
+    }
+    
+    
+    
+  private void parseClassInfo(String schoolsInfo) {
+  // TODO Auto-generated method stub
+  try {
+      if (JSONParser.getStringByTag(schoolsInfo, "") != null) {
+
+      }
+  } catch (JSONException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+  }
+}
+    
     public static ArrayList<ClassInfo> toParserCalssInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);
-        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
         ArrayList<ClassInfo> classInfoList = new ArrayList<ClassInfo>(total);
 
-        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
-            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = (JSONObject) data.get(i);
 
@@ -153,12 +196,12 @@ public class JSONParser {
 
     public static ArrayList<GradeInfo> toParserGradeInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);
-        int total = jsonObj.getInt(RestClient.RESULT_TAG_TOTAL);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
         ArrayList<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>(total);
 
-        if (jsonObj.has(RestClient.RESULT_TAG_DATAS)) {
-            JSONArray data = jsonObj.getJSONArray(RestClient.RESULT_TAG_DATAS);
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = (JSONObject) data.get(i);
 
@@ -171,444 +214,284 @@ public class JSONParser {
         }
         return gradeInfoList;
     }
+    
+    public static ArrayList<SubjectInfo> toParserSubjectInfoList(String searchTypeReslut) throws JSONException {
+        JSONObject jsonObj = new JSONObject(searchTypeReslut);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-//    public static ArrayList<SetFolderBean> toParserImageFileList(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        int total = jsonObj.getInt("total");
-//
-//        ArrayList<SetFolderBean> setFolderList = new ArrayList<SetFolderBean>(total);
-//
-//        if (jsonObj.has("data")) {
-//            JSONArray data = jsonObj.getJSONArray("data");
-//            for (int i = 0; i < data.length(); i++) {
-//                JSONObject obj = (JSONObject) data.get(i);
-//                
-//                SetFolderBean setFolderBean = new SetFolderBean();
-//                setFolderBean.setDir( obj.getString("dir"));
-//                setFolderBean.setName( obj.getString("name"));
-//                setFolderBean.setPath(obj.getString("path"));
-//                setFolderBean.setType(obj.getString("type"));     
-//                setFolderBean.setExt(obj.getString("ext"));
-//                setFolderBean.setSize(obj.getLong("size"));
-//                setFolderBean.setIsadd( obj.getString("isadd"));
-//                setFolderBean.setModifyTime(obj.getLong("modifyTime"));
-//
-//                setFolderList.add(setFolderBean);
-//            }
-//        }
-//        return setFolderList;
-//    }
-//
-//    public static FileContent toParserFileContent(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//
-//        FileContent filecontent = new FileContent();
-//        filecontent.createTime = jsonObj.getLong("createTime");
-//        filecontent.dir = jsonObj.getString("dir");
-//        filecontent.name = jsonObj.getString("name");
-//        filecontent.path = jsonObj.getString("path");
-//        filecontent.type = jsonObj.getString("type");
-//        filecontent.visitTime = jsonObj.getLong("visitTime");
-//        filecontent.modifyTime = jsonObj.getLong("modifyTime");
-//        filecontent.ext = jsonObj.getString("ext");
-//        filecontent.size = jsonObj.getLong("size");
-//        filecontent.mode = jsonObj.getInt("mode");
-//
-//        return filecontent;
-//    }
-//
-//    public static FileContent toParserUploadFile(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json).getJSONObject("info");
-//
-//        FileContent filecontent = new FileContent();
-//        filecontent.createTime = jsonObj.getLong("createTime");
-//        filecontent.dir = jsonObj.getString("dir");
-//        filecontent.name = jsonObj.getString("name");
-//        filecontent.path = jsonObj.getString("path");
-//        filecontent.type = jsonObj.getString("type");
-//        filecontent.visitTime = jsonObj.getLong("visitTime");
-//        filecontent.modifyTime = jsonObj.getLong("modifyTime");
-//        filecontent.ext = jsonObj.getString("ext");
-//        filecontent.size = jsonObj.getLong("size");
-//        filecontent.mode = jsonObj.getInt("mode");
-//
-//        return filecontent;
-//    }
-//
-//    public static int toParseCameraUpload(String json) throws JSONException {
-//
-//        JSONObject jsonObject = new JSONObject(json);
-//
-//        int ret_value = jsonObject.getInt("result");
-//
-//        if (ret_value == 0) {
-//            return 0;
-//        }
-//
-//        return ret_value;
-//    }
-//
-//    public static String toParseCameraPath(String json) throws JSONException {
-//        JSONObject jsonObject = new JSONObject(json);
-//
-//        String serverPath = jsonObject.getString("path");
-//
-//        return serverPath;
-//
-//    }
-//
-//    public static String[] toParse(String json) throws JSONException {
-//
-//        JSONArray jsonArray = new JSONArray();
-//
-//        return null;
-//    }
-//
-//    public static SearchStatus toParserSearchStatus(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//
-//        SearchStatus status = new SearchStatus();
-//
-//        status.matchCount = jsonObj.getLong("matchCount");
-//        status.totalSize = jsonObj.getLong("totalSize");
-//        status.folderCount = jsonObj.getLong("folderCount");
-//        status.canceled = jsonObj.getInt("canceled");
-//        status.finished = jsonObj.getInt("finished");
-//        status.startTime = jsonObj.getLong("startTime");
-//        status.path = jsonObj.getString("path");
-//        status.folder = jsonObj.getString("folder");
-//        status.fileCount = jsonObj.getLong("fileCount");
-//        status.start = jsonObj.getLong("start");
-//        return status;
-//    }
-//
-//    public static ArrayList<SearchResult> toParserSearchResult(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        ArrayList<SearchResult> searchResultList = new ArrayList<SearchResult>();
-//
-//        if (jsonObj.has("data")) {
-//            JSONArray array = jsonObj.getJSONArray("data");
-//
-//            for (int i = 0; i < array.length(); i++) {
-//                JSONObject obj = (JSONObject) array.get(i);
-//
-//                SearchResult result = new SearchResult();
-//                result.path = obj.getString("path");
-//                result.modifyTime = obj.getLong("modifyTime");
-//                result.type = obj.getString("type");
-//                result.name = obj.getString("name");
-//                result.size = obj.getLong("size");
-//                result.ext = obj.getString("ext");
-//
-//                searchResultList.add(result);
-//            }
-//        }
-//
-//        return searchResultList;
-//    }
-//
-//    public static String getStringByTag(String json, String tag) throws JSONException {
-//        MyLog.d(FileList.class, "json:" + json);
-//        JSONObject jsonObj = new JSONObject(json);
-//        return jsonObj.getString(tag);
-//    }
-//
-//	public static int getIntByTag(String json, String tag) throws JSONException {
-//		JSONObject jsonObj = new JSONObject(json);
-//		if (jsonObj.has(tag)) {
-//			return jsonObj.getInt(tag);
-//		}
-//		return -1;
-//	}
-//
-//    /**
-//     * 将返回分享的结果解析成sharebean
-//     * 
-//     * @param json
-//     *            分享的结果
-//     * @return
-//     * @throws JSONException
-//     */
-//    public static ShareBean toParserShareBean(String json) throws JSONException {
-//        JSONObject obj = new JSONObject(json);
-//        ShareBean sb = new ShareBean();
-//        sb.setAllowpublicaccess(obj.getInt("allowpublicaccess"));
-//        sb.setId(obj.getString("id"));
-//        sb.setIsdir(obj.getInt("isdir"));
-//        sb.setIsvalid(obj.getInt("isvalid"));
-//        sb.setLocation(obj.getString("location"));
-//        sb.setUrl(obj.getString("url"));
-//        sb.setName(obj.getString("name"));
-//
-//        return sb;
-//    }
-//
-//    public static ArrayList<ShareFile> toParserShareFileList(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        ArrayList<ShareFile> shareFileList = new ArrayList<ShareFile>();
-//
-//        if (jsonObj.has("data")) {
-//            JSONArray array = jsonObj.getJSONArray("data");
-//
-//            for (int i = array.length() - 1; i >= 0; i--) {
-//                JSONObject obj = (JSONObject) array.get(i);
-//
-//                ShareFile result = new ShareFile();
-//                result.allowpublicaccess = obj.getInt("allowpublicaccess");
-//                result.id = obj.getString("id");
-//                result.isdir = obj.getInt("isdir");
-//                result.isvalid = obj.getInt("isvalid");
-//                result.location = obj.getString("location");
-//                result.name = obj.getString("name");
-//                result.url = obj.getString("url");
-//                // result.validityperiod = obj.getInt("validityperiod");
-//                result.viewmode = obj.getString("viewmode");
-//                result.ext = obj.getString("ext");
-//                result.size = obj.getLong("size");
-//                result.modifyTime = obj.getLong("modifyTime");
-//
-//                shareFileList.add(result);
-//            }
-//        }
-//        return shareFileList;
-//    }
-//
-//    private final static Map<Integer, Integer> MonthList = new HashMap<Integer, Integer>() {
-//
-//        /**
-//		 * 
-//		 */
-//        private static final long serialVersionUID = 1L;
-//
-//        {
-//            put(1, R.string.pictures_january);
-//            put(2, R.string.pictures_february);
-//            put(3, R.string.pictures_march);
-//            put(4, R.string.pictures_april);
-//            put(5, R.string.pictures_may);
-//            put(6, R.string.pictures_june);
-//            put(7, R.string.pictures_july);
-//            put(8, R.string.pictures_august);
-//            put(9, R.string.pictures_september);
-//            put(10, R.string.pictures_october);
-//            put(11, R.string.pictures_november);
-//            put(12, R.string.pictures_december);
-//        }
-//    };
-//
-//    public static ArrayList<LibraryYearGroup> toParserPictureLibraryGroupList(Context cnx,
-//            String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        ArrayList<LibraryYearGroup> libraryGroupList = null;
-//
-//        if (jsonObj.has("data")) {
-//            JSONArray array = jsonObj.getJSONArray("data");
-//            int len = array.length();
-//            if (len <= 0) {
-//                return null;
-//            }
-//            libraryGroupList = new ArrayList<LibraryYearGroup>();
-//            String year = "";
-//
-//            for (int i = 0; i < len; i++) {
-//                JSONObject obj = (JSONObject) array.get(i);
-//                String[] title = obj.getString("name").split("-");
-//
-//                if (year.length() == 0 || title[0].compareToIgnoreCase(year) != 0) {
-//                    year = title[0];
-//
-//                    LibraryYearGroup yeargroup = new LibraryYearGroup();
-//                    yeargroup.year = title[0];
-//                    yeargroup.grouplist = new ArrayList<LibraryGroup>();
-//
-//                    libraryGroupList.add(yeargroup);
-//                }
-//
-//                int index = libraryGroupList.size() - 1;
-//                LibraryGroup group = new LibraryGroup();
-//                group.displayname = cnx.getString(MonthList.get(Integer.parseInt(title[1]))); // 获取中文月份字符串
-//                group.name = obj.getString("name");
-//                group.count = obj.getInt("count");
-//
-//                libraryGroupList.get(index).grouplist.add(group);
-//            }
-//        }
-//
-//        return libraryGroupList;
-//    }
-//
-//    public static ArrayList<PictureContent> toParserPictureContentList(String json)
-//            throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        ArrayList<PictureContent> pictureContentList = new ArrayList<PictureContent>();
-//
-//        if (jsonObj.has("data")) {
-//            JSONArray array = jsonObj.getJSONArray("data");
-//
-//            for (int i = 0; i < array.length(); i++) {
-//                JSONObject obj = (JSONObject) array.get(i);
-//
-//                PictureContent picture = new PictureContent();
-//                picture.modifyTime = obj.getLong("modifyTime");
-//                picture.name = obj.getString("name");
-//                picture.path = obj.getString("path");
-//                picture.size = obj.getLong("size");
-//                picture.ext = obj.getString("ext");
-//                picture.hash = obj.getString("hash");
-//                pictureContentList.add(picture);
-//            }
-//        }
-//        return pictureContentList;
-//    }
-//
-//    public static String getJSONPath(ArrayList<String> list) throws JSONException {
-//        JSONArray array = new JSONArray();
-//
-//        for (int i = 0; i < list.size(); i++) {
-//            array.put(list.get(i));
-//        }
-//
-//        return array.toString();
-//    }
-//
-//    public static Map<String, String> getPathToThumbMap(String path, String filename)
-//            throws UnsupportedEncodingException, IOException, JSONException {
-//        Map<String, String> map = new HashMap<String, String>();
-//
-//        // read file
-//        // String json = "";
-//        StringBuilder json = new StringBuilder();
-//        BufferedReader br = new BufferedReader(new FileReader(path + filename));
-//        String tmp = "";
-//        while (br != null && (tmp = br.readLine()) != null) {
-//            // json += tmp;
-//            json.append(tmp);
-//        }
-//        br.close();
-//
-//        JSONObject obj = new JSONObject(json.toString());
-//
-//        @SuppressWarnings("unchecked")
-//        Iterator<String> keyIter = obj.keys();
-//        while (keyIter.hasNext()) {
-//            String key = (String) keyIter.next();
-//            String value = path + (String) obj.get(key);
-//            map.put((String) obj.get(key), value);
-//        }
-//
-//        return map;
-//    }
-//
-//    public static Long toParserDiskSpace(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        Long diskSpace = jsonObj.getLong("info");
-//        return diskSpace;
-//    }
-//
-//    public static ArrayList<Disk> toParserDiskList(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        ArrayList<Disk> diskList = new ArrayList<Disk>();
-//
-//        if (jsonObj.has("data")) {
-//            JSONArray data = jsonObj.getJSONArray("data");
-//            for (int i = 0; i < data.length(); i++) {
-//                JSONObject obj = (JSONObject) data.get(i);
-//
-//                Disk diskContent = new Disk();
-//                diskContent.path = obj.getString("path");
-//                diskContent.totalSpace = obj.getLong("max");
-//                diskContent.freeSpace = (diskContent.totalSpace - obj.getLong("used"));
-//                diskList.add(diskContent);
-//            }
-//        }
-//        return diskList;
-//    }
-//
-//    public static ArrayList<String> toParserCameraData(String json) throws JSONException {
-//
-//        ArrayList<String> data = new ArrayList<String>();
-//        // String serverPath = jsonObject.getString("path");
-//        JSONObject jsonObject = new JSONObject(json);
-//
-//        JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
-//
-//        int dataSize = jsonArray.length();
-//
-//        for (int i = 0; i < dataSize; i++) {
-//
-//            data.add(jsonArray.getString(i));
-//        }
-//
-//        return data;
-//    }
-//
-//    /**
-//     * 主要用来变更hub新框架
-//     * 
-//     * @param json
-//     * @return
-//     * @throws JSONException
-//     */
-//    public static FileServerInfo toParseFileServerInfo(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//
-//        FileServerInfo fileserverinfo = new FileServerInfo();
-//        fileserverinfo.fileDownloadUrl = jsonObj.getString("fileDownloadUrl");
-//        fileserverinfo.fileUploadUrl = jsonObj.getString("fileUploadUrl");
-//        fileserverinfo.reqKey = jsonObj.getString("reqKey");
-//        fileserverinfo.message = jsonObj.getString("message");
-//        fileserverinfo.result = jsonObj.getInt("result");
-//
-//        return fileserverinfo;
-//    }
-//
-//    public static List<FileContent> toParserAllContactFiles(String json) throws JSONException {
-//        JSONObject jsonObj = new JSONObject(json);
-//        ArrayList<FileContent> fileList = null;
-//
-//        if (jsonObj.has("data")) {
-//            fileList = new ArrayList<FileContent>();
-//            JSONArray data = jsonObj.getJSONArray("data");
-//            for (int i = 0; i < data.length(); i++) {
-//                JSONObject obj = (JSONObject) data.get(i);
-//
-//                if (!obj.getString("ext").equalsIgnoreCase("vcf")) {
-//                    continue;
-//                }
-//
-//                FileContent filecontent = new FileContent();
-//                // filecontent.createTime = obj.getLong("createTime");
-//                // filecontent.dir = obj.getString("dir");
-//                filecontent.name = obj.getString("name");
-//                filecontent.path = obj.getString("path");
-//                // filecontent.type = obj.getString("type");
-//                // filecontent.visitTime = obj.getLong("visitTime");
-//                filecontent.modifyTime = obj.getLong("modifyTime");
-//                filecontent.ext = obj.getString("ext");
-//                filecontent.size = obj.getLong("size");
-//                // filecontent.mode = obj.getInt("mode");
-//
-//                fileList.add(filecontent);
-//            }
-//        }
-//
-//        return fileList;
-//    }
-//
-//    public static OperateFileStatus toParserOperateFileStaue(String response) throws JSONException {
+        ArrayList<SubjectInfo> gradeInfoList = new ArrayList<SubjectInfo>(total);
+
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                SubjectInfo school = new SubjectInfo();
+
+                school.name = obj.getString("name");
+                school.id = obj.getString("id");
+                gradeInfoList.add(school);
+            }
+        }
+        return gradeInfoList;
+    }
+    
+    
+    public static ArrayList<HomeWorkInfo> praseHomeWorks(String homeWorksInfo) throws JSONException {
+        // TODO Auto-generated method stub
+    	ArrayList<HomeWorkInfo> mHomeWorkList = new ArrayList<HomeWorkInfo>();
+        JSONObject jsonObj = new JSONObject(homeWorksInfo);
+        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+                // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
+                // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
+                // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
+                HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
+
+                homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
+                homeWorkInfo.id = obj.getString("id");
+                homeWorkInfo.content = obj.getString("content");
+                homeWorkInfo.sendType = obj.getInt("sendType");
+                //homeWorkInfo.status = obj.getString("status");
+                homeWorkInfo.fkClassId = obj.getInt("fkClassId");
+                homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
+                homeWorkInfo.smsType = obj.getInt("smsType");
+                homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
+                homeWorkInfo.className = obj.getString("id");
+                homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
+                //homeWorkInfo.stuName = obj.getString("stuName");
+                homeWorkInfo.optTime = obj.getString("optTime");
+
+                mHomeWorkList.add(homeWorkInfo);
+            }
+            if (mHomeWorkList.size() > 0) {
+
+            }
+        }
+		return mHomeWorkList;
+
+    }
+    
+    
+    private void praseHomeWorksss(String homeWorksInfo) {
+
+        JSONObject jsonObj;
+        
+        try {
+            jsonObj = new JSONObject(homeWorksInfo);
+            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+                JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+
+                ArrayList<HomeWorkInfo> homeWorkInfoList = new ArrayList<HomeWorkInfo>();
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject obj = (JSONObject) data.get(i);
+
+                    // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
+                    // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
+                    // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
+                    HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
+
+                    homeWorkInfo.content = obj.getString("content");
+                    homeWorkInfo.id = obj.getString("id");
+                    homeWorkInfo.optTime = obj.getString("optTime");
+                    homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
+                    //homeWorkInfo.status = obj.getString("status");
+                    homeWorkInfo.fkClassId = obj.getInt("fkClassId");
+                    homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
+                    homeWorkInfo.smsType = obj.getInt("smsType");
+                    homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
+                    homeWorkInfo.className = obj.getString("className");
+                    homeWorkInfo.sendType = obj.getInt("sendType");
+                    homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
+
+                    homeWorkInfoList.add(homeWorkInfo);
+                }
+
+              
+                
+               
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally{
+        }
+
+    }
+    
+    
+    public static ArrayList<CampusNotice> praseCampusNotice(String messageInfos) throws JSONException {
+        // TODO Auto-generated method stub
+    	 ArrayList<CampusNotice> campusNoticeList =  new ArrayList<CampusNotice>();
+        JSONObject jsonObj;
+        try {
+            jsonObj = new JSONObject(messageInfos);
+            
+            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+                JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+               
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject obj = (JSONObject) data.get(i);
+
+                    CampusNotice campusNotice = new CampusNotice();
+                    campusNotice.content = obj.getString("content");
+                    campusNotice.id = obj.getString("id");
+                    campusNotice.optTime = obj.getString("optTime");
+                    campusNotice.fkGradeId = obj.getInt("fkGradeId");
+                    campusNotice.status = obj.getString("status");
+                    campusNotice.fkClassId = obj.getInt("fkClassId");
+                    campusNotice.smsType = obj.getInt("smsType");
+                    campusNotice.fkSchoolId = obj.getInt("fkSchoolId");
+                    campusNotice.className = obj.getString("className");
+                    campusNotice.sendType = obj.getInt("sendType");                       
+                    campusNotice.fkStudentId = obj.getString("fkStudentId");
+                   // campusNotice.stuName = obj.getString("stuName");
+                    
+
+                    campusNoticeList.add(campusNotice);
+                } 
+                
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+            throw e;
+           
+        } finally{
+ 
+        }
+		return campusNoticeList;
+        
+    }
+
+	public static ArrayList<AttendanceInfo> praseAttendanceInfo(String body) throws JSONException {
+		 ArrayList<AttendanceInfo> attendanceInfoList =  new ArrayList<AttendanceInfo>();
+	        JSONObject jsonObj;
+	        try {
+	            jsonObj = new JSONObject(body);
+	            
+	            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+	            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+	                JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+	               
+	                for (int i = 0; i < data.length(); i++) {
+	                    JSONObject obj = (JSONObject) data.get(i);
+
+	                    AttendanceInfo attendanceInfo = new AttendanceInfo();
+	          
+	                    attendanceInfo.id = obj.getInt("id");
+	                    attendanceInfo.gradeName = obj.getString("gradeName");
+	                    attendanceInfo.fkGradeId = obj.getInt("fkGradeId");
+	                    attendanceInfo.attTime = obj.getString("attTime");
+	                    attendanceInfo.fkClassId = obj.getInt("fkClassId");
+	                    attendanceInfo.direc = obj.getInt("direc");
+	                    attendanceInfo.fkSchoolId = obj.getInt("fkSchoolId");
+	                    attendanceInfo.className = obj.getString("className");
+	                    attendanceInfo.fkStudentId = obj.getString("fkStudentId");
+	                    attendanceInfo.stuName = obj.getString("stuName");
+	                   
+	                    attendanceInfoList.add(attendanceInfo);
+	                } 
+	                
+	            }
+	        } catch (JSONException e) {
+	            e.printStackTrace();
+
+	            throw e;
+	           
+	        } finally{
+	 
+	        }
+			return attendanceInfoList;
+	}
+
+	public static ArrayList<LocationInfo> toParserLocationInfo(String locationInfo) throws JSONException {
+		// TODO Auto-generated method stub
+		ArrayList<LocationInfo> attendanceInfoList =  new ArrayList<LocationInfo>();
+        JSONObject jsonObj;
+        try {
+            jsonObj = new JSONObject(locationInfo);
+            
+            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+                JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+               
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject obj = (JSONObject) data.get(i);
+
+                    LocationInfo LocationInfo = new LocationInfo();
+                    LocationInfo.lat = obj.getString("lat");
+                    LocationInfo.lng = obj.getString("lng");
+                    LocationInfo.optTime = obj.getString("optTime");
+  
+                    attendanceInfoList.add(LocationInfo);
+                } 
+                
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+            throw e;
+           
+        } finally{
+ 
+        }
+		return attendanceInfoList;
+	}
+    
+    
+//    private void praseMessageInfos(String homeWorksInfo) throws JSONException {
 //        // TODO Auto-generated method stub
-//        JSONObject jsonObj = new JSONObject(response);
+//        JSONObject jsonObj = new JSONObject(homeWorksInfo);
+//        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 //
-//        OperateFileStatus fileStatus = new OperateFileStatus();
-//        fileStatus.success = jsonObj.getInt("success");
-//        fileStatus.canceled = jsonObj.getInt("canceled");
-//        fileStatus.finishedPath = jsonObj.getString("finishedPath");
-//        fileStatus.totalCount = jsonObj.getInt("totalCount");
-//        fileStatus.finished = jsonObj.getInt("finished");
-//        fileStatus.operatingFileName = jsonObj.getString("operating");
-//        fileStatus.result = jsonObj.getInt("result");
-//        fileStatus.operated = jsonObj.getInt("operated");
+//        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+//            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
 //
-//        return fileStatus;
+//
+//            for (int i = 0; i < data.length(); i++) {
+//                JSONObject obj = (JSONObject) data.get(i);
+//                mCampusNoticeList.clear();
+//                // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
+//                // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
+//                // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
+//                CampusNotice campusNotice = new CampusNotice();
+//                campusNotice.content = obj.getString("content");
+//                campusNotice.id = obj.getString("id");
+//                campusNotice.optTime = obj.getString("optTime");
+//                campusNotice.fkGradeId = obj.getInt("fkGradeId");
+//                campusNotice.status = obj.getString("status");
+//                campusNotice.fkClassId = obj.getInt("fkClassId");
+//                campusNotice.smsType = obj.getInt("smsType");
+//                campusNotice.fkSchoolId = obj.getInt("fkSchoolId");
+//                campusNotice.className = obj.getString("className");
+//                campusNotice.sendType = obj.getInt("sendType");
+//                campusNotice.stuName = obj.getString("stuName");
+//                campusNotice.fkStudentId = obj.getString("fkStudentId");
+//
+//                mCampusNoticeList.add(campusNotice);
+//            }
+//            if (mCampusNoticeList.size() > 0) {
+//
+//            }
+//        }
+//
 //    }
+
+
+
+
+
+
 }

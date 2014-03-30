@@ -3,63 +3,163 @@
     android:layout_height="match_parent"
     android:background="@drawable/home_page"
     android:orientation="vertical" >
+
     <include layout="@layout/home_page_title_bar" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/new_message_tittle_background"
+        android:layout_marginTop="4dp"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="6dp"
             android:layout_marginTop="10dp"
-            android:text="@string/edit_homewok_title" />
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="6dp"
-            android:background="@drawable/new_massage_tittleline" />
+            <TextView
+                android:id="@+id/select_grade_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="4dp"
+                android:text="@string/select_grade"
+                android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/edit_homework_title"
+            <ImageButton
+                android:id="@+id/select_grade_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-           
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:ems="10" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/select_class_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="4dp"
+                android:text="@string/select_class"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_class_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+        
+         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/select_subject_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="4dp"
+                android:text="@string/select_subject"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_subject_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:background="@drawable/input_background"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/edit_homework_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_gravity="center"
+            android:hint="@string/edit_homewok_title"
+            android:maxLength="20" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/newmessage_background" >
+        android:layout_marginTop="4dp"
+        android:background="@drawable/new_message_background" >
 
         <EditText
             android:id="@+id/edit_homework_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="6dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
-             android:hint="@string/edit_homewok_hint"
+            android:layout_marginTop="6dp"
+            android:hint="@string/edit_homewok_hint"
             android:singleLine="false" >
-
         </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/edit_ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/login_button_selector"
+            android:text="@string/confirm" />
     </LinearLayout>
 
 </LinearLayout>

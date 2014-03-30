@@ -10,7 +10,9 @@ import android.util.Log;
 
 import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
 import com.dingxi.jackdemo.model.CampusNotice;
+import com.dingxi.jackdemo.model.HomeWorkInfo;
 import com.dingxi.jackdemo.model.CampusNotice.CampusNoticeEntry;
+import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
 
 public class CampusNoticeDao {
 
@@ -81,7 +83,7 @@ public class CampusNoticeDao {
         // you will actually use after this query.
         String[] projection = { CampusNoticeEntry.COLUMN_NAME_ENTRY_ID,
                 CampusNoticeEntry.COLUMN_NAME_CONTENT, CampusNoticeEntry.COLUMN_NAME_OPT_TIME,
-                CampusNoticeEntry.COLUMN_NAME_IS_READ };
+                CampusNoticeEntry.COLUMN_NAME_IS_READ};
         String selection = CampusNoticeEntry.COLUMN_NAME_ENTRY_ID + " = ?";
         String[] selectionArgs = { cid };
         String sortOrder = CampusNoticeEntry.COLUMN_NAME_ENTRY_ID + " DESC";
@@ -244,4 +246,51 @@ public class CampusNoticeDao {
             mDbHelper.close();
         }
     }
+
+	public ArrayList<CampusNotice> queryReadOrNotReadCampusNotice(int isread) {
+
+
+	        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+	        // Define a projection that specifies which columns from the database
+	        // you will actually use after this query.
+	        String[] projection = { CampusNoticeEntry.COLUMN_NAME_ENTRY_ID,
+	                CampusNoticeEntry.COLUMN_NAME_CONTENT, CampusNoticeEntry.COLUMN_NAME_OPT_TIME, CampusNoticeEntry.COLUMN_NAME_IS_READ};
+	        String selection = CampusNoticeEntry.COLUMN_NAME_IS_READ + " = ?";
+	        String[] selectionArgs = { String.valueOf(isread) };
+	        String sortOrder = CampusNoticeEntry.COLUMN_NAME_ENTRY_ID + " DESC";
+	        // How you want the results sorted in the resulting Cursor
+	        // String sortOrder = FeedEntry.COLUMN_NAME_UPDATED + " DESC";
+
+	        Cursor cursor = db.query(CampusNoticeEntry.TABLE_NAME, // The table to query
+	                projection, // The columns to return
+	                selection, // The columns for the WHERE clause
+	                selectionArgs, // The values for the WHERE clause
+	                null, // don't group the rows
+	                null, // don't filter by row groups
+	                sortOrder // The sort order
+	                );
+	        ArrayList<CampusNotice> campusNotices = new ArrayList<CampusNotice>();
+	        if(cursor!=null && cursor.getCount() > 0){
+	        	while (cursor.moveToNext()) {
+	        		CampusNotice CampusNotice = new CampusNotice();
+	        		CampusNotice.id = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID));
+	        		CampusNotice.content = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_CONTENT));
+	        		CampusNotice.optTime = cursor
+							.getString(cursor
+									.getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_OPT_TIME));
+	        		CampusNotice.isRead = cursor
+							.getInt(cursor
+									.getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_IS_READ));
+	        		
+	        		
+	        		campusNotices.add(CampusNotice);
+	        	}
+	        }
+		return campusNotices;
+	}
 }

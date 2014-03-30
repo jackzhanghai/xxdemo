@@ -38,11 +38,7 @@ public class CampusNotice {
         public static final String COLUMN_NAME_IS_READ = "is_read";
        
         //public static final String COLUMN_NAME_SUBJECT_ID = "fkSubjectId";
-        
-       
-     
-        
-        
+
         
         public static final String COLUMN_NAME_NULLABLE = null;
   

@@ -29,7 +29,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/message_header"
+                android:id="@+id/student_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -50,7 +50,6 @@
                 android:layout_marginRight="6dp"
                  android:layout_weight="1.0"
                 android:padding="3dp"
-                android:text="TextView"
                 android:textSize="19sp" />
         </LinearLayout>
 
@@ -61,14 +60,25 @@
             android:background="@drawable/message_line" />
 
         <TextView
-            android:id="@+id/message_body"
+            android:id="@+id/in_out_school"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="6dp"
+            android:padding="3dp"
+            android:text="TextView"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/date_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="6dp"
             android:padding="3dp"
-            android:text="TextView"
-            android:textSize="18sp" />
+            android:text="TextView" />
+
     </LinearLayout>
 
 </LinearLayout>

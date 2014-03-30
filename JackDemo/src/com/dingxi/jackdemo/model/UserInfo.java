@@ -3,12 +3,9 @@ package com.dingxi.jackdemo.model;
 public class UserInfo {
 
 	
-	private String userName;
-	private String loginName;
-	private String password;
 	public String ticket;
 	public String fkSchoolId;
-	public String fkClassId;
+//	public String fkClassId;
 	public String id;
 	public UserType roleType;
 	

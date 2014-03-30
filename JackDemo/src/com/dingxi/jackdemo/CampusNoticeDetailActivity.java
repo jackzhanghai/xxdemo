@@ -1,11 +1,10 @@
 package com.dingxi.jackdemo;
 
 
-import com.dingxi.jackdemo.dao.HomeWorkDao;
-import com.dingxi.jackdemo.model.HomeWorkInfo;
+import com.dingxi.jackdemo.dao.CampusNoticeDao;
+import com.dingxi.jackdemo.model.CampusNotice;
+import com.dingxi.jackdemo.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.jackdemo.model.UserInfo;
-import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,11 +18,11 @@ public class CampusNoticeDetailActivity extends Activity {
     private ImageButton mBackButton;
     private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    private HomeWorkInfo curretHomeWorkInfo;
-    private HomeWorkDao curretHomeDao;
-    private TextView homeWorkTite;
-    private TextView homeWorkDate;
-    private TextView homeWorkContent;
+    private CampusNotice curretCampusNotice;
+    private CampusNoticeDao curretCampusNoticeDao;
+    private TextView noticeTite;
+    private TextView noticeDate;
+    private TextView noticeContent;
     
     
     @Override
@@ -42,19 +41,19 @@ public class CampusNoticeDetailActivity extends Activity {
             }
         });
         
-        homeWorkTite = (TextView) findViewById(R.id.homework_header);
-        homeWorkDate = (TextView) findViewById(R.id.homework_date);
-        homeWorkContent = (TextView) findViewById(R.id.homework_content);
+        noticeTite = (TextView) findViewById(R.id.homework_header);
+        noticeDate = (TextView) findViewById(R.id.homework_date);
+        noticeContent = (TextView) findViewById(R.id.homework_content);
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 
         curretUserInfo = mXiaoYunTongApplication.userInfo;
         
-       String homeWorkID =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID);
-       curretHomeDao =  new HomeWorkDao(mXiaoYunTongApplication);
-       curretHomeWorkInfo =  curretHomeDao.queryHomeWorkByID(homeWorkID);
-       homeWorkTite.setText("家庭作业");
-       homeWorkDate.setText(curretHomeWorkInfo.optTime);
-       homeWorkContent.setText(curretHomeWorkInfo.content);
+       String noticeID =  getIntent().getStringExtra(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID);
+       curretCampusNoticeDao =  new CampusNoticeDao(mXiaoYunTongApplication);
+       curretCampusNotice =  curretCampusNoticeDao.queryCampusNoticeByID(noticeID);
+       noticeTite.setText("校园通知");
+       noticeDate.setText(curretCampusNotice.optTime);
+       noticeContent.setText(curretCampusNotice.content);
        
 
     }

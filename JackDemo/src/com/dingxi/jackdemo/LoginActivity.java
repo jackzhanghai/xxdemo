@@ -9,9 +9,12 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.dingxi.jackdemo.model.School;
+import com.dingxi.jackdemo.model.ParentInfo;
+import com.dingxi.jackdemo.model.SchoolInfo;
+import com.dingxi.jackdemo.model.TeacherInfo;
 import com.dingxi.jackdemo.model.UserInfo.UserType;
 import com.dingxi.jackdemo.network.JSONParser;
+import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
 import com.dingxi.jackdemo.util.Util;
 
@@ -66,14 +69,13 @@ public class LoginActivity extends Activity {
 	private String mSchoolName;
 	private String mUserName;
 	private String mPassword;
-	private UserType mUserType;
-	private ArrayList<School> schoolList;
+	private UserType mUserType = UserType.ROLE_PARENT;
+	private ArrayList<SchoolInfo> schoolList;
 	private String schoolsString[];
-	// private boolean isCancelLogin = false;
 	private boolean isAutoLogin = false;
 	private boolean isRemberPassWord = false;
 	private ProgressDialog mProgressDialog;
-	XiaoYunTongApplication xyt;
+	 private XiaoYunTongApplication mXiaoYunTongApplication;;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,7 @@ public class LoginActivity extends Activity {
 		mAutoLoginCheckBox = (CheckBox) findViewById(R.id.auto_login_checkBox);
 		mRemberCheckBox = (CheckBox) findViewById(R.id.remember_password_checkBox);
 
-		xyt = (XiaoYunTongApplication) getApplication();
+		mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 		SharedPreferences settings = getSharedPreferences(PREFS_USER_INFO, 0);
 		isAutoLogin = settings.getBoolean(IS_AUTO_LOGIN, false);
 		isRemberPassWord = settings.getBoolean(IS_REMEMBER_PASSWORD, false);
@@ -125,22 +127,12 @@ public class LoginActivity extends Activity {
 		}
 
 		String schoolsInfo = getIntent().getStringExtra("schoolInfo");
-		parseSchoolInfo(schoolsInfo);
+		if(!TextUtils.isEmpty(schoolsInfo)){
+			parseSchoolInfo(schoolsInfo);
+		}
+		
 
 		mPasswordEditText = (EditText) findViewById(R.id.password);
-		mPasswordEditText
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						// if (id == R.id.login || id == EditorInfo.IME_NULL) {
-						// attemptLogin();
-						// return true;
-						// }
-						return false;
-					}
-				});
-
 		mLoginButton = (Button) findViewById(R.id.confirm_login_button);
 		mCancelLoginButton = (Button) findViewById(R.id.cancel_login_button);
 
@@ -169,12 +161,12 @@ public class LoginActivity extends Activity {
 		if (!TextUtils.isEmpty(schools)) {
 			Log.d(TAG, "result schoolsInfo " + schools);
 			try {
-				if (JSONParser.getIntByTag(schools, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+				if (JSONParser.getIntByTag(schools, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 
 					schoolList = JSONParser.toParserSchoolList(schools);
 				} else {
 					JSONParser.getStringByTag(schools,
-							RestClient.RESULT_TAG_MESSAGE);
+							ResponseMessage.RESULT_TAG_MESSAGE);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -209,9 +201,6 @@ public class LoginActivity extends Activity {
 								mSchoolName = schoolList.get(which).name;
 								mSchoolNameText.setText(mSchoolName);
 								Log.d(TAG, "mSchoolId " + mSchoolId);
-								// The 'which' argument contains the index
-								// position
-								// of the selected item
 							}
 						});
 				return builder.create();
@@ -253,7 +242,7 @@ public class LoginActivity extends Activity {
 
 		if (schoolsString != null && schoolsString.length > 0) {
 
-			showDialog(view.getId());
+			showDialog(R.id.choose_school);
 		} else {
 			mProgressDialog = new ProgressDialog(LoginActivity.this);
 			mProgressDialog.setMessage(getString(R.string.loading_school));
@@ -314,34 +303,6 @@ public class LoginActivity extends Activity {
 
 	}
 
-	class LoginThread extends Thread {
-
-		String userName;
-		String password;
-
-		public LoginThread(String userName, String password) {
-			this.userName = userName;
-			this.password = password;
-		}
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			super.run();
-
-			try {
-				RestClient.login(userName, password, mSchoolId, mUserType.toString());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (XmlPullParserException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-	}
-
 	private void autoLogin() {
 		// TODO Auto-generated method stub
 		mProgressDialog = new ProgressDialog(LoginActivity.this);
@@ -373,20 +334,15 @@ public class LoginActivity extends Activity {
 		
 		if(TextUtils.isEmpty(mSchoolId)){
 			isError = true;
-			errorMessage = getString(R.string.action_settings);
-		} 
-		
-		if (TextUtils.isEmpty(mPassword)) {
-			errorMessage = getString(R.string.error_field_required);
+			errorMessage = getString(R.string.select_school);
+		} else if (TextUtils.isEmpty(mPassword)) {
+			errorMessage = getString(R.string.input_password);
 			isError = true;
 		} else if (mPassword.length() < 4) {
 			errorMessage = getString(R.string.error_invalid_password);
 			isError = true;
-		}
-
-		// Check for a valid email address.
-		if (TextUtils.isEmpty(mUserName)) {
-			errorMessage = getString(R.string.error_field_required);
+		} else if (TextUtils.isEmpty(mUserName)) {
+			errorMessage = getString(R.string.input_accont);
 			isError = true;
 		}
 
@@ -395,56 +351,10 @@ public class LoginActivity extends Activity {
 			Toast.makeText(LoginActivity.this, errorMessage,
 					Toast.LENGTH_LONG).show();
 		} else {
-
 			autoLogin();
 		}
 	}
 
-	// public void getLogin(String loginName, String password, String
-	// fkSchoolId,
-	// String fkRoleId) {
-	//
-	// // login(String loginName,String password,String fkSchoolId,String
-	// // fkRoleId)
-	// RequestParams params = new RequestParams();
-	// params.put("loginName", "value");
-	// params.put("password", "data");
-	// params.put("fkSchoolId", "value");
-	// params.put("fkRoleId", "data");
-	//
-	// RestClient.get(RestClient.WEB_INTERFACE_LOGIN, params,
-	// new JsonHttpResponseHandler() {
-	// @Override
-	// public void onSuccess(JSONArray timeline) {
-	// try {
-	// JSONObject firstEvent = (JSONObject) timeline
-	// .get(0);
-	// String tweetText = firstEvent.getString("text");
-	//
-	// // Do something with the response
-	// System.out.println(tweetText);
-	// } catch (JSONException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	// @Override
-	// public void onFailure(int statusCode, Throwable e,
-	// JSONObject errorResponse) {
-	// // TODO Auto-generated method stub
-	// super.onFailure(statusCode, e, errorResponse);
-	// }
-	//
-	// @Override
-	// protected Object parseResponse(String responseBody)
-	// throws JSONException {
-	// // TODO Auto-generated method stub
-	// Log.d(TAG, "responseBody  " + responseBody);
-	// return super.parseResponse(responseBody);
-	// }
-	//
-	// });
-	// }
 
 	/**
 	 * Represents an asynchronous login/registration task used to authenticate
@@ -479,39 +389,40 @@ public class LoginActivity extends Activity {
 		@Override
 		protected void onPostExecute(String loginInfo) {
 			mAuthTask = null;
-			Log.d(TAG, "result " + loginInfo);
+			Log.d(TAG, "loginInfo " + loginInfo);
 			if (!TextUtils.isEmpty(loginInfo)) {
 
 				try {
 				    if(loginInfo.startsWith("{") && loginInfo.endsWith("}")){
 				        if (JSONParser.getIntByTag(loginInfo,
-	                            RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+	                            ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
+				        	
+				        	
+				        	
+				        	if(mUserType == UserType.ROLE_PARENT){
+				        		mXiaoYunTongApplication.userInfo = new ParentInfo();				        		
+				        	}else if(mUserType == UserType.ROLE_TEACHER){
+				        		String fkClassId = JSONParser.getStringByTag(loginInfo,
+		                                "fkClassId");
+				        		 Log.d(TAG, "userInfo.fkClassId " + fkClassId);
+				        		TeacherInfo teacherInfo	 = new TeacherInfo();
+				        		teacherInfo.defalutClassId = fkClassId;
+				        		mXiaoYunTongApplication.userInfo = teacherInfo;				        		
+				        	}
 
 	                        // to do save userinfo;
 	                        String id = JSONParser.getStringByTag(loginInfo, "id");
+	                        mXiaoYunTongApplication.userInfo.id = id;
+	                        Log.d(TAG, "userInfo.id " + id);
 	                        String ticket = JSONParser.getStringByTag(loginInfo,
 	                                "ticket");
-	                        String fkSchoolId = JSONParser.getStringByTag(loginInfo,
-	                                "fkSchoolId");
-	                        String fkClassId = JSONParser.getStringByTag(loginInfo,
-	                                "fkClassId");
-
-	                        xyt = (XiaoYunTongApplication) getApplication();
-	                        xyt.userInfo.id = id;
-	                        Log.d(TAG, "userInfo.id " + id);
-	                        xyt.userInfo.ticket = ticket;
+	                        mXiaoYunTongApplication.userInfo.ticket = ticket;
 	                        Log.d(TAG, "userInfo.ticket " + ticket);
-	                        if(TextUtils.isEmpty(fkSchoolId)){
-	                            
-	                            xyt.userInfo.fkSchoolId = mSchoolId;
-	                        } else {
-	                            xyt.userInfo.fkSchoolId = fkSchoolId ;
-	                        }
-	                        
-	                        Log.d(TAG, "userInfo.fkSchoolId " + xyt.userInfo.fkSchoolId);
-	                        xyt.userInfo.fkClassId = fkClassId;
-	                        Log.d(TAG, "userInfo.fkClassId " + fkClassId);
-	                        xyt.userInfo.roleType =  mUserType;
+
+	                        mXiaoYunTongApplication.userInfo.fkSchoolId = mSchoolId;
+	                        Log.d(TAG, "userInfo.fkSchoolId " + mSchoolId);
+	                       
+	                        mXiaoYunTongApplication.userInfo.roleType =  mUserType;
 	                        Log.d(TAG, "userInfo.roleType " + mUserType);
 
 	                        SharedPreferences settings = getSharedPreferences(
@@ -536,7 +447,7 @@ public class LoginActivity extends Activity {
 	                    } else {
 	                        mProgressDialog.dismiss();
 	                        String errorMessage = JSONParser.getStringByTag(
-	                                loginInfo, RestClient.RESULT_TAG_MESSAGE);
+	                                loginInfo, ResponseMessage.RESULT_TAG_MESSAGE);
 	                        if (!TextUtils.isEmpty(errorMessage)) {
 	                            Toast.makeText(LoginActivity.this, errorMessage,
 	                                    Toast.LENGTH_LONG).show();
@@ -607,7 +518,7 @@ public class LoginActivity extends Activity {
 
 				try {
 					if (JSONParser.getIntByTag(schoolsInfo,
-							RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+							ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 
 						parseSchoolInfo(schoolsInfo);
 
@@ -617,7 +528,7 @@ public class LoginActivity extends Activity {
 					} else {
 						mProgressDialog.dismiss();
 						String errorMessage = JSONParser.getStringByTag(
-								schoolsInfo, RestClient.RESULT_TAG_MESSAGE);
+								schoolsInfo, ResponseMessage.RESULT_TAG_MESSAGE);
 						if (!TextUtils.isEmpty(errorMessage)) {
 							Toast.makeText(LoginActivity.this, errorMessage,
 									Toast.LENGTH_LONG).show();

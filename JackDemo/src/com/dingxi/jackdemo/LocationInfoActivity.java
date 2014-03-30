@@ -2,6 +2,7 @@ package com.dingxi.jackdemo;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -14,7 +15,9 @@ import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.dingxi.jackdemo.model.LocationInfo;
 import com.dingxi.jackdemo.network.JSONParser;
+import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
 
 import android.app.Activity;
@@ -110,112 +113,94 @@ public class LocationInfoActivity extends Activity {
     }
 
 
-    public class GetLocationTask extends AsyncTask<Void, Void, String> {
+    public class GetLocationTask extends AsyncTask<Void, Void, ResponseMessage> {
+    	
+    	
         @Override
-        protected String doInBackground(Void... params) {
+        protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            String locationInfo = null;
+        	ResponseMessage responseMessage  = new ResponseMessage();
+
             try {
                 Log.i(TAG, "GetLocationTask imei "  + imei);
-                locationInfo = RestClient.getGpsPosition(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket, imei);//String id, String ticket, String imei
+                responseMessage.body = RestClient.getGpsPosition(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket, imei);//String id, String ticket, String imei
+                responseMessage.praseBody();
             } catch (ConnectTimeoutException stex) {
-                locationInfo = getString(R.string.request_time_out);
+            	responseMessage.message = getString(R.string.request_time_out);
             } catch (SocketTimeoutException stex) {
-                locationInfo = getString(R.string.server_time_out);
+            	responseMessage.message = getString(R.string.server_time_out);
             } catch (HttpHostConnectException hhce) {
-                locationInfo = getString(R.string.connection_server_error);
+            	responseMessage.message = getString(R.string.connection_server_error);
             } catch (XmlPullParserException e) {
-                locationInfo = getString(R.string.connection_error);
+            	responseMessage.message = getString(R.string.connection_error);
                 e.printStackTrace();
-            } catch (IOException e) {
-                locationInfo = getString(R.string.connection_error);
+            }  catch (JSONException e) {
+            	responseMessage.message = getString(R.string.connection_error);
+				e.printStackTrace();
+			} catch (IOException e) {
+            	responseMessage.message = getString(R.string.connection_error);
                 e.printStackTrace();
             }
             
-            return locationInfo;
+            return responseMessage;
         }
 
         @Override
-        protected void onPostExecute(String locationInfo) {
+        protected void onPostExecute(ResponseMessage responseMessage) {
             mGetLocationTask = null;
-            Log.d(TAG, "result " + locationInfo);
-            if (!TextUtils.isEmpty(locationInfo)) {
+            
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS  && responseMessage.total >0){
+            	
 
-                try {
-                    if (JSONParser.getIntByTag(locationInfo,
-                            RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
-                        String mLon = JSONParser.getStringByTag(locationInfo, "lng");
-                       
-                        String  mLat = JSONParser.getStringByTag(locationInfo, "lat");
-                        Log.i(TAG, "mLon " + mLon);
-                        Log.i(TAG, "mLat " + mLat);
-                        mProgressDialog.dismiss();
-                        if(TextUtils.isEmpty(mLat) || TextUtils.isEmpty(mLon)){
-                            Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
-                                    ,Toast.LENGTH_LONG).show();
-                        } else {
-                            double mLat1 = Double.parseDouble(mLat);
-                            double mLon1 = Double.parseDouble(mLon);
-                            GeoPoint p2 = new GeoPoint((int) (mLat1 * 1E6), (int) (mLon1 * 1E6));  
-                            Drawable mark= getResources().getDrawable(R.drawable.location_info);  
-                            OverlayItem item = new OverlayItem(p2,"item2","item2"); 
-      
-                            OverlayTest itemOverlay = new OverlayTest(mark, mMapView); 
-                            
-                            mMapView.getOverlays().clear(); 
-                            mMapView.getOverlays().add(itemOverlay);
-                            
-                            itemOverlay.addItem(item);           
-                            GeoPoint point =new GeoPoint((int)(mLat1 * 1E6),(int)(mLon1* 1E6));
-                            mMapController.setCenter(point);//设置地图中心点
-                            mMapView.refresh();
+            		ArrayList<LocationInfo> locationInfos;
+					try {
+						locationInfos = JSONParser.toParserLocationInfo(responseMessage.body);
+						LocationInfo locationInfo = locationInfos.get(0);
+					       
+	            		
+	            		if(locationInfo!=null ){
+	            			if(TextUtils.isEmpty(locationInfo.lat) || TextUtils.isEmpty(locationInfo.lng)){
+	                            Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
+	                                    ,Toast.LENGTH_LONG).show();
+	                        } else {
+	                            double mLat1 = Double.parseDouble(locationInfo.lat);
+	                            double mLon1 = Double.parseDouble(locationInfo.lng);
+	                            GeoPoint p2 = new GeoPoint((int) (mLat1 * 1E6), (int) (mLon1 * 1E6));  
+	                            Drawable mark= getResources().getDrawable(R.drawable.location_info);  
+	                            OverlayItem item = new OverlayItem(p2,"item2","item2"); 
+	      
+	                            OverlayTest itemOverlay = new OverlayTest(mark, mMapView); 
+	                            
+	                            mMapView.getOverlays().clear(); 
+	                            mMapView.getOverlays().add(itemOverlay);
+	                            
+	                            itemOverlay.addItem(item);           
+	                            GeoPoint point =new GeoPoint((int)(mLat1 * 1E6),(int)(mLon1* 1E6));
+	                            mMapController.setCenter(point);//设置地图中心点
+	                            mMapView.refresh();
 
-                        }
-                        
+	                        }
+	            		} else {
+	            			Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
+	                                ,Toast.LENGTH_LONG).show();
+	            		}
+						
+						
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            		
 
-                       
-
-                    } else {
-                        mProgressDialog.dismiss();
-                        String errorMessage = JSONParser.getStringByTag(
-                                locationInfo, RestClient.RESULT_TAG_MESSAGE);
-                        if (!TextUtils.isEmpty(errorMessage)) {
-                            Toast.makeText(LocationInfoActivity.this, errorMessage,
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(LocationInfoActivity.this, locationInfo,
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                } catch (JSONException e) {
-                    if(mProgressDialog!=null){
-                        mProgressDialog.dismiss();
-                    }
-                    
-                    Toast.makeText(LocationInfoActivity.this, locationInfo,
-                            Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                } catch (NumberFormatException e) {
-                    // TODO: handle exception
-                    if(mProgressDialog!=null){
-                        mProgressDialog.dismiss();
-                    }
-                    Toast.makeText(LocationInfoActivity.this, locationInfo,
-                            Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }catch (Exception e) {
-                    if(mProgressDialog!=null){
-                        mProgressDialog.dismiss();
-                    }
-                    // TODO: handle exception
-                    Toast.makeText(LocationInfoActivity.this, locationInfo,
-                            Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            } else {
-                mProgressDialog.dismiss();
-
+            	 mProgressDialog.dismiss();
+            }else {
+            	 mProgressDialog.dismiss();
+            	Toast.makeText(LocationInfoActivity.this, responseMessage.message
+                        ,Toast.LENGTH_LONG).show();
+            	
             }
+            
+         
         }
 
 

@@ -37,7 +37,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditHomeWorkActivity extends Activity implements OnClickListener {
+public class UpdateAttendanceInfoActivity extends Activity implements OnClickListener {
 
 	public static final String TAG = "EditHomeWorkActivity";
 	private ImageButton mBackButton;
@@ -108,9 +108,9 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 
 				if(checkText()){
-					if (Util.IsNetworkAvailable(EditHomeWorkActivity.this)) {
+					if (Util.IsNetworkAvailable(UpdateAttendanceInfoActivity.this)) {
 						mProgressDialog = new ProgressDialog(
-								EditHomeWorkActivity.this);
+								UpdateAttendanceInfoActivity.this);
 						mProgressDialog
 								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						mProgressDialog
@@ -149,16 +149,16 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 //
 //		} else 
 		if (TextUtils.isEmpty(content)) {
-			Toast.makeText(EditHomeWorkActivity.this, R.string.please_input_content,
+			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.please_input_content,
 					Toast.LENGTH_LONG).show();
 		} else if (TextUtils.isEmpty(mClassId)) {
-			Toast.makeText(EditHomeWorkActivity.this, R.string.select_class,
+			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.select_class,
 					Toast.LENGTH_LONG).show();
 		} else if (TextUtils.isEmpty(mGradeId)) {
-			Toast.makeText(EditHomeWorkActivity.this, R.string.select_grade,
+			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.select_grade,
 					Toast.LENGTH_LONG).show();
 		} else if (TextUtils.isEmpty(mSubjectId)){
-			Toast.makeText(EditHomeWorkActivity.this, R.string.select_subject,
+			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.select_subject,
 					Toast.LENGTH_LONG).show();
 		} else {
 			isOk = true;
@@ -268,7 +268,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				}
 			} else {
 				mProgressDialog.dismiss();
-				Toast.makeText(EditHomeWorkActivity.this,
+				Toast.makeText(UpdateAttendanceInfoActivity.this,
 						responseMessage.message, Toast.LENGTH_LONG).show();
 			}
 
@@ -456,7 +456,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				mProgressDialog.dismiss();				
 			}
 			
-			Toast.makeText(EditHomeWorkActivity.this,
+			Toast.makeText(UpdateAttendanceInfoActivity.this,
 					responseMessage.message, Toast.LENGTH_LONG).show();
 
 		}
@@ -471,8 +471,8 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		if (Util.IsNetworkAvailable(EditHomeWorkActivity.this)) {
-			mProgressDialog = new ProgressDialog(EditHomeWorkActivity.this);
+		if (Util.IsNetworkAvailable(UpdateAttendanceInfoActivity.this)) {
+			mProgressDialog = new ProgressDialog(UpdateAttendanceInfoActivity.this);
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			int errorCode = -1;
 			switch (v.getId()) {
@@ -512,7 +512,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			}
 
 			if (errorCode != -1) {
-				Toast.makeText(EditHomeWorkActivity.this, errorCode,
+				Toast.makeText(UpdateAttendanceInfoActivity.this, errorCode,
 						Toast.LENGTH_LONG).show();
 				mProgressDialog = null;
 			} else {
@@ -544,7 +544,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 
 			if (classInfoList != null && classInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditHomeWorkActivity.this);
+						UpdateAttendanceInfoActivity.this);
 				builder.setTitle(R.string.select_school).setItems(
 						classNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -565,7 +565,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 
 			if (gradeInfoList != null && gradeInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditHomeWorkActivity.this);
+						UpdateAttendanceInfoActivity.this);
 				builder.setTitle(R.string.select_school).setItems(
 						gradeNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -586,7 +586,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 
 			if (subjectNameList != null && subjectNameList.length > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditHomeWorkActivity.this);
+						UpdateAttendanceInfoActivity.this);
 				builder.setTitle(R.string.select_school).setItems(
 						subjectNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,

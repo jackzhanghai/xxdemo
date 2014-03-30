@@ -18,8 +18,9 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 
-import com.dingxi.jackdemo.model.School;
+import com.dingxi.jackdemo.model.SchoolInfo;
 import com.dingxi.jackdemo.network.JSONParser;
+import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
 
 public class SplashActivity extends Activity {
@@ -67,14 +68,14 @@ public class SplashActivity extends Activity {
 							schoolsInfo = RestClient.getAllSchool();
 							Log.d(TAG, "result " + schoolsInfo);
 							if (JSONParser.getIntByTag(schoolsInfo,
-									RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+									ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 
-								ArrayList<School> schools = JSONParser
+								ArrayList<SchoolInfo> schools = JSONParser
 										.toParserSchoolList(schoolsInfo);
 							} else {
 								String errorMessage = JSONParser
 										.getStringByTag(schoolsInfo,
-												RestClient.RESULT_TAG_MESSAGE);
+												ResponseMessage.RESULT_TAG_MESSAGE);
 							}
 
 						} catch (JSONException e) {
@@ -116,52 +117,4 @@ public class SplashActivity extends Activity {
 
 	};
 
-	// public void getAllSchoolss() {
-	//
-	// RestClient.get(RestClient.WEB_INTERFACE_GET_ALL_SCHOOL, null,
-	// new JsonHttpResponseHandler() {
-	// @Override
-	// public void onSuccess(JSONArray timeline) {
-	//
-	// try {
-	// JSONObject firstEvent = (JSONObject) timeline
-	// .get(0);
-	// String tweetText = firstEvent.getString("text");
-	//
-	// // Do something with the response
-	// System.out.println(tweetText);
-	// } catch (JSONException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	// @Override
-	// public void onSuccess(int statusCode, JSONObject response) {
-	// // TODO Auto-generated method stub
-	// super.onSuccess(statusCode, response);
-	// Log.d(TAG, "response  " + response.toString());
-	// Intent loginIntent = new Intent(SplashActivity.this,
-	// LoginActivity.class);
-	// startActivity(loginIntent);
-	// finish();
-	//
-	// }
-	//
-	// @Override
-	// public void onFailure(int statusCode, Throwable e,
-	// JSONObject errorResponse) {
-	// // TODO Auto-generated method stub
-	// super.onFailure(statusCode, e, errorResponse);
-	// }
-	//
-	// @Override
-	// protected Object parseResponse(String responseBody)
-	// throws JSONException {
-	// // TODO Auto-generated method stub
-	// Log.d(TAG, "responseBody  " + responseBody);
-	// return super.parseResponse(responseBody);
-	// }
-	//
-	// });
-	// }
 }

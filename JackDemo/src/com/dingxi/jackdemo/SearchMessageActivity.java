@@ -17,6 +17,7 @@ import com.dingxi.jackdemo.model.StudentInfo;
 import com.dingxi.jackdemo.model.UserInfo;
 import com.dingxi.jackdemo.model.UserInfo.UserType;
 import com.dingxi.jackdemo.network.JSONParser;
+import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
 
 import android.app.Activity;
@@ -406,9 +407,9 @@ public class SearchMessageActivity extends Activity {
 
                 try {
                     if (searchTypeReslut.startsWith("{") && searchTypeReslut.endsWith("}")) {
-                        if (JSONParser.getIntByTag(searchTypeReslut, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+                        if (JSONParser.getIntByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
                             int total = JSONParser.getIntByTag(searchTypeReslut,
-                                    RestClient.RESULT_TAG_TOTAL);
+                            		ResponseMessage.RESULT_TAG_TOTAL);
                             if (curretSearchType == SearchType.GradeInfo) {
                                 if (total == 0) {
 
@@ -443,7 +444,7 @@ public class SearchMessageActivity extends Activity {
                         } else {
                             mProgressDialog.dismiss();
                             String errorMessage = JSONParser.getStringByTag(searchTypeReslut,
-                                    RestClient.RESULT_TAG_MESSAGE);
+                            		ResponseMessage.RESULT_TAG_MESSAGE);
                             if (!TextUtils.isEmpty(errorMessage)) {
                                 Toast.makeText(SearchMessageActivity.this, errorMessage,
                                         Toast.LENGTH_LONG).show();
@@ -476,11 +477,11 @@ public class SearchMessageActivity extends Activity {
             if (!TextUtils.isEmpty(searchTypeReslut)) {
                 Log.d(TAG, "result schoolsInfo " + searchTypeReslut);
                 try {
-                    if (JSONParser.getIntByTag(searchTypeReslut, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+                    if (JSONParser.getIntByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 
                         studentInfoList = JSONParser.toParserStudentInfoList(searchTypeReslut);
                     } else {
-                        JSONParser.getStringByTag(searchTypeReslut, RestClient.RESULT_TAG_MESSAGE);
+                        JSONParser.getStringByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_MESSAGE);
                     }
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
@@ -502,11 +503,11 @@ public class SearchMessageActivity extends Activity {
             if (!TextUtils.isEmpty(searchTypeReslut)) {
                 Log.d(TAG, "result schoolsInfo " + searchTypeReslut);
                 try {
-                    if (JSONParser.getIntByTag(searchTypeReslut, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+                    if (JSONParser.getIntByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 
                         calssInfoList = JSONParser.toParserCalssInfoList(searchTypeReslut);
                     } else {
-                        JSONParser.getStringByTag(searchTypeReslut, RestClient.RESULT_TAG_MESSAGE);
+                        JSONParser.getStringByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_MESSAGE);
                     }
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
@@ -528,11 +529,11 @@ public class SearchMessageActivity extends Activity {
             if (!TextUtils.isEmpty(searchTypeReslut)) {
                 Log.d(TAG, "result schoolsInfo " + searchTypeReslut);
                 try {
-                    if (JSONParser.getIntByTag(searchTypeReslut, RestClient.RESULT_TAG_CODE) == RestClient.RESULT_TAG_SUCCESS) {
+                    if (JSONParser.getIntByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
 
                         gradeInfoList = JSONParser.toParserGradeInfoList(searchTypeReslut);
                     } else {
-                        JSONParser.getStringByTag(searchTypeReslut, RestClient.RESULT_TAG_MESSAGE);
+                        JSONParser.getStringByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_MESSAGE);
                     }
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
