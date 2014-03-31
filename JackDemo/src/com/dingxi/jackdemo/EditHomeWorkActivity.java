@@ -52,6 +52,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	private EditText titleEditText;
 	private EditText contentEditText;
 	private Button sendHomeWorkButton;
+	private Button editcancelButton;
 	private GetAllClassTask mGetAllClassTask;
 	private SendHomeWorkTask mSendHomeWorkTask;
 	private ProgressDialog mProgressDialog;
@@ -100,6 +101,16 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 
 		titleEditText = (EditText) findViewById(R.id.edit_homework_title);
 		contentEditText = (EditText) findViewById(R.id.edit_homework_content);
+		editcancelButton = (Button) findViewById(R.id.edit_cancel_button);
+		editcancelButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				EditHomeWorkActivity.this.finish();
+			}
+		});
+		
 		sendHomeWorkButton = (Button) findViewById(R.id.edit_ok_button);
 		sendHomeWorkButton.setOnClickListener(new OnClickListener() {
 
@@ -545,7 +556,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			if (classInfoList != null && classInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						EditHomeWorkActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
+				builder.setTitle(R.string.select_class).setItems(
 						classNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -566,7 +577,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			if (gradeInfoList != null && gradeInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						EditHomeWorkActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
+				builder.setTitle(R.string.select_grade).setItems(
 						gradeNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -587,7 +598,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			if (subjectNameList != null && subjectNameList.length > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						EditHomeWorkActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
+				builder.setTitle(R.string.select_subject).setItems(
 						subjectNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {

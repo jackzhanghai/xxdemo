@@ -38,7 +38,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -75,7 +74,7 @@ public class HomePageActivity extends Activity {
     private ArrayList<String> mSpinnerInfo;
     // private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();
     private ArrayList<String> campusNoticeContentList;
-    private XiaoyuantongDbHelper xiaoyuantongDbHelper;
+    private XiaoyuantongDbHelper xiaoyuantongDbHelpers;
     private XiaoYunTongApplication mXiaoYunTongApplication;
     
     boolean isFinish = false;
@@ -115,6 +114,7 @@ public class HomePageActivity extends Activity {
         gridview.setAdapter(mImageAdapter);
 
         backButton = (ImageButton) findViewById(R.id.back_button);
+        backButton.setVisibility(View.GONE);
 //
 //        backButton.setOnClickListener(new OnClickListener() {
 //
@@ -127,9 +127,9 @@ public class HomePageActivity extends Activity {
 //            }
 //        });
         
-        backButton.setVisibility(View.GONE);
+       
 
-        xiaoyuantongDbHelper = new XiaoyuantongDbHelper(getApplicationContext());
+        xiaoyuantongDbHelpers = new XiaoyuantongDbHelper(getApplicationContext());
       
 
         mSpinner = (Spinner) findViewById(R.id.main_spinner);
@@ -306,7 +306,7 @@ public class HomePageActivity extends Activity {
         // TODO Auto-generated method stub
         super.onDestroy();
         isFinish = true;
-        xiaoyuantongDbHelper.close();
+        xiaoyuantongDbHelpers.close();
     }
 
 

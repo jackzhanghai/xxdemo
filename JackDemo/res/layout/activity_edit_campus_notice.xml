@@ -84,6 +84,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:layout_weight="1.0"
         android:layout_marginTop="4dp"
         android:background="@drawable/new_message_background" >
 
@@ -109,10 +110,18 @@
             android:id="@+id/edit_ok_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/login_button_selector"
             android:text="@string/confirm" />
+        <Button
+            android:id="@+id/edit_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/login_button_selector"
+            android:text="@string/cancel" />
     </LinearLayout>
 
 </LinearLayout>

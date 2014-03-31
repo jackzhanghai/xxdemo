@@ -304,7 +304,7 @@ public class SearchMessageActivity extends Activity {
 
             if (calssInfoList != null && calssInfoList.size() > 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SearchMessageActivity.this);
-                builder.setTitle(R.string.select_school).setItems(calssNameList,
+                builder.setTitle(R.string.select_class).setItems(calssNameList,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.d(TAG, "which " + which);
@@ -323,7 +323,7 @@ public class SearchMessageActivity extends Activity {
 
             if (gradeInfoList != null && gradeInfoList.size() > 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SearchMessageActivity.this);
-                builder.setTitle(R.string.select_school).setItems(gradeNameList,
+                builder.setTitle(R.string.select_grade).setItems(gradeNameList,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.d(TAG, "which " + which);
@@ -342,7 +342,7 @@ public class SearchMessageActivity extends Activity {
 
             if (studentInfoList != null && studentInfoList.size() > 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SearchMessageActivity.this);
-                builder.setTitle(R.string.select_school).setItems(studentNameList,
+                builder.setTitle(R.string.select_student).setItems(studentNameList,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.d(TAG, "which " + which);

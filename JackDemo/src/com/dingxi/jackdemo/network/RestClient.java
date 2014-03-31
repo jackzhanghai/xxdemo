@@ -469,11 +469,10 @@ public class RestClient {
     }
 
     // 修改考勤信息
-    public static String updateAttendance(String id, String fkRoleId, String ticket, String info)
+    public static String updateAttendance(String id, String ticket, String info)
             throws IOException, XmlPullParserException {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", id);
-        map.put("fkRoleId", fkRoleId);
         map.put("ticket", ticket);
         map.put("info", info);
         String response = requestData(map, "updateAttendance");

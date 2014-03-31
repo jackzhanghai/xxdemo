@@ -12,8 +12,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import com.dingxi.jackdemo.model.ClassInfo;
 import com.dingxi.jackdemo.model.GradeInfo;
+import com.dingxi.jackdemo.model.ParentInfo;
 import com.dingxi.jackdemo.model.SubjectInfo;
 import com.dingxi.jackdemo.model.TeacherInfo;
+import com.dingxi.jackdemo.model.UserInfo;
+import com.dingxi.jackdemo.model.AttendanceInfo.AttendanceInfoEntry;
 import com.dingxi.jackdemo.network.JSONParser;
 import com.dingxi.jackdemo.network.ResponseMessage;
 import com.dingxi.jackdemo.network.RestClient;
@@ -52,7 +55,7 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 	private EditText titleEditText;
 	private EditText contentEditText;
 	private Button sendHomeWorkButton;
-	private GetAllClassTask mGetAllClassTask;
+	private UpdateAttendanceInfo mUpdateAttendanceInfo;
 	private SendHomeWorkTask mSendHomeWorkTask;
 	private ProgressDialog mProgressDialog;
 	private String mClassId;
@@ -73,7 +76,7 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_home_work);
+		setContentView(R.layout.activity_update_attendance);
 
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mBackButton.setOnClickListener(new OnClickListener() {
@@ -84,6 +87,8 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 				finish();
 			}
 		});
+		
+		String updateId = getIntent().getStringExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID);
 		mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 		curretUserInfo = (TeacherInfo) mXiaoYunTongApplication.userInfo;
 
@@ -168,47 +173,48 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 
 	}
 
-	public class GetAllClassTask extends AsyncTask<Void, Void, ResponseMessage> {
+	public class UpdateAttendanceInfo extends AsyncTask<Void, Void, ResponseMessage> {
 
+		String fkAttId;
+		String direc;
+		public UpdateAttendanceInfo(String fkAttId,String direc) {
+			// TODO Auto-generated constructor stub
+			this.fkAttId = fkAttId;
+			this.direc = direc;
+		}
 		@Override
 		protected ResponseMessage doInBackground(Void... params) {
+			
+			
+			StringBuilder info = new StringBuilder();
+			info.append("{");
+			info.append("\"fkAttId\":");
+			info.append("\"" + fkAttId + "\"");
+			info.append(",");
+			info.append("\"direc\":");
+			info.append("\"" + direc + "\"");			
+			info.append("}");
+			
+			
 			// TODO: attempt authentication against a network service.
 			ResponseMessage responseMessage = new ResponseMessage();
 			try {
 
-				if (curretSearchType == SearchType.GradeInfo) {
-					responseMessage.body = RestClient.getGradeInfos(
+				
+					responseMessage.body = RestClient.updateAttendance(
 							curretUserInfo.id, curretUserInfo.ticket,
-							curretUserInfo.fkSchoolId);
-				} else if (curretSearchType == SearchType.ClassInfo) {
-					responseMessage.body = RestClient.getClassInfos(
-							curretUserInfo.id, curretUserInfo.ticket, mGradeId);
-				} else if (curretSearchType == SearchType.SubjectInfo) {
-					responseMessage.body = RestClient.getSubjectInfoT(
-							curretUserInfo.id, curretUserInfo.ticket,
-							curretUserInfo.fkSchoolId);
-				}
+							info.toString());	
+					
+					responseMessage.praseBody();
 
 				if (TextUtils.isEmpty(responseMessage.body)) {
 
 				} else {
-					responseMessage.code = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_CODE);
-					responseMessage.message = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-					responseMessage.datas = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_DATAS);
-					responseMessage.total = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_TOTAL);
+					
 
 				}
 
 			} catch (ConnectTimeoutException stex) {
-				responseMessage.code = -1;
 				responseMessage.message = getString(R.string.request_time_out);
 			} catch (SocketTimeoutException stex) {
 				responseMessage.message = getString(R.string.server_time_out);
@@ -231,33 +237,11 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 
 		@Override
 		protected void onPostExecute(ResponseMessage responseMessage) {
-			mGetAllClassTask = null;
+			mUpdateAttendanceInfo = null;
 
 			Log.d(TAG, "responseMessage.code " + responseMessage.code);
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-				if (curretSearchType == SearchType.GradeInfo) {
-					try {
-						parseGradeInfo(responseMessage.body);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else if (curretSearchType == SearchType.ClassInfo) {
-					try {
-						parseClassInfo(responseMessage.body);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else if (curretSearchType == SearchType.SubjectInfo) {
-					try {
-						parseSubjectInfo(responseMessage.body);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+			
 				mProgressDialog.dismiss();
 				if (curretSearchType == SearchType.GradeInfo) {
 					showDialog(R.id.select_grade_button);
@@ -274,86 +258,9 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 
 		}
 
-		private void parseGradeInfo(String searchTypeReslut)
-				throws JSONException {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(searchTypeReslut)) {
-				Log.d(TAG, "result schoolsInfo " + searchTypeReslut);
-
-				if (JSONParser.getIntByTag(searchTypeReslut,
-						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-					gradeInfoList = JSONParser
-							.toParserGradeInfoList(searchTypeReslut);
-				} else {
-					JSONParser.getStringByTag(searchTypeReslut,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-				}
-
-			}
-			if (gradeInfoList != null && gradeInfoList.size() > 0) {
-				gradeNameList = new String[gradeInfoList.size()];
-
-				for (int i = 0; i < gradeInfoList.size(); i++) {
-					gradeNameList[i] = gradeInfoList.get(i).name;
-
-				}
-			}
-		}
-
-		private void parseClassInfo(String reslut) throws JSONException {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(reslut)) {
-				Log.d(TAG, "result schoolsInfo " + reslut);
-
-				if (JSONParser.getIntByTag(reslut,
-						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-					classInfoList = JSONParser.toParserCalssInfoList(reslut);
-				} else {
-					JSONParser.getStringByTag(reslut,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-				}
-
-			}
-			if (classInfoList != null && classInfoList.size() > 0) {
-				classNameList = new String[classInfoList.size()];
-
-				for (int i = 0; i < classInfoList.size(); i++) {
-					classNameList[i] = classInfoList.get(i).name;
-				}
-			}
-		}
-
-		private void parseSubjectInfo(String reslut) throws JSONException {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(reslut)) {
-				Log.d(TAG, "result schoolsInfo " + reslut);
-
-				if (JSONParser.getIntByTag(reslut,
-						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-					subjectInfoList = JSONParser
-							.toParserSubjectInfoList(reslut);
-				} else {
-					JSONParser.getStringByTag(reslut,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-				}
-
-			}
-			if (subjectInfoList != null && subjectInfoList.size() > 0) {
-				subjectNameList = new String[subjectInfoList.size()];
-
-				for (int i = 0; i < subjectInfoList.size(); i++) {
-					subjectNameList[i] = subjectInfoList.get(i).name;
-
-				}
-			}
-		}
-
 		@Override
 		protected void onCancelled() {
-			mGetAllClassTask = null;
+			mUpdateAttendanceInfo = null;
 
 		}
 	}
@@ -521,16 +428,16 @@ public class UpdateAttendanceInfoActivity extends Activity implements OnClickLis
 					@Override
 					public void onCancel(DialogInterface dialog) {
 						// TODO Auto-generated method stub
-						if (mGetAllClassTask != null
-								&& !mGetAllClassTask.isCancelled()) {
-							mGetAllClassTask.cancel(true);
+						if (mUpdateAttendanceInfo != null
+								&& !mUpdateAttendanceInfo.isCancelled()) {
+							mUpdateAttendanceInfo.cancel(true);
 							// isCancelLogin = true;
 						}
 					}
 				});
 				mProgressDialog.show();
-				mGetAllClassTask = new GetAllClassTask();
-				mGetAllClassTask.execute((Void) null);
+				mUpdateAttendanceInfo = new UpdateAttendanceInfo(curretUserInfo.id, curretUserInfo.ticket);
+				mUpdateAttendanceInfo.execute((Void) null);
 			}
 		}
 

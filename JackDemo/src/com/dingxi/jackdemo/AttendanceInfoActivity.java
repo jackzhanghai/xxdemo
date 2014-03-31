@@ -17,6 +17,7 @@ import com.dingxi.jackdemo.HomeWorkActivity.HomeWorkAdapter.HomeWorkHolder;
 import com.dingxi.jackdemo.dao.AttendanceInfoDao;
 import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.model.AttendanceInfo;
+import com.dingxi.jackdemo.model.AttendanceInfo.AttendanceInfoEntry;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
 import com.dingxi.jackdemo.model.ParentInfo;
 import com.dingxi.jackdemo.model.StudentInfo;
@@ -171,11 +172,14 @@ public class AttendanceInfoActivity extends Activity {
 					long arg3) {
 				// TODO Auto-generated method stub
 			    Log.i(TAG, "arg2 " +arg2 + " arg3 " + arg3);
-//			    Integer id = mAttendanceInfoList.get(arg2).id;
-//			    Log.i(TAG, "id " + id );
-//				Intent intent = new Intent(AttendanceInfoActivity.this,HomeWorkDetailActivity.class);
-//				intent.putExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID, id);
-//				startActivity(intent);
+			    if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
+				    Integer id = mAttendanceInfoList.get(arg2).id;
+				    Log.i(TAG, "id " + id );
+					Intent intent = new Intent(AttendanceInfoActivity.this,UpdateAttendanceInfoActivity.class);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID, id);
+					startActivity(intent);
+		        }
+
 			}
         	
 		});

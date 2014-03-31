@@ -36,7 +36,8 @@
     <GridView
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
         android:columnWidth="90dp"
         android:gravity="center"
         android:horizontalSpacing="4dp"
@@ -44,5 +45,22 @@
         android:paddingTop="30dp"
         android:stretchMode="columnWidth"
         android:verticalSpacing="30dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp" >
+
+        <ImageButton
+            android:id="@+id/exit_account"
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_button_selector"
+            android:layout_centerInParent="true"
+            android:text="@string/exit_account" />
+
+    </RelativeLayout>
 
 </LinearLayout>

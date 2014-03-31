@@ -6,6 +6,7 @@ import java.util.List;
 import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
 
 import com.dingxi.jackdemo.model.HomeWorkInfo;
+import com.dingxi.jackdemo.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
 
 import android.content.ContentValues;
@@ -54,6 +55,22 @@ public class HomeWorkDao {
 		return result;
 	}
 
+	 public int updateHomeWorkById(ContentValues values,String rowId){
+	    	
+    	 SQLiteDatabase db = mDbHelper.getReadableDatabase();
+    	String selection = HomeWorkEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+    	String[] selectionArgs = { String.valueOf(rowId) };
+
+    	int count = db.update(
+    			HomeWorkEntry.TABLE_NAME,
+    	    values,
+    	    selection,
+    	    selectionArgs);
+    	
+		return count;
+    }
+	
+	
 	public void queryHomeWorkByDate() {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
 

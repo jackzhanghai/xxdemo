@@ -53,6 +53,21 @@ public class CampusNoticeDao {
         }
         return result;
     }
+    
+    public int updateCampusNoticeById(ContentValues values,String rowId){
+    	
+    	 SQLiteDatabase db = mDbHelper.getReadableDatabase();
+    	String selection = CampusNoticeEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+    	String[] selectionArgs = { String.valueOf(rowId) };
+
+    	int count = db.update(
+    			CampusNoticeEntry.TABLE_NAME,
+    	    values,
+    	    selection,
+    	    selectionArgs);
+    	
+		return count;
+    }
 
     public void queryCampusNoticeByDate() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();

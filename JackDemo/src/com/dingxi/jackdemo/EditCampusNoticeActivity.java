@@ -63,6 +63,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 	public String[] classNameList;
 	public ArrayList<GradeInfo> gradeInfoList;
 	public String[] gradeNameList;
+	private Button editcancelButton;
 
 	
 	private enum SearchType {
@@ -97,6 +98,15 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 
 		titleEditText = (EditText) findViewById(R.id.edit_homework_title);
 		contentEditText = (EditText) findViewById(R.id.edit_campus_notice_content);
+		editcancelButton = (Button) findViewById(R.id.edit_cancel_button);
+		editcancelButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				EditCampusNoticeActivity.this.finish();
+			}
+		});
 		sendHomeWorkButton = (Button) findViewById(R.id.edit_ok_button);
 		sendHomeWorkButton.setOnClickListener(new OnClickListener() {
 
@@ -470,7 +480,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 			if (classInfoList != null && classInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						EditCampusNoticeActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
+				builder.setTitle(R.string.select_class).setItems(
 						classNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -491,7 +501,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 			if (gradeInfoList != null && gradeInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						EditCampusNoticeActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
+				builder.setTitle(R.string.select_grade).setItems(
 						gradeNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {

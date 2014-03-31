@@ -2,13 +2,16 @@ package com.dingxi.jackdemo;
 
 
 import com.dingxi.jackdemo.dao.CampusNoticeDao;
+import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
 import com.dingxi.jackdemo.model.CampusNotice;
 import com.dingxi.jackdemo.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.jackdemo.model.UserInfo;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -23,6 +26,8 @@ public class CampusNoticeDetailActivity extends Activity {
     private TextView noticeTite;
     private TextView noticeDate;
     private TextView noticeContent;
+    private Button confirmButton;
+ 
     
     
     @Override
@@ -54,6 +59,25 @@ public class CampusNoticeDetailActivity extends Activity {
        noticeTite.setText("校园通知");
        noticeDate.setText(curretCampusNotice.optTime);
        noticeContent.setText(curretCampusNotice.content);
+       
+       confirmButton = (Button) findViewById(R.id.confirm_button);
+       confirmButton.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			CampusNoticeDetailActivity.this.finish();
+		}
+	});
+       
+       CampusNoticeDao campusNoticeDao = new CampusNoticeDao(
+    		   CampusNoticeDetailActivity.this);
+       ContentValues values = new ContentValues();
+       values.put(CampusNoticeEntry.COLUMN_NAME_IS_READ, "1");
+       
+       
+       long insertResult = campusNoticeDao
+				.updateCampusNoticeById(values,noticeID);
        
 
     }
