@@ -10,6 +10,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.dingxi.jackdemo.CampusNoticeActivity.GetmCampusNoticeListTask;
 import com.dingxi.jackdemo.HomeWorkActivity.GetHomeWorTask;
 import com.dingxi.jackdemo.HomeWorkActivity.HomeWorkAdapter;
 import com.dingxi.jackdemo.HomeWorkActivity.HomeWorkAdapter.HomeWorkHolder;
@@ -18,6 +19,7 @@ import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.model.AttendanceInfo;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
 import com.dingxi.jackdemo.model.ParentInfo;
+import com.dingxi.jackdemo.model.StudentInfo;
 import com.dingxi.jackdemo.model.TeacherInfo;
 import com.dingxi.jackdemo.model.UserInfo;
 import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
@@ -38,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -46,6 +49,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 
 /**
@@ -69,6 +73,9 @@ public class AttendanceInfoActivity extends Activity {
     private AnimationDrawable loadingAnimation;
     private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
+    private ArrayList<StudentInfo> mStudentList;
+    private ArrayAdapter<String> mSpinnerAdapter;
+    private ArrayList<String> mSpinnerInfo;
 
  
     public GetAttendanceInfoTask mGetAttendanceInfoTask;
@@ -93,6 +100,37 @@ public class AttendanceInfoActivity extends Activity {
 		curretUserInfo = mXiaoYunTongApplication.userInfo;
         
         mSpinner = (Spinner) findViewById(R.id.main_spinner);
+        mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                    int arg2, long arg3) {
+                Log.d(TAG, "mSpinner onItemSelected()");
+                // TODO Auto-generated method stub
+                ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                parentInfo.defalutChild = mStudentList.get(arg2);
+
+                mAttendanceInfoList.clear();
+                mAttendanceAdapter.notifyDataSetChanged();
+
+                loadingImageView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+                loadingAnimation.start();
+
+               // ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
+                mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
+
+
+                mGetAttendanceInfoTask.execute((Void) null);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+                Log.d(TAG, "mSpinner onNothingSelected()");
+            }
+        });
+        
         
         mQueryMessageButton = (ImageButton) findViewById(R.id.query_button);
         mQueryMessageButton.setOnClickListener(new OnClickListener() {
@@ -148,6 +186,27 @@ public class AttendanceInfoActivity extends Activity {
             mEditMessageButton.setVisibility(View.VISIBLE);
             mSpinner.setVisibility(View.GONE);
         } else {
+            
+            ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+
+            if (parentInfo.childList != null) {
+                mStudentList = parentInfo.childList;
+            } else {
+                mStudentList = new ArrayList<StudentInfo>();
+            }
+
+            if (parentInfo.nameList != null) {
+                mSpinnerInfo = parentInfo.nameList;
+            } else {
+                mSpinnerInfo = new ArrayList<String>();
+            }
+            
+            mSpinnerAdapter = new ArrayAdapter<String>(AttendanceInfoActivity.this,
+                    android.R.layout.simple_spinner_item, mSpinnerInfo);
+            mSpinnerAdapter
+                    .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            mSpinner.setAdapter(mSpinnerAdapter);
             mQueryMessageButton.setVisibility(View.GONE);
             mEditMessageButton.setVisibility(View.GONE);
             mSpinner.setVisibility(View.VISIBLE);

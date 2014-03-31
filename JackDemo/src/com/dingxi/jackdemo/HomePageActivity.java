@@ -77,6 +77,8 @@ public class HomePageActivity extends Activity {
     private ArrayList<String> campusNoticeContentList;
     private XiaoyuantongDbHelper xiaoyuantongDbHelper;
     private XiaoYunTongApplication mXiaoYunTongApplication;
+    
+    boolean isFinish = false;
     private Handler rollTextHandler = new Handler(){
 
 		@Override
@@ -113,17 +115,19 @@ public class HomePageActivity extends Activity {
         gridview.setAdapter(mImageAdapter);
 
         backButton = (ImageButton) findViewById(R.id.back_button);
-
-        backButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent backIntent = new Intent(HomePageActivity.this, LoginActivity.class);
-                backIntent.putExtra("auto", false);
-                startActivity(backIntent);
-                finish();
-            }
-        });
+//
+//        backButton.setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                Intent backIntent = new Intent(HomePageActivity.this, LoginActivity.class);
+//                backIntent.putExtra("auto", false);
+//                startActivity(backIntent);
+//                finish();
+//            }
+//        });
+        
+        backButton.setVisibility(View.GONE);
 
         xiaoyuantongDbHelper = new XiaoyuantongDbHelper(getApplicationContext());
       
@@ -256,6 +260,9 @@ public class HomePageActivity extends Activity {
 
     }
 
+    
+    
+    
     @Override
     public void onBackPressed() {
         // TODO Auto-generated method stub
@@ -280,10 +287,25 @@ public class HomePageActivity extends Activity {
 
     }
 
+    
+    
+    @Override
+    protected void onStart() {
+        // TODO Auto-generated method stub
+        super.onStart();
+    }
+    
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+    }
+    
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
+        isFinish = true;
         xiaoyuantongDbHelper.close();
     }
 
@@ -295,7 +317,7 @@ public class HomePageActivity extends Activity {
     		// TODO Auto-generated method stub
     		super.run();
     		
-    		while (campusNoticeContentList!=null && campusNoticeContentList.size()>0) {
+    		while (campusNoticeContentList!=null && campusNoticeContentList.size()>0 && (!isFinish)) {
     			for (int i = 0; i < campusNoticeContentList.size(); i++) {
     				
     				Message message = Message.obtain();
@@ -490,6 +512,8 @@ public class HomePageActivity extends Activity {
 //
 //        }
 //    }
+    
+    
 
     public class GetAllNoteTask extends AsyncTask<Void, String, ResponseMessage> {
         @Override

@@ -62,8 +62,7 @@ public class HomeWorkActivity extends Activity {
 	private ImageButton mQueryMessageButton;
 	private ImageButton mEditMessageButton;
 	private Spinner mSpinner;
-	private ArrayAdapter<String> mSpinnerAdapter;
-	private ArrayList<String> mSpinnerInfo;
+	
 	private ListView mHomeWorkListView;
 	private HomeWorkAdapter mHomeWorkAdapter;
 	private ArrayList<HomeWorkInfo> mHomeWorkList;
@@ -72,6 +71,8 @@ public class HomeWorkActivity extends Activity {
 	private static UserInfo curretUserInfo;
 	private XiaoYunTongApplication mXiaoYunTongApplication;
 	private ArrayList<StudentInfo> mStudentList;
+	private ArrayAdapter<String> mSpinnerAdapter;
+    private ArrayList<String> mSpinnerInfo;
 
 	public GetHomeWorTask mHomeWorTask;
 
@@ -126,27 +127,30 @@ public class HomeWorkActivity extends Activity {
 			}
 		});
 
-		ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+		if(curretUserInfo.roleType == UserType.ROLE_PARENT){
+		    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 
-		if (parentInfo.childList != null) {
-			mStudentList = parentInfo.childList;
-		} else {
-			mStudentList = new ArrayList<StudentInfo>();
+	        if (parentInfo.childList != null) {
+	            mStudentList = parentInfo.childList;
+	        } else {
+	            mStudentList = new ArrayList<StudentInfo>();
+	        }
+
+	        if (parentInfo.nameList != null) {
+	            mSpinnerInfo = parentInfo.nameList;
+	        } else {
+	            mSpinnerInfo = new ArrayList<String>();
+	        }
+	        
+	        mSpinnerAdapter = new ArrayAdapter<String>(HomeWorkActivity.this,
+	                android.R.layout.simple_spinner_item, mSpinnerInfo);
+	        mSpinnerAdapter
+	                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+	        mSpinner.setAdapter(mSpinnerAdapter);
 		}
 
-		if (parentInfo.nameList != null) {
-			mSpinnerInfo = parentInfo.nameList;
-		} else {
-			mSpinnerInfo = new ArrayList<String>();
-		}
-
-		mSpinnerAdapter = new ArrayAdapter<String>(HomeWorkActivity.this,
-				android.R.layout.simple_spinner_item, mSpinnerInfo);
-		mSpinnerAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mSpinner.setAdapter(mSpinnerAdapter);
-
-		mSpinner.setAdapter(mSpinnerAdapter);
+		
 
 		mQueryMessageButton = (ImageButton) findViewById(R.id.query_button);
 		mQueryMessageButton.setOnClickListener(new OnClickListener() {
@@ -219,7 +223,7 @@ public class HomeWorkActivity extends Activity {
 			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
 					teacherInfo.defalutClassId, "", "", "", false);
 		} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-			// ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+			ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
 					"", "", parentInfo.defalutChild.id, "", false);
 		}
