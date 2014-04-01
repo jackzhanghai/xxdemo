@@ -61,7 +61,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 public class AttendanceInfoActivity extends Activity {
 
 	
-	public static final String TAG = "HomeWorkActivity";
+	public static final String TAG = "AttendanceInfoActivity";
     private View emptyView;
     private ImageButton mBackButton;
     private ImageButton mQueryMessageButton;
@@ -107,7 +107,6 @@ public class AttendanceInfoActivity extends Activity {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
                 Log.d(TAG, "mSpinner onItemSelected()");
-                // TODO Auto-generated method stub
                 ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                 parentInfo.defalutChild = mStudentList.get(arg2);
 
@@ -117,8 +116,6 @@ public class AttendanceInfoActivity extends Activity {
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
-
-               // ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
                 mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
 
 
@@ -155,6 +152,7 @@ public class AttendanceInfoActivity extends Activity {
                 
             }
         });
+        mEditMessageButton.setVisibility(View.GONE);
         
         emptyView = findViewById(R.id.empty);
         mHomeWorkListView = (ListView) findViewById(R.id.attendanceinfo_list);
@@ -173,10 +171,12 @@ public class AttendanceInfoActivity extends Activity {
 				// TODO Auto-generated method stub
 			    Log.i(TAG, "arg2 " +arg2 + " arg3 " + arg3);
 			    if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
-				    Integer id = mAttendanceInfoList.get(arg2).id;
-				    Log.i(TAG, "id " + id );
 					Intent intent = new Intent(AttendanceInfoActivity.this,UpdateAttendanceInfoActivity.class);
-					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID, id);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID,  mAttendanceInfoList.get(arg2).id);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_DIREC,  mAttendanceInfoList.get(arg2).direc);
+					Log.i(TAG, "mAttendanceInfoList.get(arg2).direc " + mAttendanceInfoList.get(arg2).direc);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_STU_NAME,  mAttendanceInfoList.get(arg2).stuName);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ATT_TIME,  mAttendanceInfoList.get(arg2).attTime);
 					startActivity(intent);
 		        }
 
@@ -293,7 +293,7 @@ public class AttendanceInfoActivity extends Activity {
             } else if (attendanceInfos.get(position).direc == 2){
             	viewHolder.inOutText.setText(R.string.out_school);
             } else {
-            	viewHolder.inOutText.setText(R.string.unkown_school);
+            	viewHolder.inOutText.setText(R.string.unkown_time);
             }
             
             viewHolder.dateText.setText(attendanceInfos.get(position).attTime);
@@ -420,41 +420,48 @@ public class AttendanceInfoActivity extends Activity {
         @Override
         protected void onPostExecute(ResponseMessage responseMessage) {
         	mGetAttendanceInfoTask = null;           
-        	AttendanceInfoDao attendanceInfoDao = new AttendanceInfoDao(mXiaoYunTongApplication);
+        	//AttendanceInfoDao attendanceInfoDao = new AttendanceInfoDao(mXiaoYunTongApplication);
             if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS && responseMessage.total>0){
             	
             	try {           		
             		ArrayList<AttendanceInfo> attendanceInfoList = JSONParser.praseAttendanceInfo(responseMessage.body);
                     if (attendanceInfoList != null && attendanceInfoList.size() > 0) {
 
-                        for (AttendanceInfo homeWorkInfo : attendanceInfoList) {
-                            long insertResult = attendanceInfoDao.addAttendanceInfo(homeWorkInfo);
-                            Log.i(TAG, "HomeWork insertResult " + insertResult);
-                        }
+//                        for (AttendanceInfo homeWorkInfo : attendanceInfoList) {
+//                            long insertResult = attendanceInfoDao.addAttendanceInfo(homeWorkInfo);
+//                            Log.i(TAG, "HomeWork insertResult " + insertResult);
+//                        }
                         
                         mAttendanceInfoList.clear();
                         mAttendanceInfoList.addAll(attendanceInfoList);
-                        attendanceInfoDao.colseDb();
-                        attendanceInfoDao = null;
-                    } 
+                        mAttendanceAdapter.notifyDataSetChanged();
+//                        attendanceInfoDao.colseDb();
+//                        attendanceInfoDao = null;
+                    } else {
+                        mAttendanceInfoList.clear();
+                        emptyView.setVisibility(View.VISIBLE);
+                        mAttendanceAdapter.notifyDataSetChanged(); 
+                    }
                     
                 } catch (JSONException e) {
-                    // TODO Auto-generated catch block
+                    mAttendanceInfoList.clear();
+                    emptyView.setVisibility(View.VISIBLE);
+                    mAttendanceAdapter.notifyDataSetChanged();
                     e.printStackTrace();
-                }
-            	
-                
-                loadingAnimation.stop();
-                loadingImageView.setVisibility(View.GONE);
-                mAttendanceAdapter.notifyDataSetChanged();
+                } finally{
+                    loadingAnimation.stop();
+                    loadingImageView.setVisibility(View.GONE);  
+                }            	
 
             } else if(responseMessage.total == 0){
+                mAttendanceInfoList.clear();
             	loadingAnimation.stop();
                 loadingImageView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
             	 Toast.makeText(AttendanceInfoActivity.this, R.string.no_data, Toast.LENGTH_LONG)
                  .show();
             }else {
+                mAttendanceInfoList.clear();
             	loadingAnimation.stop();
                 loadingImageView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);

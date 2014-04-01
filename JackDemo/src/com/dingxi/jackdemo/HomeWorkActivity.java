@@ -100,8 +100,6 @@ public class HomeWorkActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
-				Log.d(TAG, "mSpinner onItemSelected()");
-				// TODO Auto-generated method stub
 				ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 				parentInfo.defalutChild = mStudentList.get(arg2);
 

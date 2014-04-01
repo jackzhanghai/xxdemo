@@ -370,8 +370,10 @@ public class LoginActivity extends Activity {
 						mUserType.toString());
 			} catch (ConnectTimeoutException stex) {
 				loginInfo = getString(R.string.request_time_out);
-			} catch (SocketTimeoutException stex) {
+				stex.printStackTrace();
+			} catch (SocketTimeoutException stex) {			    
 				loginInfo = getString(R.string.server_time_out);
+				stex.printStackTrace();
 			} catch (HttpHostConnectException hhce) {
 				loginInfo = getString(R.string.connection_server_error);
 			} catch (XmlPullParserException e) {

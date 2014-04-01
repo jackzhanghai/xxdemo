@@ -26,6 +26,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -50,7 +51,6 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 	private TextView classNameText;
 	private TextView gradeNameText;
 
-	private EditText titleEditText;
 	private EditText contentEditText;
 	private Button sendHomeWorkButton;
 	private GetTypeTask mGetTypeTask;
@@ -96,7 +96,6 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 		selectGradeButton.setOnClickListener(this);
 
 
-		titleEditText = (EditText) findViewById(R.id.edit_homework_title);
 		contentEditText = (EditText) findViewById(R.id.edit_campus_notice_content);
 		editcancelButton = (Button) findViewById(R.id.edit_cancel_button);
 		editcancelButton.setOnClickListener(new OnClickListener() {
@@ -393,9 +392,10 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 
 			Log.d(TAG, "responseMessage.code " + responseMessage.code);
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-				
-				
-				mProgressDialog.dismiss();				
+				mProgressDialog.dismiss();		
+				Intent backIntent = new Intent(EditCampusNoticeActivity.this,CampusNoticeActivity.class);
+				startActivity(backIntent);
+				EditCampusNoticeActivity.this.finish();
 			} else {
 				mProgressDialog.dismiss();				
 			}

@@ -9,6 +9,7 @@ import com.dingxi.jackdemo.model.UserInfo;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -76,8 +77,9 @@ public class CampusNoticeDetailActivity extends Activity {
        values.put(CampusNoticeEntry.COLUMN_NAME_IS_READ, "1");
        
        
-       long insertResult = campusNoticeDao
+       long updateResult = campusNoticeDao
 				.updateCampusNoticeById(values,noticeID);
+       Log.i("CampusNoticeDetailActivity", "updateResult " + updateResult);
        
 
     }

@@ -59,7 +59,7 @@ public class HomeWorkDao {
 	    	
     	 SQLiteDatabase db = mDbHelper.getReadableDatabase();
     	String selection = HomeWorkEntry.COLUMN_NAME_ENTRY_ID + " = ?";
-    	String[] selectionArgs = { String.valueOf(rowId) };
+    	String[] selectionArgs = {rowId};
 
     	int count = db.update(
     			HomeWorkEntry.TABLE_NAME,

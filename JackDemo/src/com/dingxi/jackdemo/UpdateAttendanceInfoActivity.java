@@ -28,6 +28,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -37,485 +38,213 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class UpdateAttendanceInfoActivity extends Activity implements OnClickListener {
+public class UpdateAttendanceInfoActivity extends Activity {
 
-	public static final String TAG = "EditHomeWorkActivity";
-	private ImageButton mBackButton;
-	private TeacherInfo curretUserInfo;
-	private XiaoYunTongApplication mXiaoYunTongApplication;
-	private ImageButton selectClassButton;
-	private ImageButton selectGradeButton;
-	private ImageButton selectSubjectButton;
-	private TextView classNameText;
-	private TextView gradeNameText;
-	private TextView subjectNameText;
-	private EditText titleEditText;
-	private EditText contentEditText;
-	private Button sendHomeWorkButton;
-	private UpdateAttendanceInfo mUpdateAttendanceInfo;
-	private SendHomeWorkTask mSendHomeWorkTask;
-	private ProgressDialog mProgressDialog;
-	private String mClassId;
-	private String mGradeId;
-	private String mSubjectId;
-	private SearchType curretSearchType;
-	public List<ClassInfo> classInfoList;
-	public String[] classNameList;
-	public ArrayList<GradeInfo> gradeInfoList;
-	public String[] gradeNameList;
-	public List<SubjectInfo> subjectInfoList;
-	public String[] subjectNameList;
+    public static final String TAG = "UpdateAttendanceInfoActivity";
+    private ImageButton mBackButton;
+    private TeacherInfo curretUserInfo;
+    private XiaoYunTongApplication mXiaoYunTongApplication;
+    //private Button sendHomeWorkButton;
+    private UpdateAttendanceInfoTask mUpdateAttendanceInfoTask;
+    private ProgressDialog mProgressDialog;
+    private TextView stuNameText;
+    private TextView attTimeText;
+    private Integer updateId;
+    private Integer direc;
+    private RadioButton inSchoolRadioButton;
+    private RadioButton outSchoolRadioButton;
+    private RadioButton unKownRadioButton;
+    private Button confirmButton;
+    private Button cancekButton;
 
-	private enum SearchType {
-		ClassInfo, GradeInfo, SubjectInfo
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_update_attendance);
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_update_attendance);
+        mBackButton = (ImageButton) findViewById(R.id.back_button);
+        mBackButton.setOnClickListener(new OnClickListener() {
 
-		mBackButton = (ImageButton) findViewById(R.id.back_button);
-		mBackButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                finish();
+            }
+        });
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				finish();
-			}
-		});
-		
-		String updateId = getIntent().getStringExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID);
-		mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
-		curretUserInfo = (TeacherInfo) mXiaoYunTongApplication.userInfo;
+        updateId = getIntent().getIntExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID, 1);
+        direc = getIntent().getIntExtra(AttendanceInfoEntry.COLUMN_NAME_DIREC,3);
+        Log.i(TAG, "direc " + direc);
+        String stuName = getIntent().getStringExtra(AttendanceInfoEntry.COLUMN_NAME_STU_NAME);
+        String attTime = getIntent().getStringExtra(AttendanceInfoEntry.COLUMN_NAME_ATT_TIME);
 
-		gradeNameText = (TextView) findViewById(R.id.select_grade_text);
-		classNameText = (TextView) findViewById(R.id.select_class_text);
-		subjectNameText = (TextView) findViewById(R.id.select_subject_text);
+        mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
+        curretUserInfo = (TeacherInfo) mXiaoYunTongApplication.userInfo;
 
-		selectClassButton = (ImageButton) findViewById(R.id.select_class_button);
-		selectClassButton.setOnClickListener(this);
-		selectGradeButton = (ImageButton) findViewById(R.id.select_grade_button);
-		selectGradeButton.setOnClickListener(this);
-		selectSubjectButton = (ImageButton) findViewById(R.id.select_subject_button);
-		selectSubjectButton.setOnClickListener(this);
+        stuNameText = (TextView) findViewById(R.id.stu_name_text);
+        stuNameText.setText(stuName);
+        attTimeText = (TextView) findViewById(R.id.att_time_text);
+        attTimeText.setText(attTime);
+        
+        inSchoolRadioButton = (RadioButton) findViewById(R.id.radio_into_school);        
+        outSchoolRadioButton = (RadioButton) findViewById(R.id.radio_out_school);
+        unKownRadioButton = (RadioButton) findViewById(R.id.radio_unkown);
+        Log.i(TAG, "direc " + direc);
+        if(1== direc){
+            inSchoolRadioButton.setChecked(true);
+        } else if(2 == direc){
+            outSchoolRadioButton.setChecked(true);
+        } else {
+            unKownRadioButton.setChecked(true);
+        }
+        
+        
 
-		titleEditText = (EditText) findViewById(R.id.edit_homework_title);
-		contentEditText = (EditText) findViewById(R.id.edit_homework_content);
-		sendHomeWorkButton = (Button) findViewById(R.id.edit_ok_button);
-		sendHomeWorkButton.setOnClickListener(new OnClickListener() {
+        confirmButton = (Button) findViewById(R.id.edit_ok_button);
+        confirmButton.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
+            @Override
+            public void onClick(View v) {
 
-				if(checkText()){
-					if (Util.IsNetworkAvailable(UpdateAttendanceInfoActivity.this)) {
-						mProgressDialog = new ProgressDialog(
-								UpdateAttendanceInfoActivity.this);
-						mProgressDialog
-								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-						mProgressDialog
-								.setMessage(getString(R.string.now_adding_homework));
-						mProgressDialog.setOnCancelListener(new OnCancelListener() {
+                if (Util.IsNetworkAvailable(UpdateAttendanceInfoActivity.this)) {
+                    mProgressDialog = new ProgressDialog(UpdateAttendanceInfoActivity.this);
+                    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    mProgressDialog.setMessage(getString(R.string.now_modiy_attendance));
+                    mProgressDialog.setOnCancelListener(new OnCancelListener() {
 
-							@Override
-							public void onCancel(DialogInterface dialog) {
-								// TODO Auto-generated method stub
-								if (mSendHomeWorkTask != null
-										&& !mSendHomeWorkTask.isCancelled()) {
-									mSendHomeWorkTask.cancel(true);
-									// isCancelLogin = true;
-								}
-							}
-						});
-						String content = contentEditText.getText().toString();
-						mProgressDialog.show();
-						mSendHomeWorkTask = new SendHomeWorkTask(curretUserInfo.fkSchoolId,
-								mGradeId, mClassId, mSubjectId, content);
-						mSendHomeWorkTask.execute((Void) null);
-					}
-				}
-				
-			}
-		});
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            // TODO Auto-generated method stub
+                            if (mUpdateAttendanceInfoTask != null
+                                    && !mUpdateAttendanceInfoTask.isCancelled()) {
+                                mUpdateAttendanceInfoTask.cancel(true);
+                                // isCancelLogin = true;
+                            }
+                        }
+                    });
+                    mProgressDialog.show();
+                    mUpdateAttendanceInfoTask = new UpdateAttendanceInfoTask(updateId, direc);
+                    mUpdateAttendanceInfoTask.execute((Void) null);
+                }
 
-	}
+            }
+        });
+        cancekButton = (Button) findViewById(R.id.edit_cancel_button);
+        cancekButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                UpdateAttendanceInfoActivity.this.finish();
+            }
+        });
+        
 
-	protected boolean checkText() {
-		// TODO Auto-generated method stub
-		boolean isOk = false;
-		//String title = titleEditText.getText().toString();
-		String content = contentEditText.getText().toString();
-//		if (TextUtils.isEmpty(title)) {
-//
-//		} else 
-		if (TextUtils.isEmpty(content)) {
-			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.please_input_content,
-					Toast.LENGTH_LONG).show();
-		} else if (TextUtils.isEmpty(mClassId)) {
-			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.select_class,
-					Toast.LENGTH_LONG).show();
-		} else if (TextUtils.isEmpty(mGradeId)) {
-			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.select_grade,
-					Toast.LENGTH_LONG).show();
-		} else if (TextUtils.isEmpty(mSubjectId)){
-			Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.select_subject,
-					Toast.LENGTH_LONG).show();
-		} else {
-			isOk = true;
-		}
-				
-		return isOk;
+    }
 
-	}
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
 
-	public class UpdateAttendanceInfo extends AsyncTask<Void, Void, ResponseMessage> {
+        // Check which radio button was clicked
+        switch (view.getId()) {
+        case R.id.radio_into_school:
+            if (checked)
+                direc = 1;
+            break;
+        case R.id.radio_out_school:
+            if (checked)
+                direc = 2;
+            break;
+        case R.id.radio_unkown:
+            if (checked)
+                direc = 3;
+            break;
+        }
+    }
 
-		String fkAttId;
-		String direc;
-		public UpdateAttendanceInfo(String fkAttId,String direc) {
-			// TODO Auto-generated constructor stub
-			this.fkAttId = fkAttId;
-			this.direc = direc;
-		}
-		@Override
-		protected ResponseMessage doInBackground(Void... params) {
-			
-			
-			StringBuilder info = new StringBuilder();
-			info.append("{");
-			info.append("\"fkAttId\":");
-			info.append("\"" + fkAttId + "\"");
-			info.append(",");
-			info.append("\"direc\":");
-			info.append("\"" + direc + "\"");			
-			info.append("}");
-			
-			
-			// TODO: attempt authentication against a network service.
-			ResponseMessage responseMessage = new ResponseMessage();
-			try {
+    public class UpdateAttendanceInfoTask extends AsyncTask<Void, Void, ResponseMessage> {
 
-				
-					responseMessage.body = RestClient.updateAttendance(
-							curretUserInfo.id, curretUserInfo.ticket,
-							info.toString());	
-					
-					responseMessage.praseBody();
+        Integer fkAttId;
+        Integer direc;
 
-				if (TextUtils.isEmpty(responseMessage.body)) {
+        public UpdateAttendanceInfoTask(Integer fkAttId,Integer direc) {
+            // TODO Auto-generated constructor stub
+            this.fkAttId = fkAttId;
+            this.direc = direc;
+        }
 
-				} else {
-					
+        @Override
+        protected ResponseMessage doInBackground(Void... params) {
 
-				}
+            StringBuilder info = new StringBuilder();
+            info.append("{");
+            info.append("\"fkAttId\":");
+            info.append("\"" + fkAttId + "\"");
+            info.append(",");
+            info.append("\"direc\":");
+            info.append("\"" + direc + "\"");
+            info.append("}");
 
-			} catch (ConnectTimeoutException stex) {
-				responseMessage.message = getString(R.string.request_time_out);
-			} catch (SocketTimeoutException stex) {
-				responseMessage.message = getString(R.string.server_time_out);
-			} catch (HttpHostConnectException hhce) {
-				responseMessage.message = getString(R.string.connection_server_error);
-			} catch (JSONException e) {
-				responseMessage.message = getString(R.string.connection_error);
-				e.printStackTrace();
-			} catch (XmlPullParserException e) {
-				responseMessage.message = getString(R.string.connection_error);
-				e.printStackTrace();
-			} catch (IOException e) {
-				responseMessage.message = getString(R.string.connection_error);
-				e.printStackTrace();
-			}
+            // TODO: attempt authentication against a network service.
+            ResponseMessage responseMessage = new ResponseMessage();
+            try {
 
-			// TODO: register the new account here.
-			return responseMessage;
-		}
+                responseMessage.body = RestClient.updateAttendance(curretUserInfo.id,
+                        curretUserInfo.ticket, info.toString());
 
-		@Override
-		protected void onPostExecute(ResponseMessage responseMessage) {
-			mUpdateAttendanceInfo = null;
+                responseMessage.praseBody();
 
-			Log.d(TAG, "responseMessage.code " + responseMessage.code);
-			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-			
-				mProgressDialog.dismiss();
-				if (curretSearchType == SearchType.GradeInfo) {
-					showDialog(R.id.select_grade_button);
-				} else if (curretSearchType == SearchType.ClassInfo) {
-					showDialog(R.id.select_class_button);
-				} else if (curretSearchType == SearchType.SubjectInfo) {
-					showDialog(R.id.select_subject_button);
-				}
-			} else {
-				mProgressDialog.dismiss();
-				Toast.makeText(UpdateAttendanceInfoActivity.this,
-						responseMessage.message, Toast.LENGTH_LONG).show();
-			}
+            } catch (ConnectTimeoutException stex) {
+                responseMessage.message = getString(R.string.request_time_out);
+            } catch (SocketTimeoutException stex) {
+                responseMessage.message = getString(R.string.server_time_out);
+            } catch (HttpHostConnectException hhce) {
+                responseMessage.message = getString(R.string.connection_server_error);
+            } catch (JSONException e) {
+                responseMessage.message = getString(R.string.connection_error);
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                responseMessage.message = getString(R.string.connection_error);
+                e.printStackTrace();
+            } catch (IOException e) {
+                responseMessage.message = getString(R.string.connection_error);
+                e.printStackTrace();
+            }
 
-		}
+            return responseMessage;
+        }
 
-		@Override
-		protected void onCancelled() {
-			mUpdateAttendanceInfo = null;
+        @Override
+        protected void onPostExecute(ResponseMessage responseMessage) {
+            mUpdateAttendanceInfoTask = null;
 
-		}
-	}
+            Log.d(TAG, "responseMessage.code " + responseMessage.code);
+            Log.d(TAG, "responseMessage.body " + responseMessage.body);
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS){
+                Toast.makeText(UpdateAttendanceInfoActivity.this, R.string.modiy_attendance_sucess,
+                        Toast.LENGTH_LONG).show();
+                Intent backIntet = new Intent(UpdateAttendanceInfoActivity.this, AttendanceInfoActivity.class);
+                startActivity(backIntet);
+                UpdateAttendanceInfoActivity.this.finish();
+            } else {
+                Toast.makeText(UpdateAttendanceInfoActivity.this, responseMessage.message,
+                        Toast.LENGTH_LONG).show();
+            }
+            mProgressDialog.dismiss();
 
-	public class SendHomeWorkTask extends
-			AsyncTask<Void, Void, ResponseMessage> {
+        }
 
-		String fkSchoolId, fkGradeId, fkClassId, fkSubjectId, content;
+        @Override
+        protected void onCancelled() {
+            mUpdateAttendanceInfoTask = null;
 
-		public SendHomeWorkTask(String fkSchoolId, String fkGradeId,
-				String fkClassId, String fkSubjectId, String content) {
-			this.fkClassId = fkClassId;
-			this.fkGradeId = fkGradeId;
-			this.content = content;
-			this.fkSubjectId = fkSubjectId;
-			this.fkSchoolId = fkSchoolId;
-		}
-
-		@Override
-		protected ResponseMessage doInBackground(Void... params) {
-
-			StringBuilder info = new StringBuilder();
-			info.append("{");
-			info.append("\"fkSchoolId\":");
-			info.append("\"" + fkSchoolId + "\"");
-			info.append(",");
-
-			info.append("\"fkGradeId\":");
-			info.append("\"" + fkGradeId + "\"");
-			info.append(",");
-
-			info.append("\"fkClassId\":");
-			info.append("\"" + fkClassId + "\"");
-			info.append(",");
-			info.append("\"fkSubjectId\":");
-			info.append("\"" + fkSubjectId + "\"");
-			info.append(",");
-
-			info.append("\"content\":");
-			info.append("\"" + content + "\"");
-			info.append("}");
-
-			Log.d(TAG, "info.toString() " + info.toString());
-
-			ResponseMessage responseMessage = new ResponseMessage();
-			try {
-
-				responseMessage.body = RestClient.addHomeWorks(
-						curretUserInfo.id, curretUserInfo.ticket,
-						info.toString());
-				Log.d(TAG, "SendHomeWorkTask response " + responseMessage.body);
-
-				if (TextUtils.isEmpty(responseMessage.body)) {
-
-				} else {
-					responseMessage.code = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_CODE);
-					responseMessage.message = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-					responseMessage.datas = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_DATAS);
-					responseMessage.total = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_TOTAL);
-
-				}
-
-			} catch (ConnectTimeoutException stex) {
-				responseMessage.message = getString(R.string.request_time_out);
-			} catch (SocketTimeoutException stex) {
-				responseMessage.message = getString(R.string.server_time_out);
-			} catch (HttpHostConnectException hhce) {
-				responseMessage.message = getString(R.string.connection_server_error);
-			} catch (JSONException e) {
-				responseMessage.message = getString(R.string.connection_error);
-				e.printStackTrace();
-			} catch (XmlPullParserException e) {
-				responseMessage.message = getString(R.string.connection_error);
-				e.printStackTrace();
-			} catch (IOException e) {
-				responseMessage.message = getString(R.string.connection_error);
-				e.printStackTrace();
-			}
-
-			// TODO: register the new account here.
-			return responseMessage;
-		}
-
-		@Override
-		protected void onPostExecute(ResponseMessage responseMessage) {
-			mSendHomeWorkTask = null;
-
-			Log.d(TAG, "responseMessage.code " + responseMessage.code);
-			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-				mProgressDialog.dismiss();				
-			} else {
-				mProgressDialog.dismiss();				
-			}
-			
-			Toast.makeText(UpdateAttendanceInfoActivity.this,
-					responseMessage.message, Toast.LENGTH_LONG).show();
-
-		}
-
-		@Override
-		protected void onCancelled() {
-			mSendHomeWorkTask = null;
-
-		}
-	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		if (Util.IsNetworkAvailable(UpdateAttendanceInfoActivity.this)) {
-			mProgressDialog = new ProgressDialog(UpdateAttendanceInfoActivity.this);
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			int errorCode = -1;
-			switch (v.getId()) {
-			case R.id.select_class_button:
-
-				if (!TextUtils.isEmpty(mGradeId)) {
-					curretSearchType = SearchType.ClassInfo;
-					mProgressDialog
-							.setMessage(getString(R.string.now_geting_classinfo));
-				} else {
-					errorCode = R.string.select_grade;
-				}
-
-				break;
-			case R.id.select_grade_button:
-				if (!TextUtils.isEmpty(curretUserInfo.fkSchoolId)) {
-					curretSearchType = SearchType.GradeInfo;
-					mProgressDialog
-							.setMessage(getString(R.string.now_geting_classinfo));
-				} else {
-					errorCode = R.string.select_school;
-				}
-
-				break;
-			case R.id.select_subject_button:
-				if (!TextUtils.isEmpty(mClassId)) {
-					curretSearchType = SearchType.SubjectInfo;
-					mProgressDialog
-							.setMessage(getString(R.string.now_geting_classinfo));
-				} else {
-					errorCode = R.string.select_class;
-				}
-
-				break;
-			default:
-				break;
-			}
-
-			if (errorCode != -1) {
-				Toast.makeText(UpdateAttendanceInfoActivity.this, errorCode,
-						Toast.LENGTH_LONG).show();
-				mProgressDialog = null;
-			} else {
-				mProgressDialog.setOnCancelListener(new OnCancelListener() {
-
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						// TODO Auto-generated method stub
-						if (mUpdateAttendanceInfo != null
-								&& !mUpdateAttendanceInfo.isCancelled()) {
-							mUpdateAttendanceInfo.cancel(true);
-							// isCancelLogin = true;
-						}
-					}
-				});
-				mProgressDialog.show();
-				mUpdateAttendanceInfo = new UpdateAttendanceInfo(curretUserInfo.id, curretUserInfo.ticket);
-				mUpdateAttendanceInfo.execute((Void) null);
-			}
-		}
-
-	}
-
-	@Override
-	protected Dialog onCreateDialog(int id, Bundle args) {
-		// TODO Auto-generated method stub
-		switch (id) {
-		case R.id.select_class_button:
-
-			if (classInfoList != null && classInfoList.size() > 0) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						UpdateAttendanceInfoActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
-						classNameList, new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Log.d(TAG, "which " + which);
-								mClassId = classInfoList.get(which).id;
-								classNameText.setText(classInfoList.get(which).name);
-								Log.d(TAG, "mClassId " + mClassId);
-								// The 'which' argument contains the index
-								// position
-								// of the selected item
-							}
-						});
-				return builder.create();
-			}
-			break;
-		case R.id.select_grade_button:
-
-			if (gradeInfoList != null && gradeInfoList.size() > 0) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						UpdateAttendanceInfoActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
-						gradeNameList, new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Log.d(TAG, "which " + which);
-								mGradeId = gradeInfoList.get(which).id;
-								gradeNameText.setText(gradeInfoList.get(which).name);
-								Log.d(TAG, "mGradeId " + mGradeId);
-								// The 'which' argument contains the index
-								// position
-								// of the selected item
-							}
-						});
-				return builder.create();
-			}
-			break;
-		case R.id.select_subject_button:
-
-			if (subjectNameList != null && subjectNameList.length > 0) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						UpdateAttendanceInfoActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
-						subjectNameList, new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Log.d(TAG, "which " + which);
-								mSubjectId = subjectInfoList.get(which).id;
-								subjectNameText.setText(subjectInfoList
-										.get(which).name);
-								Log.d(TAG, "mSubjectId " + mSubjectId);
-								// The 'which' argument contains the index
-								// position
-								// of the selected item
-							}
-						});
-				return builder.create();
-			}
-			break;
-		default:
-			break;
-		}
-		return null;
-
-	}
+        }
+    }
 
 }

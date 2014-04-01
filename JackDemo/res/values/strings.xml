@@ -43,6 +43,8 @@
     <string name="input_new_password">输入新密码： </string>
     <string name="input_new_password_again">输入新密码： </string>
     <string name="now_modiy_password">正在修改密码...</string>
+      <string name="now_modiy_attendance">正在修改考勤信息...</string>
+      <string name="modiy_attendance_sucess">修改考勤信息成功...</string>
     <string name="modify_password_sucess">修改密码成功 </string>
     <string name="now_loading_locaton">正在加载位置信息...</string>
     <string name="not_location_data">没有位置信息</string>
@@ -64,7 +66,9 @@
     <string name="no_data">没有数据</string>
     <string name="into_school">进校</string>
     <string name="out_school">离校</string>
-    <string name="unkown_school">未知</string>
+    <string name="unkown_time">未知</string>
+    <string name="student_name">学生姓名</string>
+    <string name="att_time">出入时间</string>
     <string name="title_activity_attendance_info">AttendanceInfoActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

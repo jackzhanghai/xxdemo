@@ -23,25 +23,37 @@
             android:gravity="center_vertical" >
 
             <TextView
-                android:id="@+id/select_grade_text"
+                android:id="@+id/stu_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="4dp"
                 android:layout_marginTop="10dp"
                 android:paddingLeft="4dp"
-                android:text="@string/select_grade"
+                android:text="@string/student_name"
                 android:textSize="18sp" />
 
-            <ImageButton
-                android:id="@+id/select_grade_button"
+            <TextView
+                android:id="@+id/password_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_toRightOf="@id/stu_name"
+                android:background="@drawable/dividing_line" />
+
+            <TextView
+                android:id="@+id/stu_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/chooseschool_down" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/password_line"
+                android:paddingLeft="4dp"
+                android:text="@string/student_name" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -52,100 +64,74 @@
             android:gravity="center_vertical" >
 
             <TextView
-                android:id="@+id/select_class_text"
+                android:id="@+id/att_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="4dp"
                 android:layout_marginTop="10dp"
                 android:paddingLeft="4dp"
-                android:text="@string/select_class"
+                android:text="@string/att_time"
                 android:textSize="18sp" />
-
-            <ImageButton
-                android:id="@+id/select_class_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/chooseschool_down" />
-        </RelativeLayout>
-        
-         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/input_background"
-            android:gravity="center_vertical" >
 
             <TextView
-                android:id="@+id/select_subject_text"
+                android:id="@+id/password_line"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="4dp"
-                android:text="@string/select_subject"
-                android:textSize="18sp" />
+                android:layout_marginLeft="4dp"
+                android:layout_toRightOf="@id/att_time"
+                android:background="@drawable/dividing_line" />
 
-            <ImageButton
-                android:id="@+id/select_subject_button"
+            <TextView
+                android:id="@+id/att_time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/chooseschool_down" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/password_line"
+                android:paddingLeft="4dp"
+                android:text="@string/student_name" />
         </RelativeLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:background="@drawable/input_background"
-        android:orientation="vertical" >
-
-        <EditText
-            android:id="@+id/edit_homework_title"
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:id="@+id/in_out_school"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_gravity="center"
-            android:hint="@string/edit_homewok_title"
-            android:maxLength="20" />
-    </LinearLayout>
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_weight="1.0"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/new_message_background" >
+            <RadioButton
+                android:id="@+id/radio_into_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:textColor="@android:color/darker_gray"
+                android:onClick="onRadioButtonClicked"
+                android:text="@string/into_school" />
 
-        <EditText
-            android:id="@+id/edit_homework_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="4dp"
-            
-            android:hint="@string/edit_homewok_hint"
-            android:singleLine="false" >
-        </EditText>
+            <RadioButton
+                android:id="@+id/radio_out_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:textColor="@android:color/darker_gray"
+                android:onClick="onRadioButtonClicked"
+                android:text="@string/out_school" />
+
+            <RadioButton
+                android:id="@+id/radio_unkown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:textColor="@android:color/darker_gray"
+                android:layout_weight="1.0"
+                android:onClick="onRadioButtonClicked"
+                android:text="@string/unkown_time" />
+        </RadioGroup>
     </LinearLayout>
 
     <LinearLayout
@@ -162,6 +148,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/login_button_selector"
             android:text="@string/confirm" />
+
         <Button
             android:id="@+id/edit_cancel_button"
             android:layout_width="wrap_content"

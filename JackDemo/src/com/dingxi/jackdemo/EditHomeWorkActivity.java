@@ -25,6 +25,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -49,7 +50,6 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	private TextView classNameText;
 	private TextView gradeNameText;
 	private TextView subjectNameText;
-	private EditText titleEditText;
 	private EditText contentEditText;
 	private Button sendHomeWorkButton;
 	private Button editcancelButton;
@@ -99,7 +99,6 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 		selectSubjectButton = (ImageButton) findViewById(R.id.select_subject_button);
 		selectSubjectButton.setOnClickListener(this);
 
-		titleEditText = (EditText) findViewById(R.id.edit_homework_title);
 		contentEditText = (EditText) findViewById(R.id.edit_homework_content);
 		editcancelButton = (Button) findViewById(R.id.edit_cancel_button);
 		editcancelButton.setOnClickListener(new OnClickListener() {
@@ -416,25 +415,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 						curretUserInfo.id, curretUserInfo.ticket,
 						info.toString());
 				Log.d(TAG, "SendHomeWorkTask response " + responseMessage.body);
-
-				if (TextUtils.isEmpty(responseMessage.body)) {
-
-				} else {
-					responseMessage.code = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_CODE);
-					responseMessage.message = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-					responseMessage.datas = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_DATAS);
-					responseMessage.total = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_TOTAL);
-
-				}
-
+				responseMessage.praseBody();
 			} catch (ConnectTimeoutException stex) {
 				responseMessage.message = getString(R.string.request_time_out);
 			} catch (SocketTimeoutException stex) {
@@ -462,7 +443,12 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 
 			Log.d(TAG, "responseMessage.code " + responseMessage.code);
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-				mProgressDialog.dismiss();				
+			    
+			    mProgressDialog.dismiss();   
+			    Intent backIntet = new Intent(EditHomeWorkActivity.this,HomeWorkActivity.class);
+			    startActivity(backIntet);
+			    EditHomeWorkActivity.this.finish();
+							
 			} else {
 				mProgressDialog.dismiss();				
 			}

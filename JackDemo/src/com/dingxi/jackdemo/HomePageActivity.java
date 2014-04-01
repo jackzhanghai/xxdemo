@@ -29,6 +29,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,12 +39,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -76,6 +79,7 @@ public class HomePageActivity extends Activity {
     private ArrayList<String> campusNoticeContentList;
     private XiaoyuantongDbHelper xiaoyuantongDbHelpers;
     private XiaoYunTongApplication mXiaoYunTongApplication;
+    private Button exitAccountButton;
     
     boolean isFinish = false;
     private Handler rollTextHandler = new Handler(){
@@ -127,7 +131,35 @@ public class HomePageActivity extends Activity {
 //            }
 //        });
         
-       
+        exitAccountButton = (Button) findViewById(R.id.exit_account);
+        exitAccountButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                
+                SharedPreferences settings = getSharedPreferences(
+                        LoginActivity.PREFS_USER_INFO, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean(LoginActivity.IS_AUTO_LOGIN, false);
+                editor.commit();
+                Intent loginIntent = new Intent(HomePageActivity.this,
+                        LoginActivity.class);
+                startActivity(loginIntent);
+                
+                userInfo = null;
+                
+                if(mGetAllNoteTask!=null && !mGetAllNoteTask.isCancelled()){
+                    mGetAllNoteTask.cancel(true);
+                    mGetAllNoteTask= null;
+                }
+                if(mGetAllChildTask!=null && !mGetAllChildTask.isCancelled()){
+                    mGetAllChildTask.cancel(true);  
+                    mGetAllChildTask = null;
+                }
+                //private GetAllChildTask mGetAllChildTask;
+                finish();
+            }
+        });
 
         xiaoyuantongDbHelpers = new XiaoyuantongDbHelper(getApplicationContext());
       
@@ -234,32 +266,13 @@ public class HomePageActivity extends Activity {
             mProgressDialog.show();
             mGetAllChildTask = new GetAllChildTask();
             mGetAllChildTask.execute((Void) null);
-        } else if (userInfo.roleType == UserType.ROLE_TEACHER) {
-
-            mGetAllNoteTask = new GetAllNoteTask();
-            mGetAllNoteTask.execute((Void) null);
-            // mProgressDialog.setMessage(getString(R.string.now_geting_classinfo));
-            //
-            // mProgressDialog.setOnCancelListener(new OnCancelListener() {
-            //
-            // @Override
-            // public void onCancel(DialogInterface dialog) {
-            // // TODO Auto-generated method stub
-            // if (mGetAllClassTask != null
-            // && !mGetAllClassTask.isCancelled()) {
-            // mGetAllClassTask.cancel(true);
-            // // isCancelLogin = true;
-            // }
-            // }
-            // });
-            //
-            // mProgressDialog.show();
-            // mGetAllClassTask = new GetAllClassTask();
-            // mGetAllClassTask.execute((Void) null);
-        }
+        } 
 
     }
 
+    
+    
+    
     
     
     
@@ -293,6 +306,20 @@ public class HomePageActivity extends Activity {
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
+        
+        
+        if (userInfo.roleType == UserType.ROLE_PARENT) {
+
+            ParentInfo parentInfo = (ParentInfo) userInfo;
+            if(!TextUtils.isEmpty(parentInfo.defalutChild.id)){
+                mGetAllNoteTask = new GetAllNoteTask();
+                mGetAllNoteTask.execute((Void) null);
+            }
+            
+        } else if (userInfo.roleType == UserType.ROLE_TEACHER) {
+            mGetAllNoteTask = new GetAllNoteTask();
+            mGetAllNoteTask.execute((Void) null);
+        }
     }
     
     @Override
@@ -762,6 +789,8 @@ public class HomePageActivity extends Activity {
                         mSpinnerInfo.add(studentInfo.name);
                     }
                     parentInfo.nameList = mSpinnerInfo;
+                    mGetAllNoteTask = new GetAllNoteTask();
+                    mGetAllNoteTask.execute((Void) null);
                     mSpinnerAdapter.notifyDataSetChanged();
                 }
             	 mProgressDialog.dismiss();

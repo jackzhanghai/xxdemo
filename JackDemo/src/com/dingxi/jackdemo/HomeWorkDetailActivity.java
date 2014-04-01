@@ -3,13 +3,13 @@ package com.dingxi.jackdemo;
 
 import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.model.HomeWorkInfo;
-import com.dingxi.jackdemo.model.UserInfo;
 import com.dingxi.jackdemo.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.jackdemo.model.HomeWorkInfo.HomeWorkEntry;
 
 import android.app.Activity;
 import android.content.ContentValues;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -20,7 +20,6 @@ public class HomeWorkDetailActivity extends Activity {
 
     private View parentHeader;
     private ImageButton mBackButton;
-    private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
     private HomeWorkInfo curretHomeWorkInfo;
     private HomeWorkDao curretHomeDao;
@@ -47,9 +46,6 @@ public class HomeWorkDetailActivity extends Activity {
         });
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 
-        curretUserInfo = mXiaoYunTongApplication.userInfo;
-        
-        
         homeWorkTite = (TextView) findViewById(R.id.homework_header);
         homeWorkDate = (TextView) findViewById(R.id.homework_date);
         homeWorkContent = (TextView) findViewById(R.id.homework_content);
@@ -74,12 +70,12 @@ public class HomeWorkDetailActivity extends Activity {
        HomeWorkDao campusNoticeDao = new HomeWorkDao(
     		   HomeWorkDetailActivity.this);
        ContentValues values = new ContentValues();
-       values.put(CampusNoticeEntry.COLUMN_NAME_IS_READ, "1");
+       values.put(HomeWorkEntry.COLUMN_NAME_IS_READ, "1");
        
        
-       long insertResult = campusNoticeDao
+      int updateResult = campusNoticeDao
 				.updateHomeWorkById(values,homeWorkID);
-       
+       Log.i("CampusNoticeDetailActivity", "updateResult " + updateResult);
        
     }
 
