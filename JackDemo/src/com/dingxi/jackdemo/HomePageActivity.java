@@ -9,6 +9,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.dingxi.jackdemo.HomePageActivity.ImageAdapter.ViewHolder;
 import com.dingxi.jackdemo.dao.CampusNoticeDao;
 import com.dingxi.jackdemo.dao.HomeWorkDao;
 import com.dingxi.jackdemo.db.XiaoyuantongDbHelper;
@@ -71,7 +72,7 @@ public class HomePageActivity extends Activity {
     private int homeWorkTotal;
     private int campusNotieTotal;
     private RollTextThread rollTextThread;
-    
+    GridView gridview;
     private TextView rollNoteText;
     private ArrayList<StudentInfo> mStudentList;
     private ArrayList<String> mSpinnerInfo;
@@ -109,14 +110,14 @@ public class HomePageActivity extends Activity {
         userInfo = mXiaoYunTongApplication.userInfo;
 
 
-        GridView gridview = (GridView) findViewById(R.id.gridview);
+        gridview = (GridView) findViewById(R.id.gridview);
         rollNoteText = (TextView) findViewById(R.id.roll_note_text);
         mImageAdapter = new ImageAdapter(this);
         mSpinnerInfo = new ArrayList<String>();
         mStudentList = new ArrayList<StudentInfo>();
         campusNoticeContentList = new ArrayList<String>();
         gridview.setAdapter(mImageAdapter);
-
+       
         backButton = (ImageButton) findViewById(R.id.back_button);
         backButton.setVisibility(View.GONE);
 //
@@ -266,7 +267,10 @@ public class HomePageActivity extends Activity {
             mProgressDialog.show();
             mGetAllChildTask = new GetAllChildTask();
             mGetAllChildTask.execute((Void) null);
-        } 
+        } else if (userInfo.roleType == UserType.ROLE_TEACHER) {
+            mGetAllNoteTask = new GetAllNoteTask();
+            mGetAllNoteTask.execute((Void) null);
+        }
 
     }
 
@@ -300,26 +304,60 @@ public class HomePageActivity extends Activity {
 
     }
 
-    
+  
     
     @Override
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
         
-        
-        if (userInfo.roleType == UserType.ROLE_PARENT) {
+       
 
-            ParentInfo parentInfo = (ParentInfo) userInfo;
-            if(!TextUtils.isEmpty(parentInfo.defalutChild.id)){
-                mGetAllNoteTask = new GetAllNoteTask();
-                mGetAllNoteTask.execute((Void) null);
-            }
-            
-        } else if (userInfo.roleType == UserType.ROLE_TEACHER) {
-            mGetAllNoteTask = new GetAllNoteTask();
-            mGetAllNoteTask.execute((Void) null);
+        View  homeWorkView = gridview.getChildAt(0);
+        if(homeWorkView!=null){
+        	 HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+             homeWorkTotal = homeWorkDao.queryReadOrNotReadCount(0);
+        	 ViewHolder viewHolder = (ViewHolder)  homeWorkView.getTag();
+             if (homeWorkTotal > 0) {
+             	 
+                 viewHolder.numberText.setVisibility(View.VISIBLE);
+                 viewHolder.numberText.setText(String.valueOf(homeWorkTotal));
+                 homeWorkView.setBackgroundResource(R.drawable.button_down);
+             } else {
+             	viewHolder.numberText.setVisibility(View.GONE);
+             	homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
+             }
+             homeWorkDao.colseDb();
+             homeWorkDao = null;
         }
+       
+
+       
+       
+        View  convertView = gridview.getChildAt(1);
+        if(convertView!=null){
+        	 CampusNoticeDao campusNoticeDao = new CampusNoticeDao(HomePageActivity.this);
+             campusNotieTotal = campusNoticeDao.queryReadOrNotReadCount(0);
+             campusNoticeContentList.clear();
+             campusNoticeContentList.addAll(campusNoticeDao.queryNotReadCampusNoticeContents());
+             ViewHolder convertViewHolder = (ViewHolder)  convertView.getTag();
+             if (campusNotieTotal > 0) {
+
+             	convertViewHolder.numberText.setVisibility(View.VISIBLE);
+             	convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
+                 convertView.setBackgroundResource(R.drawable.button_down);
+             }else {
+             	convertViewHolder.numberText.setVisibility(View.GONE);
+             	convertView.setBackgroundResource(R.drawable.button_ordinary);
+             }
+             campusNoticeDao.colseDb();
+             campusNoticeDao = null;
+             
+        }
+        
+         
+ 
+
     }
     
     @Override
@@ -396,7 +434,7 @@ public class HomePageActivity extends Activity {
                 itemId = teacherTitles[position];
 
             }
-            return itemId;
+            return 0;
         }
 
         @Override
@@ -550,9 +588,9 @@ public class HomePageActivity extends Activity {
             StringBuilder info = new StringBuilder();
             try {
             	 responseMessage = new ResponseMessage();
-                // 老师info：
-                // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime”:”2014-03-24”}
-                // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime”:”2014-03-24”}
+                // 老师info�?
+                // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime�?�?014-03-24”}
+                // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime�?�?014-03-24”}
 
                 info.append("{");
                 info.append("\"fkSchoolId\":");
@@ -602,6 +640,7 @@ public class HomePageActivity extends Activity {
                 e.printStackTrace();
             }
             HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+            
             if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS && responseMessage.total>0){
             	
             	try {
@@ -625,9 +664,9 @@ public class HomePageActivity extends Activity {
            
            
             responseMessage = null;
-            // 老师info：
-            // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime”:”2014-03-24”}
-            // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime”:”2014-03-24”}
+            // 老师info�?
+            // {"fkSchoolId":"2","fkClassId":"0","fkClassId2":"2",”queryTime�?�?014-03-24”}
+            // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime�?�?014-03-24”}
             try {           	
             	 responseMessage = new ResponseMessage();
             	 responseMessage.body = RestClient.getMessageInfos(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket,

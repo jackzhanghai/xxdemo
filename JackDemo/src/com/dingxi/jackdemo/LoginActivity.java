@@ -487,71 +487,60 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class GetAllShoolTask extends AsyncTask<Void, Void, String> {
+	public class GetAllShoolTask extends AsyncTask<Void, Void, ResponseMessage> {
 		@Override
-		protected String doInBackground(Void... params) {
+		protected ResponseMessage doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
-			String schoolsInfo = null;
+			ResponseMessage responseMessage = new  ResponseMessage();
 			try {
-				schoolsInfo = RestClient.getAllSchool();
+				responseMessage.body = RestClient.getAllSchool();
+				responseMessage.praseBody();
+
 			} catch (ConnectTimeoutException stex) {
-				schoolsInfo = getString(R.string.request_time_out);
+				stex.printStackTrace();
+				responseMessage.message = getString(R.string.request_time_out);
 			} catch (SocketTimeoutException stex) {
-				schoolsInfo = getString(R.string.server_time_out);
+				stex.printStackTrace();
+				responseMessage.message = getString(R.string.server_time_out);
 			} catch (HttpHostConnectException hhce) {
-				schoolsInfo = getString(R.string.connection_server_error);
+				hhce.printStackTrace();
+				responseMessage.message = getString(R.string.connection_server_error);
+			} catch (JSONException e) {
+				responseMessage.message = getString(R.string.connection_server_error);
+				e.printStackTrace();
 			} catch (XmlPullParserException e) {
-				schoolsInfo = getString(R.string.connection_error);
+
+				responseMessage.message = getString(R.string.connection_error);
 				e.printStackTrace();
 			} catch (IOException e) {
-				schoolsInfo = getString(R.string.connection_error);
+				responseMessage.message = getString(R.string.connection_error);
 				e.printStackTrace();
 			}
 
 			// TODO: register the new account here.
-			return schoolsInfo;
+			return responseMessage;
 		}
 
 		@Override
-		protected void onPostExecute(String schoolsInfo) {
+		protected void onPostExecute(ResponseMessage responseMessage) {
 			mGetAllShoolTask = null;
-			Log.d(TAG, "result " + schoolsInfo);
-			if (!TextUtils.isEmpty(schoolsInfo)) {
-
-				try {
-					if (JSONParser.getIntByTag(schoolsInfo,
-							ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-						parseSchoolInfo(schoolsInfo);
-
-						mProgressDialog.dismiss();
-
-						showDialog(R.id.choose_school);
-					} else {
-						mProgressDialog.dismiss();
-						String errorMessage = JSONParser.getStringByTag(
-								schoolsInfo, ResponseMessage.RESULT_TAG_MESSAGE);
-						if (!TextUtils.isEmpty(errorMessage)) {
-							Toast.makeText(LoginActivity.this, errorMessage,
-									Toast.LENGTH_LONG).show();
-						} else {
-							Toast.makeText(LoginActivity.this, schoolsInfo,
-									Toast.LENGTH_LONG).show();
-						}
-					}
-				} catch (JSONException e) {
-				    if(mProgressDialog!=null){
-				        mProgressDialog.dismiss();
-				    }
-					
-					Toast.makeText(LoginActivity.this, schoolsInfo,
+			Log.d(TAG, "GetAllShool result " + responseMessage.body);
+			
+			if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS){
+				if(responseMessage.total>0){
+					parseSchoolInfo(responseMessage.body);
+				}else {
+					Toast.makeText(LoginActivity.this, R.string.no_data,
 							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				}
+				}				
+				mProgressDialog.dismiss();
+				showDialog(R.id.choose_school);
 			} else {
 				mProgressDialog.dismiss();
-
+				Toast.makeText(LoginActivity.this, responseMessage.message,
+						Toast.LENGTH_LONG).show();
 			}
+			
 		}
 
 		@Override

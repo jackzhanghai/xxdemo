@@ -220,12 +220,12 @@ public class CampusNoticeActivity extends Activity {
 			TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 			mGetmCampusNoticeTask = new GetmCampusNoticeListTask(1, 5,
 					curretUserInfo.fkSchoolId, teacherInfo.defalutClassId, "",
-					"", "",false);
+					"", "",true);
 		} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
 			ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 			mGetmCampusNoticeTask = new GetmCampusNoticeListTask(1, 5,
 					curretUserInfo.fkSchoolId, "", "",
-					parentInfo.defalutChild.id, "",false);
+					parentInfo.defalutChild.id, "",true);
 		}
 
 		mGetmCampusNoticeTask.execute((Void) null);

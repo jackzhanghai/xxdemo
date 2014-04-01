@@ -69,6 +69,8 @@
     <string name="unkown_time">未知</string>
     <string name="student_name">学生姓名</string>
     <string name="att_time">出入时间</string>
+    <string name="readed">已读</string>
+    <string name="unread">未读</string>
     <string name="title_activity_attendance_info">AttendanceInfoActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

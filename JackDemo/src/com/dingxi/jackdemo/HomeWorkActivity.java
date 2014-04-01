@@ -219,11 +219,11 @@ public class HomeWorkActivity extends Activity {
 		if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
 			TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
-					teacherInfo.defalutClassId, "", "", "", false);
+					teacherInfo.defalutClassId, "", "", "", true);
 		} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
 			ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
-					"", "", parentInfo.defalutChild.id, "", false);
+					"", "", parentInfo.defalutChild.id, "", true);
 		}
 
 		mHomeWorTask.execute((Void) null);
