@@ -55,7 +55,6 @@ public class LoginActivity extends Activity {
 	// UI references.
 	private EditText mUserNameEditText;
 	private EditText mPasswordEditText;
-	private TextView mSchoolNameText;
 	private Button mLoginButton;
 	private Button mCancelLoginButton;
 	private UserLoginTask mAuthTask;
@@ -64,8 +63,8 @@ public class LoginActivity extends Activity {
 	private CheckBox mRemberCheckBox;
 
 	// Values for email and password at the time of the login attempt.
-	private String mSchoolId;
-	private String mSchoolName;
+	//private String mSchoolId;
+	//private String mSchoolName;
 	private String mUserName;
 	private String mPassword;
 	private UserType mUserType = UserType.ROLE_PARENT;
@@ -84,7 +83,6 @@ public class LoginActivity extends Activity {
 
 		mUserNameEditText = (EditText) findViewById(R.id.user_name);
 		mPasswordEditText = (EditText) findViewById(R.id.password);
-		mSchoolNameText = (TextView) findViewById(R.id.school_name);
 		mAutoLoginCheckBox = (CheckBox) findViewById(R.id.auto_login_checkBox);
 		mRemberCheckBox = (CheckBox) findViewById(R.id.remember_password_checkBox);
 
@@ -102,13 +100,11 @@ public class LoginActivity extends Activity {
 		// isAutoLogin = getIntent().getBooleanExtra("auto", false);
 		setAuthUI(mUserType);
 		if (isRemberPassWord || isAutoLogin) {
-			mSchoolId = settings.getString(LOGIN_SCHOOL_ID, "");
-			mSchoolName = settings.getString(LOGIN_SCHOOL_NAME, "");
+
 			mUserName = settings.getString(lOGIN_USER_NAME, "");
 			mPassword = settings.getString(LOGIN_PASSWORD, "");
 
 			mUserNameEditText.setText(mUserName);
-			mSchoolNameText.setText(mSchoolName);
 			mPasswordEditText.setText(mPassword);
 			mAutoLoginCheckBox.setChecked(isAutoLogin);
 			mRemberCheckBox.setChecked(isRemberPassWord);
@@ -185,30 +181,30 @@ public class LoginActivity extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
 		// TODO Auto-generated method stub
-		switch (id) {
-		case R.id.choose_school:
-
-			if (schoolList != null && schoolList.size() > 0) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						LoginActivity.this);
-				builder.setTitle(R.string.select_school).setItems(
-						schoolsString, new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Log.d(TAG, "which " + which);
-								mSchoolId = schoolList.get(which).id;
-								mSchoolName = schoolList.get(which).name;
-								mSchoolNameText.setText(mSchoolName);
-								Log.d(TAG, "mSchoolId " + mSchoolId);
-							}
-						});
-				return builder.create();
-			}
-
-			// break;
-		default:
-			break;
-		}
+//		switch (id) {
+//		case R.id.choose_school:
+//
+//			if (schoolList != null && schoolList.size() > 0) {
+//				AlertDialog.Builder builder = new AlertDialog.Builder(
+//						LoginActivity.this);
+//				builder.setTitle(R.string.select_school).setItems(
+//						schoolsString, new DialogInterface.OnClickListener() {
+//							public void onClick(DialogInterface dialog,
+//									int which) {
+//								Log.d(TAG, "which " + which);
+//								mSchoolId = schoolList.get(which).id;
+//								mSchoolName = schoolList.get(which).name;
+//								mSchoolNameText.setText(mSchoolName);
+//								Log.d(TAG, "mSchoolId " + mSchoolId);
+//							}
+//						});
+//				return builder.create();
+//			}
+//
+//			// break;
+//		default:
+//			break;
+//		}
 		return null;
 
 	}
@@ -237,33 +233,33 @@ public class LoginActivity extends Activity {
 				+ isRemberPassWord);
 	}
 
-	public void onChooseSchoolButtonClicked(View view) {
-
-		if (schoolsString != null && schoolsString.length > 0) {
-
-			showDialog(R.id.choose_school);
-		} else {
-			mProgressDialog = new ProgressDialog(LoginActivity.this);
-			mProgressDialog.setMessage(getString(R.string.loading_school));
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			mProgressDialog.setOnCancelListener(new OnCancelListener() {
-
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					// TODO Auto-generated method stub
-					if (mGetAllShoolTask != null && !mGetAllShoolTask.isCancelled()) {
-						mGetAllShoolTask.cancel(true);
-						// isCancelLogin = true;
-					}
-					mProgressDialog = null;
-					mGetAllShoolTask = null;
-				}
-			});
-			mProgressDialog.show();
-			mGetAllShoolTask = new GetAllShoolTask();
-			mGetAllShoolTask.execute((Void) null);
-		}
-	}
+//	public void onChooseSchoolButtonClicked(View view) {
+//
+//		if (schoolsString != null && schoolsString.length > 0) {
+//
+//			showDialog(R.id.choose_school);
+//		} else {
+//			mProgressDialog = new ProgressDialog(LoginActivity.this);
+//			mProgressDialog.setMessage(getString(R.string.loading_school));
+//			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//			mProgressDialog.setOnCancelListener(new OnCancelListener() {
+//
+//				@Override
+//				public void onCancel(DialogInterface dialog) {
+//					// TODO Auto-generated method stub
+//					if (mGetAllShoolTask != null && !mGetAllShoolTask.isCancelled()) {
+//						mGetAllShoolTask.cancel(true);
+//						// isCancelLogin = true;
+//					}
+//					mProgressDialog = null;
+//					mGetAllShoolTask = null;
+//				}
+//			});
+//			mProgressDialog.show();
+//			mGetAllShoolTask = new GetAllShoolTask();
+//			mGetAllShoolTask.execute((Void) null);
+//		}
+//	}
 
 	public void onRadioButtonClicked(View view) {
 		boolean checked = ((RadioButton) view).isChecked();
@@ -331,10 +327,7 @@ public class LoginActivity extends Activity {
 		boolean isError = false;
 		String errorMessage = null;
 		
-		if(TextUtils.isEmpty(mSchoolId)){
-			isError = true;
-			errorMessage = getString(R.string.select_school);
-		} else if (TextUtils.isEmpty(mPassword)) {
+	if (TextUtils.isEmpty(mPassword)) {
 			errorMessage = getString(R.string.input_password);
 			isError = true;
 		} else if (mPassword.length() < 4) {
@@ -359,120 +352,107 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, String> {
+	public class UserLoginTask extends AsyncTask<Void, Void, ResponseMessage> {
 		@Override
-		protected String doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-			String loginInfo = null;
+		protected ResponseMessage doInBackground(Void... params) {
+		    ResponseMessage  responseMessage = new  ResponseMessage();
+	
 			try {
-				loginInfo = RestClient.login(mUserName, mPassword, mSchoolId,
+			    responseMessage.body = RestClient.login(mUserName, mPassword,
 						mUserType.toString());
+                responseMessage.praseBody();
+
 			} catch (ConnectTimeoutException stex) {
-				loginInfo = getString(R.string.request_time_out);
+			    responseMessage.message = getString(R.string.request_time_out);
 				stex.printStackTrace();
 			} catch (SocketTimeoutException stex) {			    
-				loginInfo = getString(R.string.server_time_out);
+			    responseMessage.message = getString(R.string.server_time_out);
 				stex.printStackTrace();
 			} catch (HttpHostConnectException hhce) {
-				loginInfo = getString(R.string.connection_server_error);
-			} catch (XmlPullParserException e) {
-				loginInfo = getString(R.string.connection_error);
+			    responseMessage.message = getString(R.string.connection_server_error);
+			} catch (JSONException e) {
+			    responseMessage.message = getString(R.string.connection_server_error);
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+			    responseMessage.message = getString(R.string.connection_error);
 				e.printStackTrace();
 			} catch (IOException e) {
-				loginInfo = getString(R.string.connection_error);
+			    responseMessage.message = getString(R.string.connection_error);
 				e.printStackTrace();
 			}
 
 			// TODO: register the new account here.
-			return loginInfo;
+			return responseMessage;
 		}
 
 		@Override
-		protected void onPostExecute(String loginInfo) {
+		protected void onPostExecute(ResponseMessage  responseMessage) {
 			mAuthTask = null;
-			Log.d(TAG, "loginInfo " + loginInfo);
-			if (!TextUtils.isEmpty(loginInfo)) {
+			Log.d(TAG, "login response " + responseMessage.body);
+			
+			boolean isLoginSuccss = false;
+			
+			if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS){
 
-				try {
-				    if(loginInfo.startsWith("{") && loginInfo.endsWith("}")){
-				        if (JSONParser.getIntByTag(loginInfo,
-	                            ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-				        	
-				        	
-				        	
-				        	if(mUserType == UserType.ROLE_PARENT){
-				        		mXiaoYunTongApplication.userInfo = new ParentInfo();				        		
-				        	}else if(mUserType == UserType.ROLE_TEACHER){
-				        		String fkClassId = JSONParser.getStringByTag(loginInfo,
-		                                "fkClassId");
-				        		 Log.d(TAG, "userInfo.fkClassId " + fkClassId);
-				        		TeacherInfo teacherInfo	 = new TeacherInfo();
-				        		teacherInfo.defalutClassId = fkClassId;
-				        		mXiaoYunTongApplication.userInfo = teacherInfo;				        		
-				        	}
+			    
+			    // to do save userinfo;
+               
+                try {                    
+                    
+                    if(mUserType == UserType.ROLE_PARENT){
+                        mXiaoYunTongApplication.userInfo = new ParentInfo();                                
+                    }else if(mUserType == UserType.ROLE_TEACHER){
+                        String fkClassId = JSONParser.getStringByTag(responseMessage.body,
+                                    "fkClassId");                      
+                            String fkSchoolId = JSONParser.getStringByTag(responseMessage.body,
+                                    "fkSchoolId");
+                           TeacherInfo teacherInfo  = new TeacherInfo();
+                           teacherInfo.defalutClassId = fkClassId;
+                           teacherInfo.defalutSchoolId = fkSchoolId;
+                           mXiaoYunTongApplication.userInfo = teacherInfo;                        
+                                                     
+                    }
+                    
+                    String id = JSONParser.getStringByTag(responseMessage.body, "id");
+                    mXiaoYunTongApplication.userInfo.id = id;
+                    String ticket = JSONParser.getStringByTag(responseMessage.body,
+                            "ticket");
+                    mXiaoYunTongApplication.userInfo.ticket = ticket;
+                    mXiaoYunTongApplication.userInfo.roleType =  mUserType;
+                    Log.d(TAG, "userInfo.roleType " + mUserType);
 
-	                        // to do save userinfo;
-	                        String id = JSONParser.getStringByTag(loginInfo, "id");
-	                        mXiaoYunTongApplication.userInfo.id = id;
-	                        Log.d(TAG, "userInfo.id " + id);
-	                        String ticket = JSONParser.getStringByTag(loginInfo,
-	                                "ticket");
-	                        mXiaoYunTongApplication.userInfo.ticket = ticket;
-	                        Log.d(TAG, "userInfo.ticket " + ticket);
+                    SharedPreferences settings = getSharedPreferences(
+                            PREFS_USER_INFO, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(lOGIN_USER_NAME, mUserName);
+                    editor.putString(LOGIN_PASSWORD, mPassword);
+                    editor.putString(LOGIN_ROLE_ID, mUserType.toString());
+                    editor.putBoolean(IS_AUTO_LOGIN, isAutoLogin);
+                    editor.putBoolean(IS_REMEMBER_PASSWORD,
+                            isRemberPassWord);
 
-	                        mXiaoYunTongApplication.userInfo.fkSchoolId = mSchoolId;
-	                        Log.d(TAG, "userInfo.fkSchoolId " + mSchoolId);
-	                       
-	                        mXiaoYunTongApplication.userInfo.roleType =  mUserType;
-	                        Log.d(TAG, "userInfo.roleType " + mUserType);
+                    editor.commit();
+                    isLoginSuccss = true;
+                                       
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+               
+                mProgressDialog.dismiss();
+                if(isLoginSuccss){
+                    Intent loginIntent = new Intent(LoginActivity.this,
+                            HomePageActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                }
+                
 
-	                        SharedPreferences settings = getSharedPreferences(
-	                                PREFS_USER_INFO, 0);
-	                        SharedPreferences.Editor editor = settings.edit();
-	                        editor.putString(LOGIN_SCHOOL_ID, mSchoolId);
-	                        editor.putString(LOGIN_SCHOOL_NAME, mSchoolName);
-	                        editor.putString(lOGIN_USER_NAME, mUserName);
-	                        editor.putString(LOGIN_PASSWORD, mPassword);
-	                        editor.putString(LOGIN_ROLE_ID, mUserType.toString());
-	                        editor.putBoolean(IS_AUTO_LOGIN, isAutoLogin);
-	                        editor.putBoolean(IS_REMEMBER_PASSWORD,
-	                                isRemberPassWord);
-
-	                        editor.commit();
-
-	                        mProgressDialog.dismiss();
-	                        Intent loginIntent = new Intent(LoginActivity.this,
-	                                HomePageActivity.class);
-	                        startActivity(loginIntent);
-	                        finish();
-	                    } else {
-	                        mProgressDialog.dismiss();
-	                        String errorMessage = JSONParser.getStringByTag(
-	                                loginInfo, ResponseMessage.RESULT_TAG_MESSAGE);
-	                        if (!TextUtils.isEmpty(errorMessage)) {
-	                            Toast.makeText(LoginActivity.this, errorMessage,
-	                                    Toast.LENGTH_LONG).show();
-	                        } else {
-	                            Toast.makeText(LoginActivity.this, loginInfo,
-	                                    Toast.LENGTH_LONG).show();
-	                        }
-	                    } 
-				    } else {
-				        mProgressDialog.dismiss();
-	                    Toast.makeText(LoginActivity.this, loginInfo,
-	                            Toast.LENGTH_LONG).show();
-				    }
-					 
-				} catch (JSONException e) {
-					mProgressDialog.dismiss();
-					Toast.makeText(LoginActivity.this, loginInfo,
-							Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				}
-			} else {
-				mProgressDialog.dismiss();
-
-			}
+		} else {
+		    mProgressDialog.dismiss();
+		    Toast.makeText(LoginActivity.this, responseMessage.message,
+                  Toast.LENGTH_LONG).show();
+		    }
 		}
 
 		@Override
@@ -533,7 +513,7 @@ public class LoginActivity extends Activity {
 							Toast.LENGTH_LONG).show();
 				}				
 				mProgressDialog.dismiss();
-				showDialog(R.id.choose_school);
+				//showDialog(R.id.choose_school);
 			} else {
 				mProgressDialog.dismiss();
 				Toast.makeText(LoginActivity.this, responseMessage.message,

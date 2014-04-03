@@ -53,14 +53,13 @@ public class RestClient {
     }
 
     // login(String loginName,String password,String fkSchoolId,String fkRoleId)
-    public static String login(String loginName, String password, String fkSchoolId, String fkRoleId)
+    public static String login(String loginName, String password, String fkRoleId)
             throws IOException, XmlPullParserException {
         String soapAction = nameSpace + "/login";
 
         SoapObject rpc = new SoapObject(nameSpace, "login");
         rpc.addProperty("loginName", loginName);
         rpc.addProperty("password", password);
-        rpc.addProperty("fkSchoolId", fkSchoolId);
         rpc.addProperty("fkRoleId", fkRoleId);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);

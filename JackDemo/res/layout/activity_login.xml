@@ -53,52 +53,6 @@
         android:gravity="center_vertical" >
 
         <ImageView
-            android:id="@+id/school_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/school" />
-
-        <TextView
-            android:id="@+id/school_line"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/school_icon"
-            android:background="@drawable/dividing_line" />
-
-        <TextView
-            android:id="@+id/school_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/school_line"
-            android:paddingLeft="4dp"
-            android:text="@string/select_school"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/choose_school"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:onClick="onChooseSchoolButtonClicked"
-            android:src="@drawable/chooseschool_down" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/input_background"
-        android:gravity="center_vertical" >
-
-        <ImageView
             android:id="@+id/username_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -122,7 +76,7 @@
             android:layout_toRightOf="@id/username_line"
             android:background="@android:color/transparent"
             android:hint="@string/input_accont"
-            android:maxLength="10"
+            android:maxLength="20"
             android:maxLines="1"
             android:paddingLeft="4dp"
             android:singleLine="true" />
@@ -162,7 +116,7 @@
             android:background="@android:color/transparent"
             android:hint="@string/input_password"
             android:inputType="textPassword"
-            android:maxLength="10"
+            android:maxLength="20"
             android:maxLines="1"
             android:paddingLeft="4dp"
             android:singleLine="true" />

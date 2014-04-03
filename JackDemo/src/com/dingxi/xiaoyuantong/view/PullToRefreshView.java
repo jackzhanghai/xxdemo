@@ -20,13 +20,15 @@ import com.dingxi.xiaoyuantong.R;
 
 public class PullToRefreshView extends LinearLayout {
 	private static final String TAG = "PullToRefreshView";
+	
+	// pull state
+    private static final int PULL_UP_STATE = 0;
+    private static final int PULL_DOWN_STATE = 1;
 	// refresh states
 	private static final int PULL_TO_REFRESH = 2;
 	private static final int RELEASE_TO_REFRESH = 3;
 	private static final int REFRESHING = 4;
-	// pull state
-	private static final int PULL_UP_STATE = 0;
-	private static final int PULL_DOWN_STATE = 1;
+	
 	/**
 	 * last y
 	 */
@@ -352,6 +354,7 @@ public class PullToRefreshView extends LinearLayout {
 	 * @return
 	 */
 	private boolean isRefreshViewScroll(int deltaY) {
+	    Log.i(TAG, "isRefreshViewScroll()");
 		if (mHeaderState == REFRESHING || mFooterState == REFRESHING) {
 			return false;
 		}
@@ -395,6 +398,8 @@ public class PullToRefreshView extends LinearLayout {
 				}
 			}
 		}
+		
+		 Log.i(TAG, "mPullState " + mPullState);
 		// 对于ScrollView
 		if (mScrollView != null) {
 			// 子scroll view滑动到最顶端

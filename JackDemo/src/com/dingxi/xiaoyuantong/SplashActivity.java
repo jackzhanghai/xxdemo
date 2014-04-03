@@ -58,62 +58,52 @@ public class SplashActivity extends Activity {
 			    
 			    
 
-				new Thread(new Runnable() {
+			    
+			    Intent loginIntent = new Intent(SplashActivity.this,
+	                    LoginActivity.class);
+	            startActivity(loginIntent);
 
-					@Override
-					public void run() {
-						String schoolsInfo = null;
-						try {
-							schoolsInfo = RestClient.getAllSchool();
-							Log.d(TAG, "result " + schoolsInfo);
-							if (JSONParser.getIntByTag(schoolsInfo,
-									ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-								ArrayList<SchoolInfo> schools = JSONParser
-										.toParserSchoolList(schoolsInfo);
-							} else {
-								String errorMessage = JSONParser
-										.getStringByTag(schoolsInfo,
-												ResponseMessage.RESULT_TAG_MESSAGE);
-							}
-
-						} catch (JSONException e) {
-							Log.e(TAG, "JSONException " + e.getMessage());
-							e.printStackTrace();
-						} catch (XmlPullParserException e) {
-							Log.e(TAG, "XmlPullParserException " + e.getMessage());
-							e.printStackTrace();
-						} catch (IOException e) {
-							Log.e(TAG, "IOException " +  e.getMessage());
-							e.printStackTrace();
-						} finally {
-							Message message = Message.obtain();
-							message.obj = schoolsInfo;
-							mHideHandler.sendMessage(message);
-						}
-					}
-				}).start();
+	            finish();
+			    
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						String schoolsInfo = null;
+//						try {
+//							schoolsInfo = RestClient.getAllSchool();
+//							Log.d(TAG, "result " + schoolsInfo);
+//							if (JSONParser.getIntByTag(schoolsInfo,
+//									ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
+//
+//								ArrayList<SchoolInfo> schools = JSONParser
+//										.toParserSchoolList(schoolsInfo);
+//							} else {
+//								String errorMessage = JSONParser
+//										.getStringByTag(schoolsInfo,
+//												ResponseMessage.RESULT_TAG_MESSAGE);
+//							}
+//
+//						} catch (JSONException e) {
+//							Log.e(TAG, "JSONException " + e.getMessage());
+//							e.printStackTrace();
+//						} catch (XmlPullParserException e) {
+//							Log.e(TAG, "XmlPullParserException " + e.getMessage());
+//							e.printStackTrace();
+//						} catch (IOException e) {
+//							Log.e(TAG, "IOException " +  e.getMessage());
+//							e.printStackTrace();
+//						} finally {
+//							Message message = Message.obtain();
+//							message.obj = schoolsInfo;
+//							mHideHandler.sendMessage(message);
+//						}
+//					}
+//				}).start();
 
 			}
 		});
 		
 	}
-
-	Handler mHideHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			// TODO Auto-generated method stub
-			super.handleMessage(msg);
-
-			Intent loginIntent = new Intent(SplashActivity.this,
-					LoginActivity.class);
-			loginIntent.putExtra("schoolInfo", (String) msg.obj);
-			startActivity(loginIntent);
-
-			finish();
-		}
-
-	};
 
 }

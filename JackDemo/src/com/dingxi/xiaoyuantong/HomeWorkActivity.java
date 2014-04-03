@@ -81,7 +81,17 @@ public class HomeWorkActivity extends Activity {
             @Override
             public void onHeaderRefresh(PullToRefreshView view) {
                 // TODO Auto-generated method stub
-
+                Log.i(TAG, "onHeaderRefresh()");
+                Log.i(TAG, "curretUserInfo.roleType " + curretUserInfo.roleType);
+                if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+                    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
+                    mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
+                            teacherInfo.defalutClassId, "", "", "", true);
+                } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+                    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                    mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, "", "",
+                            parentInfo.defalutChild.id, "", true);
+                }
             }
         });
         
@@ -90,11 +100,12 @@ public class HomeWorkActivity extends Activity {
             @Override
             public void onFooterRefresh(PullToRefreshView view) {
                 // TODO Auto-generated method stub
-                ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, "", "",
-                        parentInfo.defalutChild.id, "", true);
-                mHomeWorTask.execute((Void) null);
-                isFooterRefresh = true;
+                Log.i(TAG, "onFooterRefresh()");
+//                ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+//                mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId, "", "",
+//                        parentInfo.defalutChild.id, "", true);
+//                mHomeWorTask.execute((Void) null);
+//                isFooterRefresh = true;
             }
         });
 
@@ -220,9 +231,9 @@ public class HomeWorkActivity extends Activity {
             mSpinner.setVisibility(View.VISIBLE);
         }
 
-        loadingImageView.setVisibility(View.VISIBLE);
-        emptyView.setVisibility(View.GONE);
-        loadingAnimation.start();
+//        loadingImageView.setVisibility(View.VISIBLE);
+//        emptyView.setVisibility(View.GONE);
+//        loadingAnimation.start();
         if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
             TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
             mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
@@ -280,7 +291,7 @@ public class HomeWorkActivity extends Activity {
                 convertView = inflater.inflate(R.layout.homework_item, null);
                 viewHolder = new HomeWorkHolder();
                 viewHolder.headerText = (TextView) convertView.findViewById(R.id.message_header);
-                viewHolder.dateText = (TextView) convertView.findViewById(R.id.message_date);
+                viewHolder.isRead = (TextView) convertView.findViewById(R.id.is_read);
                 viewHolder.bodyText = (TextView) convertView.findViewById(R.id.message_body);
                 convertView.setTag(viewHolder);
             } else {
@@ -289,18 +300,23 @@ public class HomeWorkActivity extends Activity {
 
             Log.i(TAG, "homeWorkList.get(position).getId() " + homeWorkList.get(position).id);
             // viewHolder.headerText.setText(homeWorkList.get(position).id);
-            viewHolder.headerText.setText("家庭作业");
+            viewHolder.headerText.setText(R.string.home_work);
             Log.i(TAG, "homeWorkList.get(position).getContent() "
                     + homeWorkList.get(position).content);
             viewHolder.bodyText.setText(homeWorkList.get(position).content);
-            viewHolder.dateText.setText(homeWorkList.get(position).optTime);
+            if(homeWorkList.get(position).isRead == 0){
+                viewHolder.isRead.setText(R.string.readed);
+            } else {
+                viewHolder.isRead.setText(R.string.unread);
+            }
+           
             return convertView;
         }
 
         class HomeWorkHolder {
 
             TextView headerText;
-            TextView dateText;
+            TextView isRead;
             TextView bodyText;
 
         }
