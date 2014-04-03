@@ -174,7 +174,7 @@ public class RestClient {
 
     };
 
-    public static String getAllChilds(String id, String fkSchoolId, String ticket)
+    public static String getAllChilds(String id,String ticket)
             throws IOException, XmlPullParserException {
 
         Log.d(TAG, "getAllChilds()");
@@ -185,11 +185,9 @@ public class RestClient {
         ticket.trim();
         map.put("ticket", ticket);
         Log.d(TAG, "ticket " + ticket);
-        fkSchoolId.trim();
-        map.put("fkSchoolId", fkSchoolId);
-        Log.d(TAG, "fkSchoolId " + fkSchoolId);
 
         String response = requestData(map, "getAllChilds");
+        Log.i(TAG, "getAllChilds response " + response);
         return response;
 
     };

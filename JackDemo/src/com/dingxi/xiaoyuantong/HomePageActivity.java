@@ -95,8 +95,6 @@ public class HomePageActivity extends Activity {
 			rollNoteText.setText(text);
 			
 		}
-    	
-    	
     };
     
    
@@ -593,12 +591,13 @@ public class HomePageActivity extends Activity {
                 // 家长info:{"fkSchoolId":"2","fkStudentId":"402881f144d911a10144d916319c0002",”queryTime�?�?014-03-24”}
 
                 info.append("{");
-                info.append("\"fkSchoolId\":");
-                info.append("\"" + mXiaoYunTongApplication.userInfo.fkSchoolId + "\"");
-                info.append(",");
+                
                 if (userInfo.roleType == UserInfo.UserType.ROLE_TEACHER) {
                 	
                 	TeacherInfo teacherInfo = (TeacherInfo) userInfo;
+                	info.append("\"fkSchoolId\":");
+                    info.append("\"" + teacherInfo.defalutSchoolId + "\"");
+                    info.append(",");
                     info.append("\"fkClassId\":");                  
                     info.append("\"" + teacherInfo.defalutClassId + "\"");//curretUserInfo.fkClassId
                     info.append(",");
@@ -608,6 +607,9 @@ public class HomePageActivity extends Activity {
                     info.append(",");
                 } else if (userInfo.roleType == UserInfo.UserType.ROLE_PARENT) {
                 	 ParentInfo parentInfo = (ParentInfo) userInfo;
+                	 info.append("\"fkSchoolId\":");
+                     info.append("\"" + mXiaoYunTongApplication.userInfo.fkSchoolId + "\"");
+                     info.append(",");
                     info.append("\"fkStudentId\":");
                     info.append("\"" + parentInfo.defalutChild.id + "\"");
                     info.append(",");
@@ -622,6 +624,7 @@ public class HomePageActivity extends Activity {
                 responseMessage.body = RestClient.getHomeWorks(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket,
                 		userInfo.roleType.toString(), info.toString(), 1, 5);
 				responseMessage.praseBody();
+				Log.i(TAG, "HomeWorks response  " + responseMessage.body);
 
             } catch (ConnectTimeoutException stex) {
             	responseMessage.message = getString(R.string.request_time_out);
@@ -671,6 +674,7 @@ public class HomePageActivity extends Activity {
             	 responseMessage = new ResponseMessage();
             	 responseMessage.body = RestClient.getMessageInfos(mXiaoYunTongApplication.userInfo.id, mXiaoYunTongApplication.userInfo.ticket,
                 		userInfo.roleType.toString(), info.toString(), 1, 5);
+            	 Log.i(TAG, "HomeWorks response  " + responseMessage.body);
 				 responseMessage.praseBody();
 
             } catch (ConnectTimeoutException stex) {
@@ -739,16 +743,12 @@ public class HomePageActivity extends Activity {
             if (campusNoticeContentList != null && campusNoticeContentList.size() > 0) {
 
                 if (campusNoticeContentList.size() > 1) {
-                	
-                	
                 	if(rollTextThread!=null && rollTextThread.isAlive()){
                 		
                 	} else {
                 		rollTextThread = new RollTextThread();
                     	rollTextThread.start();
-                	}
-                	
-                	               
+                	}             
                 } else if (campusNoticeContentList.size() == 1) {
                     String content = campusNoticeContentList.get(0);
                     Log.i(TAG, "content " + content);
@@ -760,8 +760,6 @@ public class HomePageActivity extends Activity {
             if (homeWorkTotal > 0 || campusNotieTotal > 0) {
                 mImageAdapter.notifyDataSetChanged();
             }
-
-            
         }
         
         @Override
@@ -779,7 +777,7 @@ public class HomePageActivity extends Activity {
         	ResponseMessage responseMessage = new ResponseMessage();
             try {
 
-            	responseMessage.body = RestClient.getAllChilds(userInfo.id, userInfo.fkSchoolId,
+            	responseMessage.body = RestClient.getAllChilds(userInfo.id,
             			userInfo.ticket);
 				responseMessage.praseBody();
             	

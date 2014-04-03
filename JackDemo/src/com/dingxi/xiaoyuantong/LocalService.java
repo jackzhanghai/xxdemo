@@ -78,7 +78,7 @@ public class LocalService extends Service {
             try {
                 
                 
-                schoolsInfo = RestClient.getAllChilds("", "", "");
+                schoolsInfo = RestClient.getAllChilds("", "");
             } catch (ConnectTimeoutException stex) {
                 schoolsInfo = getString(R.string.request_time_out);
             } catch (SocketTimeoutException stex) {

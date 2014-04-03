@@ -53,7 +53,7 @@ public class HomeWorkDetailActivity extends Activity {
        String homeWorkID =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID);
        curretHomeDao =  new HomeWorkDao(mXiaoYunTongApplication);
        curretHomeWorkInfo =  curretHomeDao.queryHomeWorkByID(homeWorkID);
-       homeWorkTite.setText("家庭作业");
+       homeWorkTite.setText(R.string.home_work);
        homeWorkDate.setText(curretHomeWorkInfo.optTime);
        homeWorkContent.setText(curretHomeWorkInfo.content);
        confirmButton = (Button) findViewById(R.id.confirm_button);
@@ -69,7 +69,7 @@ public class HomeWorkDetailActivity extends Activity {
        HomeWorkDao campusNoticeDao = new HomeWorkDao(
     		   HomeWorkDetailActivity.this);
        ContentValues values = new ContentValues();
-       values.put(HomeWorkEntry.COLUMN_NAME_IS_READ, "1");
+       values.put(HomeWorkEntry.COLUMN_NAME_IS_READ, 1);
        
        
       int updateResult = campusNoticeDao
