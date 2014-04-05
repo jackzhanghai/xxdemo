@@ -134,7 +134,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 						});
 						String content = contentEditText.getText().toString();
 						mProgressDialog.show();
-						mAddCampusNoticeTask = new AddCampusNoticeTask(curretUserInfo.fkSchoolId,
+						mAddCampusNoticeTask = new AddCampusNoticeTask(curretUserInfo.defalutSchoolId,
 								mGradeId, mClassId, content);
 						mAddCampusNoticeTask.execute((Void) null);
 					}
@@ -183,7 +183,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 				if (curretSearchType == SearchType.GradeInfo) {
 					responseMessage.body = RestClient.getGradeInfos(
 							curretUserInfo.id, curretUserInfo.ticket,
-							curretUserInfo.fkSchoolId);
+							curretUserInfo.defalutSchoolId);
 				} else if (curretSearchType == SearchType.ClassInfo) {
 					responseMessage.body = RestClient.getClassInfos(
 							curretUserInfo.id, curretUserInfo.ticket, mGradeId);
@@ -228,8 +228,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 				if (curretSearchType == SearchType.GradeInfo) {
 					try {
 						parseGradeInfo(responseMessage.body);
-						
-						
+
 						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -245,9 +244,21 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 				} 
 				mProgressDialog.dismiss();
 				if (curretSearchType == SearchType.GradeInfo) {
-					showDialog(R.id.select_grade_button);
+				    if(gradeNameList!=null && gradeNameList.length>0){
+				        showDialog(R.id.select_grade_button); 
+				    } else {
+				        Toast.makeText(EditCampusNoticeActivity.this,
+		                        R.string.no_grade, Toast.LENGTH_LONG).show();
+				    }
+					
 				} else if (curretSearchType == SearchType.ClassInfo) {
-					showDialog(R.id.select_class_button);
+				    if(classNameList!=null && classNameList.length>0){
+				        showDialog(R.id.select_class_button);  
+                    } else {
+                        Toast.makeText(EditCampusNoticeActivity.this,
+                                R.string.no_class, Toast.LENGTH_LONG).show(); 
+                    }
+					
 				}
 			} else {
 				mProgressDialog.dismiss();
@@ -431,7 +442,7 @@ public class EditCampusNoticeActivity extends Activity  implements OnClickListen
 
 				break;
 			case R.id.select_grade_button:
-				if (!TextUtils.isEmpty(curretUserInfo.fkSchoolId)) {
+				if (!TextUtils.isEmpty(curretUserInfo.defalutSchoolId)) {
 					curretSearchType = SearchType.GradeInfo;
 					mProgressDialog
 							.setMessage(getString(R.string.now_geting_classinfo));

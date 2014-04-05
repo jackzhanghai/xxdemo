@@ -128,7 +128,7 @@ public class JSONParser {
 
                 StudentInfo studentInfo = new StudentInfo();
 
-                studentInfo.name = obj.getString("stuName");
+                studentInfo.stuName = obj.getString("stuName");
                 studentInfo.id = obj.getString("id");
                 schoolList.add(studentInfo);
             }
@@ -150,7 +150,10 @@ public class JSONParser {
 
                 studentInfo.imei = obj.getString("imei");
                 studentInfo.id = obj.getString("id");
-                studentInfo.name = obj.getString("stuName");
+                studentInfo.stuName = obj.getString("stuName");
+                studentInfo.fkGradeId = obj.getString("fkGradeId");
+                studentInfo.fkClassId = obj.getString("fkClassId");
+                studentInfo.fkSchoolId = obj.getString("fkSchoolId");
                 studentList.add(studentInfo);
             }
         }
@@ -161,17 +164,6 @@ public class JSONParser {
     
     
     
-  private void parseClassInfo(String schoolsInfo) {
-  // TODO Auto-generated method stub
-  try {
-      if (JSONParser.getStringByTag(schoolsInfo, "") != null) {
-
-      }
-  } catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-  }
-}
     
     public static ArrayList<ClassInfo> toParserCalssInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);

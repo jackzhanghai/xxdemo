@@ -49,6 +49,7 @@
         <activity
             android:name="com.dingxi.xiaoyuantong.HomeWorkActivity"
             android:label="@string/title_activity_home_work"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
@@ -59,6 +60,7 @@
         <activity
             android:name="com.dingxi.xiaoyuantong.CampusNoticeActivity"
             android:label="@string/title_activity_campus_notice"
+             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity

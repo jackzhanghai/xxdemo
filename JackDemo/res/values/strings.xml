@@ -34,11 +34,18 @@
     <string name="now_adding_homework">正在添加家庭作业...</string>
     <string name="now_adding_notice">正在添加校园通知...</string>
     <string name="select_school">请选择学校</string>
+    <string name="no_school">没有学校</string>
+    
     <string name="please_check_child">请选择孩子</string>
+    <string name="no_child">没有孩子</string>
      <string name="select_class">请选择班级</string>
+     <string name="no_class">没有班级</string>
     <string name="select_grade">请选择年级</string>
+    <string name="no_grade">没有年纪</string>
     <string name="select_student">请选择学生</string>
+    <string name="no_student">没有学生</string>
      <string name="select_subject">请选择科目</string>
+     <string name="no_subject">没有科目</string>
     <string name="input_old_password">输入旧密码： </string>
     <string name="input_new_password">输入新密码： </string>
     <string name="input_new_password_again">输入新密码： </string>
@@ -51,6 +58,7 @@
     <string name="exit_app">退出应用?</string>
     <string name="ok_exit_app">确定</string>
     <string name="cancel_exit_app">取消</string>
+    <string name="no_bound_phone"></string>
     <string name="no_home_work_data">没有家庭作业</string>
     <string name="no_attendanceinfo_data">没有考勤信息</string>
     <string name="no_campus_notice_data">没有校园通知</string>
@@ -81,6 +89,7 @@
     <string name="pull_to_refresh_footer_release_label">松开后加载</string>
     <string name="pull_to_refresh_footer_pull_label">上拉加载更多</string>
     <string name="pull_to_refresh_footer_refreshing_label">加载中\u2026</string>
+    <string name="no_more_data">没有更多数据了</string>
     <string name="title_activity_attendance_info">AttendanceInfoActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

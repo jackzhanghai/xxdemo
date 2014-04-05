@@ -148,49 +148,51 @@ public class LocationInfoActivity extends Activity {
         @Override
         protected void onPostExecute(ResponseMessage responseMessage) {
             mGetLocationTask = null;
-            
-            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS  && responseMessage.total >0){
-            	
+            Log.i(TAG, "responseMessage.body " + responseMessage.body);
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS){
+            	if(responseMessage.total >0){
+            	    ArrayList<LocationInfo> locationInfos;
+                    try {
+                        locationInfos = JSONParser.toParserLocationInfo(responseMessage.body);
+                        LocationInfo locationInfo = locationInfos.get(0);
+                           
+                        
+                        if(locationInfo!=null ){
+                            if(TextUtils.isEmpty(locationInfo.lat) || TextUtils.isEmpty(locationInfo.lng)){
+                                Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
+                                        ,Toast.LENGTH_LONG).show();
+                            } else {
+                                double mLat1 = Double.parseDouble(locationInfo.lat);
+                                double mLon1 = Double.parseDouble(locationInfo.lng);
+                                GeoPoint p2 = new GeoPoint((int) (mLat1 * 1E6), (int) (mLon1 * 1E6));  
+                                Drawable mark= getResources().getDrawable(R.drawable.location_info);  
+                                OverlayItem item = new OverlayItem(p2,"item2","item2"); 
+          
+                                OverlayTest itemOverlay = new OverlayTest(mark, mMapView); 
+                                
+                                mMapView.getOverlays().clear(); 
+                                mMapView.getOverlays().add(itemOverlay);
+                                
+                                itemOverlay.addItem(item);           
+                                GeoPoint point =new GeoPoint((int)(mLat1 * 1E6),(int)(mLon1* 1E6));
+                                mMapController.setCenter(point);//设置地图中心点
+                                mMapView.refresh();
 
-            		ArrayList<LocationInfo> locationInfos;
-					try {
-						locationInfos = JSONParser.toParserLocationInfo(responseMessage.body);
-						LocationInfo locationInfo = locationInfos.get(0);
-					       
-	            		
-	            		if(locationInfo!=null ){
-	            			if(TextUtils.isEmpty(locationInfo.lat) || TextUtils.isEmpty(locationInfo.lng)){
-	                            Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
-	                                    ,Toast.LENGTH_LONG).show();
-	                        } else {
-	                            double mLat1 = Double.parseDouble(locationInfo.lat);
-	                            double mLon1 = Double.parseDouble(locationInfo.lng);
-	                            GeoPoint p2 = new GeoPoint((int) (mLat1 * 1E6), (int) (mLon1 * 1E6));  
-	                            Drawable mark= getResources().getDrawable(R.drawable.location_info);  
-	                            OverlayItem item = new OverlayItem(p2,"item2","item2"); 
-	      
-	                            OverlayTest itemOverlay = new OverlayTest(mark, mMapView); 
-	                            
-	                            mMapView.getOverlays().clear(); 
-	                            mMapView.getOverlays().add(itemOverlay);
-	                            
-	                            itemOverlay.addItem(item);           
-	                            GeoPoint point =new GeoPoint((int)(mLat1 * 1E6),(int)(mLon1* 1E6));
-	                            mMapController.setCenter(point);//设置地图中心点
-	                            mMapView.refresh();
-
-	                        }
-	            		} else {
-	            			Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
-	                                ,Toast.LENGTH_LONG).show();
-	            		}
-						
-						
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            		
+                            }
+                        } else {
+                            Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
+                                    ,Toast.LENGTH_LONG).show();
+                        }
+                        
+                        
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }  
+            	} else {
+            	    Toast.makeText(LocationInfoActivity.this, R.string.not_location_data
+                            ,Toast.LENGTH_LONG).show();
+            	}
 
             	 mProgressDialog.dismiss();
             }else {

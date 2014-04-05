@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.dingxi.xiaoyuantong.model.ClassInfo;
 import com.dingxi.xiaoyuantong.model.GradeInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
+import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 import com.dingxi.xiaoyuantong.network.JSONParser;
@@ -46,17 +47,17 @@ public class SearchMessageActivity extends Activity {
     public static final String TAG = "SearchMessageActivity";
     // private View parentHeader;
     // private ImageButton mBackButton;
-    private static UserInfo curretUserInfo;
+    private  UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
     private ImageButton selectClassButton;
     private ImageButton selectGradeButton;
     private ImageButton selectStudentButton;
     private ImageButton selectTimeButton;
-    private static String mSchoolId;
-    private static String mGradeId;
-    private static String mClassId;
-    private static String mStudentId;
-    private static String mData;
+    private String mSchoolId;
+    private String mGradeId;
+    private String mClassId;
+    private String mStudentId;
+    private String mData;
     private ProgressDialog mProgressDialog;
     private TextView selectClassTextView;
     private TextView selectGradeTextView;
@@ -86,7 +87,13 @@ public class SearchMessageActivity extends Activity {
 
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
         curretUserInfo = mXiaoYunTongApplication.userInfo;
+        if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+            
+            TeacherInfo teacherInfo =  (TeacherInfo) curretUserInfo;
+            mSchoolId = teacherInfo.defalutSchoolId;
+            Log.i(TAG, "mSchoolId " + mSchoolId);
 
+        }
         sreachConfirmButton = (Button) findViewById(R.id.sreach_confirm_button);
         sreachConfirmButton.setOnClickListener(new OnClickListener() {
 
@@ -109,6 +116,11 @@ public class SearchMessageActivity extends Activity {
                 } else {
                     Intent intent = new Intent(SearchMessageActivity.this, HomeWorkActivity.class);
                     
+                    
+                    Log.i(TAG, "mGradeId " + mGradeId);
+                    Log.i(TAG, "mClassId " + mClassId);
+                    Log.i(TAG, "mStudentId " + mStudentId);
+                    Log.i(TAG, "mData " + mData);
                     Bundle  searchBundle = new Bundle();
                     searchBundle.putString("mGradeId", mGradeId);
                     searchBundle.putString("mClassId", mClassId);
@@ -160,6 +172,9 @@ public class SearchMessageActivity extends Activity {
                     mProgressDialog.show();
                     mSearchTask = new SearchTask();
                     mSearchTask.execute((Void) null);
+                } else {
+                    Toast.makeText(SearchMessageActivity.this, R.string.select_school,
+                            Toast.LENGTH_LONG).show(); 
                 }
 
             }
@@ -274,13 +289,7 @@ public class SearchMessageActivity extends Activity {
         selectStudentTextView = (TextView) findViewById(R.id.select_student_text);
         selectTimeTextView = (TextView) findViewById(R.id.select_time_text);
 
-        if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-            mSchoolId = curretUserInfo.fkSchoolId;
-            Log.i(TAG, "mSchoolId " + mSchoolId);
-            if (TextUtils.isEmpty(mSchoolId)) {
-
-            }
-        }
+        
 
     }
 
@@ -307,7 +316,7 @@ public class SearchMessageActivity extends Activity {
                                 Log.d(TAG, "which " + which);
                                 mClassId = calssInfoList.get(which).id;
                                 selectClassTextView.setText(calssInfoList.get(which).name);
-                                Log.d(TAG, "mClassId " + mSchoolId);
+                                Log.d(TAG, "mClassId " + mClassId);
                                 // The 'which' argument contains the index
                                 // position
                                 // of the selected item
@@ -326,7 +335,7 @@ public class SearchMessageActivity extends Activity {
                                 Log.d(TAG, "which " + which);
                                 mGradeId = gradeInfoList.get(which).id;
                                 selectGradeTextView.setText(gradeInfoList.get(which).name);
-                                Log.d(TAG, "mGradeId " + mSchoolId);
+                                Log.d(TAG, "mGradeId " + mGradeId);
                                 // The 'which' argument contains the index
                                 // position
                                 // of the selected item
@@ -344,8 +353,8 @@ public class SearchMessageActivity extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.d(TAG, "which " + which);
                                 mStudentId = studentInfoList.get(which).id;
-                                selectStudentTextView.setText(studentInfoList.get(which).name);
-                                Log.d(TAG, "mStudentId " + mSchoolId);
+                                selectStudentTextView.setText(studentInfoList.get(which).stuName);
+                                Log.d(TAG, "mStudentId " + mStudentId);
                                 // The 'which' argument contains the index
                                 // position
                                 // of the selected item
@@ -407,35 +416,38 @@ public class SearchMessageActivity extends Activity {
                         if (JSONParser.getIntByTag(searchTypeReslut, ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
                             int total = JSONParser.getIntByTag(searchTypeReslut,
                             		ResponseMessage.RESULT_TAG_TOTAL);
-                            if (curretSearchType == SearchType.GradeInfo) {
-                                if (total == 0) {
-
-                                }else if(total > 0) {
-                                    parseGradeInfo(searchTypeReslut); 
-                                }
-                                
-                            } else if (curretSearchType == SearchType.ClassInfo) {
-                               
-                                if (total == 0) {
-
-                                } else if(total > 0){
+                            if (curretSearchType == SearchType.GradeInfo) {                               
+                                    parseGradeInfo(searchTypeReslut);                                 
+                            } else if (curretSearchType == SearchType.ClassInfo) {                              
                                     parseClassInfo(searchTypeReslut);
-                                }
-                            } else if (curretSearchType == SearchType.StudentInfo) {
-                                
-                                if (total == 0) {
-
-                                }else if(total > 0){
+                            } else if (curretSearchType == SearchType.StudentInfo) {                               
                                     parseStudentInfo(searchTypeReslut);
-                                }
                             }
                             mProgressDialog.dismiss();
                             if (curretSearchType == SearchType.GradeInfo) {
-                                showDialog(R.id.select_grade_button);
+                                if(gradeNameList!=null && gradeNameList.length>0){
+                                    showDialog(R.id.select_grade_button); 
+                                }else {
+                                    Toast.makeText(SearchMessageActivity.this, R.string.no_grade,
+                                            Toast.LENGTH_LONG).show();
+                                }
+                                
                             } else if (curretSearchType == SearchType.ClassInfo) {
-                                showDialog(R.id.select_class_button);
+                                if(calssNameList!=null && calssNameList.length>0){
+                                    showDialog(R.id.select_class_button); 
+                                }else {
+                                    Toast.makeText(SearchMessageActivity.this, R.string.no_class,
+                                            Toast.LENGTH_LONG).show(); 
+                                }
+                               
                             } else if (curretSearchType == SearchType.StudentInfo) {
-                                showDialog(R.id.select_student_button);
+                                if(studentNameList!=null && studentNameList.length>0){
+                                    showDialog(R.id.select_student_button);  
+                                }else {
+                                    Toast.makeText(SearchMessageActivity.this, R.string.no_student,
+                                            Toast.LENGTH_LONG).show(); 
+                                }
+                                
                             }
 
                         } else {
@@ -489,7 +501,7 @@ public class SearchMessageActivity extends Activity {
                 studentNameList = new String[studentInfoList.size()];
 
                 for (int i = 0; i < studentInfoList.size(); i++) {
-                    studentNameList[i] = studentInfoList.get(i).name;
+                    studentNameList[i] = studentInfoList.get(i).stuName;
 
                 }
             }

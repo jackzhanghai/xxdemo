@@ -10,6 +10,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.dingxi.xiaoyuantong.HomeWorkActivity.GetHomeWorTask;
 import com.dingxi.xiaoyuantong.model.AttendanceInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
@@ -20,6 +21,11 @@ import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 import com.dingxi.xiaoyuantong.network.JSONParser;
 import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,6 +33,7 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +66,7 @@ public class AttendanceInfoActivity extends Activity {
     private ImageButton mQueryMessageButton;
     private ImageButton mEditMessageButton;
     private Spinner mSpinner;
-    private ListView mHomeWorkListView;
+    private ListView mAttendanceInfoListView;
     private AttendanceAdapter mAttendanceAdapter;
     private ArrayList<AttendanceInfo> mAttendanceInfoList;
     private ImageView loadingImageView;
@@ -70,7 +77,13 @@ public class AttendanceInfoActivity extends Activity {
     private ArrayAdapter<String> mSpinnerAdapter;
     private ArrayList<String> mSpinnerInfo;
 
- 
+    PullToRefreshListView mPullToRefreshView;
+    private boolean isFooterRefresh;
+    int totalCount;
+    int toatlPage;
+    int curretCount;
+    int curretPage;
+    int pageCount = 5;
     public GetAttendanceInfoTask mGetAttendanceInfoTask;
 	
 	@Override
@@ -101,14 +114,17 @@ public class AttendanceInfoActivity extends Activity {
                 Log.d(TAG, "mSpinner onItemSelected()");
                 ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                 parentInfo.defalutChild = mStudentList.get(arg2);
-
+                totalCount = 0;
+                toatlPage  = 0;
+                curretCount = 0;
+                curretPage = 0;
                 mAttendanceInfoList.clear();
                 mAttendanceAdapter.notifyDataSetChanged();
 
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
-                mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
+                mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount,parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
 
 
                 mGetAttendanceInfoTask.execute((Void) null);
@@ -145,30 +161,75 @@ public class AttendanceInfoActivity extends Activity {
             }
         });
         mEditMessageButton.setVisibility(View.GONE);
-        
+        mPullToRefreshView = (PullToRefreshListView) findViewById(R.id.attendanceinfo_list);
         emptyView = findViewById(R.id.empty);
-        mHomeWorkListView = (ListView) findViewById(R.id.attendanceinfo_list);
-        mHomeWorkListView.setEmptyView(emptyView);
+        mAttendanceInfoListView = mPullToRefreshView.getRefreshableView();
+        mAttendanceInfoListView.setEmptyView(emptyView);
+       
+
+        mPullToRefreshView.setOnRefreshListener(new OnRefreshListener<ListView>() {
+
+            @Override
+            public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+                Log.i(TAG, "onRefresh()");
+                String label = DateUtils.formatDateTime(getApplicationContext(),
+                        System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
+                                | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                // Update the LastUpdatedLabel
+                refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+                if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+                    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
+                    mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount,
+                            teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "");
+                } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+                    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                    mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount,
+                            parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
+                }
+                mGetAttendanceInfoTask.execute((Void) null);
+                isFooterRefresh = true;
+
+            }
+        });
+
+        // Add an end-of-list listener
+        mPullToRefreshView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
+
+            @Override
+            public void onLastItemVisible() {
+                Log.i(TAG, "onLastItemVisible()");
+                // if(totalCount==curretCount){
+                // Toast.makeText(HomeWorkActivity.this, "End of List!",
+                // Toast.LENGTH_SHORT).show();
+                // mPullToRefreshView.onRefreshComplete();
+                // }
+
+            }
+        });
+
+        mPullToRefreshView.setMode(Mode.PULL_FROM_END);
+        registerForContextMenu(mAttendanceInfoListView);
         mAttendanceInfoList = new ArrayList<AttendanceInfo>();
         mAttendanceAdapter = new AttendanceAdapter(AttendanceInfoActivity.this, mAttendanceInfoList);
         loadingImageView = (ImageView) findViewById(R.id.loading_message_image);
         loadingImageView.setBackgroundResource(R.drawable.loading_howework_animation);
         loadingAnimation = (AnimationDrawable) loadingImageView.getBackground();
-        mHomeWorkListView.setAdapter(mAttendanceAdapter);
-        mHomeWorkListView.setOnItemClickListener(new OnItemClickListener() {
+        mAttendanceInfoListView.setAdapter(mAttendanceAdapter);
+        mAttendanceInfoListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
 			    Log.i(TAG, "arg2 " +arg2 + " arg3 " + arg3);
+			    int index = arg2-1;
 			    if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
 					Intent intent = new Intent(AttendanceInfoActivity.this,UpdateAttendanceInfoActivity.class);
-					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID,  mAttendanceInfoList.get(arg2).id);
-					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_DIREC,  mAttendanceInfoList.get(arg2).direc);
-					Log.i(TAG, "mAttendanceInfoList.get(arg2).direc " + mAttendanceInfoList.get(arg2).direc);
-					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_STU_NAME,  mAttendanceInfoList.get(arg2).stuName);
-					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ATT_TIME,  mAttendanceInfoList.get(arg2).attTime);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ENTRY_ID,  mAttendanceInfoList.get(index).id);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_DIREC,  mAttendanceInfoList.get(index).direc);
+					Log.i(TAG, "mAttendanceInfoList.get(arg2).direc " + mAttendanceInfoList.get(index).direc);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_STU_NAME,  mAttendanceInfoList.get(index).stuName);
+					intent.putExtra(AttendanceInfoEntry.COLUMN_NAME_ATT_TIME,  mAttendanceInfoList.get(index).attTime);
 					startActivity(intent);
 		        }
 
@@ -208,18 +269,20 @@ public class AttendanceInfoActivity extends Activity {
             mSpinner.setVisibility(View.VISIBLE);
         }
 
-        loadingImageView.setVisibility(View.VISIBLE);
-        emptyView.setVisibility(View.GONE);
-        loadingAnimation.start();
+        
         if(curretUserInfo.roleType == UserType.ROLE_TEACHER){
+            loadingImageView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+            loadingAnimation.start();
         	TeacherInfo teacherInfo  = (TeacherInfo) curretUserInfo;       	
-        	mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, teacherInfo.defalutClassId, "", "", "");
+        	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "");
+        	mGetAttendanceInfoTask.execute((Void) null);
         } else  if(curretUserInfo.roleType == UserType.ROLE_PARENT){
-        	ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
-        	mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
+//        	ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
+//        	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
         }
        
-        mGetAttendanceInfoTask.execute((Void) null);
+        
 	}
 
 
@@ -257,7 +320,7 @@ public class AttendanceInfoActivity extends Activity {
             // TODO Auto-generated method stub
             Integer id = attendanceInfos.get(position).id;
             //Long.parseLong(id)
-            return 0;
+            return position;
         }
 
         @Override
@@ -309,6 +372,12 @@ public class AttendanceInfoActivity extends Activity {
         
         if(resultCode == RESULT_OK && requestCode == R.layout.activity_search_message){
             Bundle  searchBundle =   data.getExtras();           
+            
+            totalCount = 0;
+            toatlPage = 0;
+            curretCount = 0;
+            curretPage = 0;
+            
             searchBundle.getString("mGradeId");
            String classId2 = searchBundle.getString("mClassId");
           String studentId =  searchBundle.getString("mStudentId");
@@ -322,10 +391,10 @@ public class AttendanceInfoActivity extends Activity {
             if(curretUserInfo.roleType == UserType.ROLE_TEACHER){
             	TeacherInfo teacherInfo  = (TeacherInfo) curretUserInfo;
             	
-            	mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, teacherInfo.defalutClassId, classId2, studentId, date);
+            	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, classId2, studentId, date);
             } else {
             	ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
-            	mGetAttendanceInfoTask = new GetAttendanceInfoTask(1, 5, curretUserInfo.fkSchoolId, "", "", parentInfo.defalutChild.id, date);
+            	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, date);
             }
             mGetAttendanceInfoTask.execute((Void) null);
             
@@ -357,6 +426,11 @@ public class AttendanceInfoActivity extends Activity {
         @Override
         protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            Log.i(TAG, "totalCount1 " + totalCount);
+            Log.i(TAG, "toatlPage1 " + toatlPage);
+            Log.i(TAG, "curretCount1 " + curretCount);
+            Log.i(TAG, "curretPage1 " + curretPage);
+            ++curretPage;
         	 ResponseMessage responseMessage = new ResponseMessage();
             StringBuilder info = new StringBuilder();
             info.append("{");
@@ -385,7 +459,7 @@ public class AttendanceInfoActivity extends Activity {
             Log.d(TAG, "info.toString() " + info.toString());
             
             try {
-            	responseMessage.body = RestClient.getAttendanceInfos(curretUserInfo.id, curretUserInfo.roleType.toString(), curretUserInfo.ticket,info.toString(), page, row, queryTime);
+            	responseMessage.body = RestClient.getAttendanceInfos(curretUserInfo.id, curretUserInfo.roleType.toString(), curretUserInfo.ticket,info.toString(), curretPage, pageCount, queryTime);
 				responseMessage.praseBody();
             
             } catch (ConnectTimeoutException stex) {
@@ -413,53 +487,71 @@ public class AttendanceInfoActivity extends Activity {
         protected void onPostExecute(ResponseMessage responseMessage) {
         	mGetAttendanceInfoTask = null;           
         	//AttendanceInfoDao attendanceInfoDao = new AttendanceInfoDao(mXiaoYunTongApplication);
-            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS && responseMessage.total>0){
-            	
-            	try {           		
-            		ArrayList<AttendanceInfo> attendanceInfoList = JSONParser.praseAttendanceInfo(responseMessage.body);
-                    if (attendanceInfoList != null && attendanceInfoList.size() > 0) {
+            if(responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS ){
+                totalCount = responseMessage.total;
+                if(responseMessage.total>0){
+                    toatlPage = totalCount % pageCount > 1 ? (totalCount / pageCount + 1)
+                            : totalCount / pageCount;
+                    try {                
+                        ArrayList<AttendanceInfo> attendanceInfoList = JSONParser.praseAttendanceInfo(responseMessage.body);
+                        if (attendanceInfoList != null && attendanceInfoList.size() > 0) {
 
-//                        for (AttendanceInfo homeWorkInfo : attendanceInfoList) {
-//                            long insertResult = attendanceInfoDao.addAttendanceInfo(homeWorkInfo);
-//                            Log.i(TAG, "HomeWork insertResult " + insertResult);
-//                        }
+//                            for (AttendanceInfo homeWorkInfo : attendanceInfoList) {
+//                                long insertResult = attendanceInfoDao.addAttendanceInfo(homeWorkInfo);
+//                                Log.i(TAG, "HomeWork insertResult " + insertResult);
+//                            }
+                            
+                            mAttendanceInfoList.addAll(attendanceInfoList);
+                            
+//                            attendanceInfoDao.colseDb();
+//                            attendanceInfoDao = null;
+                        } else {
+                            --curretPage;
+                            if (totalCount == curretCount) {
+                                Toast.makeText(AttendanceInfoActivity.this, R.string.no_more_data, Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }
                         
-                        mAttendanceInfoList.clear();
-                        mAttendanceInfoList.addAll(attendanceInfoList);
-                        mAttendanceAdapter.notifyDataSetChanged();
-//                        attendanceInfoDao.colseDb();
-//                        attendanceInfoDao = null;
-                    } else {
-                        mAttendanceInfoList.clear();
-                        emptyView.setVisibility(View.VISIBLE);
-                        mAttendanceAdapter.notifyDataSetChanged(); 
-                    }
-                    
-                } catch (JSONException e) {
+                    } catch (JSONException e) {
+                        --curretPage;
+                        e.printStackTrace();
+                    }          
+                    curretCount = mAttendanceInfoList.size();
+                   
+                   
+                } else if(responseMessage.total == 0){
+                    curretCount = 0;
+                    --curretPage;
                     mAttendanceInfoList.clear();
                     emptyView.setVisibility(View.VISIBLE);
-                    mAttendanceAdapter.notifyDataSetChanged();
-                    e.printStackTrace();
-                } finally{
-                    loadingAnimation.stop();
-                    loadingImageView.setVisibility(View.GONE);  
-                }            	
+                     Toast.makeText(AttendanceInfoActivity.this, R.string.no_data, Toast.LENGTH_LONG)
+                     .show();
+                } 
 
-            } else if(responseMessage.total == 0){
-                mAttendanceInfoList.clear();
-            	loadingAnimation.stop();
-                loadingImageView.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-            	 Toast.makeText(AttendanceInfoActivity.this, R.string.no_data, Toast.LENGTH_LONG)
-                 .show();
             }else {
+                curretCount = 0;
+                --curretPage;
                 mAttendanceInfoList.clear();
-            	loadingAnimation.stop();
-                loadingImageView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
                 Toast.makeText(AttendanceInfoActivity.this, responseMessage.message, Toast.LENGTH_LONG)
                 .show();                          	
-            }                                            
+            }    
+            if(mAttendanceInfoList.size()>0){
+                mAttendanceInfoListView.setSelection(curretPage * pageCount - 4);
+            }
+            mAttendanceAdapter.notifyDataSetChanged();
+            Log.i(TAG, "totalCount2 " + totalCount);
+            Log.i(TAG, "toatlPage2 " + toatlPage);
+            Log.i(TAG, "curretCount2 " + curretCount);
+            Log.i(TAG, "curretPage2 " + curretPage);
+            if (isFooterRefresh) {
+                mPullToRefreshView.onRefreshComplete();               
+                isFooterRefresh = false;
+            } else {
+                loadingAnimation.stop();
+                loadingImageView.setVisibility(View.GONE);
+            }
         }
 
         @Override

@@ -59,6 +59,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	private String mClassId;
 	private String mGradeId;
 	private String mSubjectId;
+	private String mSchoolId;
 	private SearchType curretSearchType;
 	public List<ClassInfo> classInfoList;
 	public String[] classNameList;
@@ -87,7 +88,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 		});
 		mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 		curretUserInfo = (TeacherInfo) mXiaoYunTongApplication.userInfo;
-
+		mSchoolId = curretUserInfo.defalutSchoolId;
 		gradeNameText = (TextView) findViewById(R.id.select_grade_text);
 		classNameText = (TextView) findViewById(R.id.select_class_text);
 		subjectNameText = (TextView) findViewById(R.id.select_subject_text);
@@ -139,7 +140,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 						});
 						String content = contentEditText.getText().toString();
 						mProgressDialog.show();
-						mSendHomeWorkTask = new SendHomeWorkTask(curretUserInfo.fkSchoolId,
+						mSendHomeWorkTask = new SendHomeWorkTask(curretUserInfo.defalutSchoolId,
 								mGradeId, mClassId, mSubjectId, content);
 						mSendHomeWorkTask.execute((Void) null);
 					}
@@ -189,32 +190,20 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				if (curretSearchType == SearchType.GradeInfo) {
 					responseMessage.body = RestClient.getGradeInfos(
 							curretUserInfo.id, curretUserInfo.ticket,
-							curretUserInfo.fkSchoolId);
+							mSchoolId);
 				} else if (curretSearchType == SearchType.ClassInfo) {
 					responseMessage.body = RestClient.getClassInfos(
 							curretUserInfo.id, curretUserInfo.ticket, mGradeId);
 				} else if (curretSearchType == SearchType.SubjectInfo) {
 					responseMessage.body = RestClient.getSubjectInfoT(
 							curretUserInfo.id, curretUserInfo.ticket,
-							curretUserInfo.fkSchoolId);
+							mSchoolId);
 				}
 
 				if (TextUtils.isEmpty(responseMessage.body)) {
 
-				} else {
-					responseMessage.code = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_CODE);
-					responseMessage.message = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-					responseMessage.datas = JSONParser.getStringByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_DATAS);
-					responseMessage.total = JSONParser.getIntByTag(
-							responseMessage.body,
-							ResponseMessage.RESULT_TAG_TOTAL);
-
+				} else {				    
+				    responseMessage.praseBody();
 				}
 
 			} catch (ConnectTimeoutException stex) {
@@ -270,11 +259,29 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				}
 				mProgressDialog.dismiss();
 				if (curretSearchType == SearchType.GradeInfo) {
-					showDialog(R.id.select_grade_button);
+				    if(gradeNameList!=null && gradeNameList.length>0){
+				        showDialog(R.id.select_grade_button);
+				    }else {
+				        Toast.makeText(EditHomeWorkActivity.this,
+		                        R.string.no_grade, Toast.LENGTH_LONG).show(); 
+				    }
+					
 				} else if (curretSearchType == SearchType.ClassInfo) {
-					showDialog(R.id.select_class_button);
+				    if(classNameList!=null && classNameList.length>0){
+				        showDialog(R.id.select_class_button);
+                    }else {
+                        Toast.makeText(EditHomeWorkActivity.this,
+                                R.string.no_class, Toast.LENGTH_LONG).show(); 
+                    }
+					
 				} else if (curretSearchType == SearchType.SubjectInfo) {
-					showDialog(R.id.select_subject_button);
+					
+					if(subjectNameList!=null && subjectNameList.length>0){
+					    showDialog(R.id.select_subject_button);
+                    }else {
+                        Toast.makeText(EditHomeWorkActivity.this,
+                                R.string.no_subject, Toast.LENGTH_LONG).show(); 
+                    }
 				}
 			} else {
 				mProgressDialog.dismiss();
@@ -445,8 +452,8 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
 			    
 			    mProgressDialog.dismiss();   
-			    Intent backIntet = new Intent(EditHomeWorkActivity.this,HomeWorkActivity.class);
-			    startActivity(backIntet);
+			    Intent backIntent = new Intent(EditHomeWorkActivity.this,HomeWorkActivity.class);
+			    startActivity(backIntent);
 			    EditHomeWorkActivity.this.finish();
 							
 			} else {
@@ -485,7 +492,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 
 				break;
 			case R.id.select_grade_button:
-				if (!TextUtils.isEmpty(curretUserInfo.fkSchoolId)) {
+				if (!TextUtils.isEmpty(curretUserInfo.defalutSchoolId)) {
 					curretSearchType = SearchType.GradeInfo;
 					mProgressDialog
 							.setMessage(getString(R.string.now_geting_classinfo));

@@ -169,10 +169,11 @@ public class HomePageActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // TODO Auto-generated method stub
-                Log.i(TAG, " position " + position + " id " + id);
+                Log.i(TAG, "mStudentList position " + position + " id " + id);
                 
                homeWorkTotal = 0;
                campusNotieTotal = 0;
+               
                
                ParentInfo parentInfo = (ParentInfo) userInfo;
                parentInfo.defalutChild = mStudentList.get(position); 
@@ -231,7 +232,7 @@ public class HomePageActivity extends Activity {
                         
                         ParentInfo parentInfo = (ParentInfo) userInfo;
                         Log.i(TAG, "deflutStudentInfo.name "
-                                + parentInfo.defalutChild.name);
+                                + parentInfo.defalutChild.stuName);
                         Log.i(TAG, "deflutStudentInfo.imei "
                                 + parentInfo.defalutChild.imei);
                         Log.i(TAG, "deflutStudentInfo.id "
@@ -239,6 +240,8 @@ public class HomePageActivity extends Activity {
 
                         intent.putExtra("imei", parentInfo.defalutChild.imei);
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(HomePageActivity.this, R.string.no_bound_phone, Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -608,7 +611,7 @@ public class HomePageActivity extends Activity {
                 } else if (userInfo.roleType == UserInfo.UserType.ROLE_PARENT) {
                 	 ParentInfo parentInfo = (ParentInfo) userInfo;
                 	 info.append("\"fkSchoolId\":");
-                     info.append("\"" + mXiaoYunTongApplication.userInfo.fkSchoolId + "\"");
+                     info.append("\"" + parentInfo.defalutChild.fkSchoolId + "\"");
                      info.append(",");
                     info.append("\"fkStudentId\":");
                     info.append("\"" + parentInfo.defalutChild.id + "\"");
@@ -823,12 +826,15 @@ public class HomePageActivity extends Activity {
                     parentInfo.defalutChild = mStudentList.get(0);
                     mSpinnerInfo.clear();
                     for (StudentInfo studentInfo : mStudentList) {
-                        mSpinnerInfo.add(studentInfo.name);
+                        mSpinnerInfo.add(studentInfo.stuName);
                     }
                     parentInfo.nameList = mSpinnerInfo;
                     mGetAllNoteTask = new GetAllNoteTask();
                     mGetAllNoteTask.execute((Void) null);
                     mSpinnerAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(HomePageActivity.this,R.string.no_child, Toast.LENGTH_LONG)
+                    .show(); 
                 }
             	 mProgressDialog.dismiss();
             	
