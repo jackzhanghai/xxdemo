@@ -71,7 +71,11 @@ public class HomeWorkActivity extends Activity {
 	private ArrayList<String> mSpinnerInfo;
 	PullToRefreshListView mPullToRefreshView;
 	private boolean isFooterRefresh;
-
+	int totalCount;
+	int toatlPage;
+	int curretCount;
+	int curretPage;
+	int pageCount = 5;
 	public GetHomeWorTask mHomeWorTask;
 
 	@Override
@@ -96,21 +100,26 @@ public class HomeWorkActivity extends Activity {
 						// Update the LastUpdatedLabel
 						refreshView.getLoadingLayoutProxy()
 								.setLastUpdatedLabel(label);
-
-						if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-							TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-							mHomeWorTask = new GetHomeWorTask(1, 5,
-									curretUserInfo.fkSchoolId,
-									teacherInfo.defalutClassId, "", "", "",
-									true);
-						} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-							ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-							mHomeWorTask = new GetHomeWorTask(1, 5,
-									curretUserInfo.fkSchoolId, "", "",
-									parentInfo.defalutChild.id, "", true);
-						}
-						mHomeWorTask.execute((Void) null);
-						isFooterRefresh = true;
+						if(curretPage < toatlPage ){
+							if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+								TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
+								mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
+										curretUserInfo.fkSchoolId,
+										teacherInfo.defalutClassId, "", "", "",
+										true);
+							} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+								ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+								mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
+										curretUserInfo.fkSchoolId, "", "",
+										parentInfo.defalutChild.id, "", true);
+							}
+							mHomeWorTask.execute((Void) null);
+							isFooterRefresh = true;
+						} else if(toatlPage>0 && curretPage == toatlPage){
+							Toast.makeText(HomeWorkActivity.this, "End of List!",
+									Toast.LENGTH_SHORT).show();
+						} 
+						
 					}
 				});
 
@@ -120,8 +129,12 @@ public class HomeWorkActivity extends Activity {
 
 					@Override
 					public void onLastItemVisible() {
-						Toast.makeText(HomeWorkActivity.this, "End of List!",
-								Toast.LENGTH_SHORT).show();
+						Log.i(TAG, "onLastItemVisible()");
+						if(totalCount==curretCount){
+							Toast.makeText(HomeWorkActivity.this, "End of List!",
+									Toast.LENGTH_SHORT).show();
+						}
+						
 					}
 				});
 
@@ -158,7 +171,7 @@ public class HomeWorkActivity extends Activity {
 				 loadingAnimation.start();
 
 				// ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-				mHomeWorTask = new GetHomeWorTask(1, 5,
+				mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
 						curretUserInfo.fkSchoolId, "", "",
 						parentInfo.defalutChild.id, "", true);
 
@@ -262,12 +275,12 @@ public class HomeWorkActivity extends Activity {
 		 loadingAnimation.start();
 		if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
 			TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-			mHomeWorTask = new GetHomeWorTask(1, 5,
+			mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
 					teacherInfo.defalutSchoolId, teacherInfo.defalutClassId,
 					"", "", "", true);
 		} else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
 			ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-			mHomeWorTask = new GetHomeWorTask(1, 5, curretUserInfo.fkSchoolId,
+			mHomeWorTask = new GetHomeWorTask(curretPage, pageCount, curretUserInfo.fkSchoolId,
 					"", "", parentInfo.defalutChild.id, "", true);
 		}
 
@@ -362,6 +375,12 @@ public class HomeWorkActivity extends Activity {
 
 		if (resultCode == RESULT_OK
 				&& requestCode == R.layout.activity_search_message) {
+			
+			totalCount = 0;
+			toatlPage  = 0;
+			curretCount  = 0;
+			curretPage  = 1;
+	
 			Bundle searchBundle = data.getExtras();
 			searchBundle.getString("mGradeId");
 			String classId2 = searchBundle.getString("mClassId");
@@ -376,12 +395,12 @@ public class HomeWorkActivity extends Activity {
 			if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
 				TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 
-				mHomeWorTask = new GetHomeWorTask(1, 5,
+				mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
 						curretUserInfo.fkSchoolId, teacherInfo.defalutClassId,
 						classId2, studentId, date, true);
 			} else {
 				ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-				mHomeWorTask = new GetHomeWorTask(1, 5,
+				mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
 						curretUserInfo.fkSchoolId, "", "",
 						parentInfo.defalutChild.id, date, true);
 			}
@@ -411,11 +430,19 @@ public class HomeWorkActivity extends Activity {
 			this.fkClassId2 = fkClassId2;
 			this.fkStudentId = fkStudentId;
 			this.isCustomSearch = isCustomSearch;
+			
 		}
 
 		@Override
 		protected ResponseMessage doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
+			Log.i(TAG, "totalCount " + totalCount);
+			Log.i(TAG, "toatlPage " + toatlPage);
+			Log.i(TAG, "curretCount " + curretCount);
+			Log.i(TAG, "curretPage " + curretPage);
+
+				++curretPage;
+
 			ResponseMessage responseMessage = new ResponseMessage();
 			StringBuilder info = new StringBuilder();
 			info.append("{");
@@ -452,7 +479,7 @@ public class HomeWorkActivity extends Activity {
 				responseMessage.body = RestClient.getHomeWorks(
 						curretUserInfo.id, curretUserInfo.ticket,
 						curretUserInfo.roleType.toString(), info.toString(),
-						page, row);
+						curretPage, pageCount);
 				responseMessage.praseBody();
 
 			} catch (ConnectTimeoutException stex) {
@@ -481,7 +508,11 @@ public class HomeWorkActivity extends Activity {
 			mHomeWorTask = null;
 			HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-				
+				totalCount = responseMessage.total;
+				if(totalCount>0){
+					toatlPage = totalCount%pageCount>1?(totalCount/pageCount+1):totalCount/pageCount;
+					
+				}
 				if( responseMessage.total > 0){
 					ArrayList<HomeWorkInfo> homeWorkInfoList = null;
 					try {
@@ -494,24 +525,25 @@ public class HomeWorkActivity extends Activity {
 					}
 
 					if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
-
+						curretCount = homeWorkInfoList.size();
 						for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
 							long insertResult = homeWorkDao
 									.addHomeWork(homeWorkInfo);
 							Log.i(TAG, "HomeWork insertResult " + insertResult);
 						}
 
-						if (isCustomSearch) {
-							mHomeWorkList.clear();
-							mHomeWorkList.addAll(homeWorkInfoList);
-						} else {
-							ArrayList<HomeWorkInfo> homeWork = homeWorkDao
-									.queryReadOrNotReadCountHomeWork(0);
-							Log.i(TAG, "homeWork.size() " + homeWork.size());
-							mHomeWorkList.clear();
-							mHomeWorkList.addAll(homeWork);
-
-						}
+						mHomeWorkList.addAll(homeWorkInfoList);
+//						if (isCustomSearch) {
+//							mHomeWorkList.clear();
+//							mHomeWorkList.addAll(homeWorkInfoList);
+//						} else {
+//							ArrayList<HomeWorkInfo> homeWork = homeWorkDao
+//									.queryReadOrNotReadCountHomeWork(0);
+//							Log.i(TAG, "homeWork.size() " + homeWork.size());
+//							mHomeWorkList.clear();
+//							mHomeWorkList.addAll(homeWork);
+//
+//						}
 					}
 
 					homeWorkDao.colseDb();
@@ -523,9 +555,12 @@ public class HomeWorkActivity extends Activity {
 							Toast.LENGTH_LONG).show();
 				}
 				
-
+				Log.i(TAG, "totalCount2 " + totalCount);
+				Log.i(TAG, "toatlPage2 " + toatlPage);
+				Log.i(TAG, "curretCount2 " + curretCount);
+				Log.i(TAG, "curretPage2 " + curretPage);
 			} else {
-				
+				--curretPage;
 				emptyView.setVisibility(View.VISIBLE);
 				Toast.makeText(HomeWorkActivity.this, responseMessage.message,
 						Toast.LENGTH_LONG).show();
