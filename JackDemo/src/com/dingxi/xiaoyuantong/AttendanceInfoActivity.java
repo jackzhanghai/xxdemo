@@ -64,7 +64,6 @@ public class AttendanceInfoActivity extends Activity {
     private View emptyView;
     private ImageButton mBackButton;
     private ImageButton mQueryMessageButton;
-    private ImageButton mEditMessageButton;
     private Spinner mSpinner;
     private ListView mAttendanceInfoListView;
     private AttendanceAdapter mAttendanceAdapter;
@@ -149,18 +148,6 @@ public class AttendanceInfoActivity extends Activity {
             }
         });
         
-        mEditMessageButton = (ImageButton) findViewById(R.id.edit_button);
-        mEditMessageButton.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(AttendanceInfoActivity.this,UpdateAttendanceInfoActivity.class);
-                startActivity(intent);
-                
-            }
-        });
-        mEditMessageButton.setVisibility(View.GONE);
         mPullToRefreshView = (PullToRefreshListView) findViewById(R.id.attendanceinfo_list);
         emptyView = findViewById(R.id.empty);
         mAttendanceInfoListView = mPullToRefreshView.getRefreshableView();
@@ -240,10 +227,10 @@ public class AttendanceInfoActivity extends Activity {
 
         if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
             mQueryMessageButton.setVisibility(View.VISIBLE);
-            mEditMessageButton.setVisibility(View.VISIBLE);
             mSpinner.setVisibility(View.GONE);
         } else {
-            
+            mQueryMessageButton.setVisibility(View.GONE);
+            mSpinner.setVisibility(View.VISIBLE);
             ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 
             if (parentInfo.childList != null) {
@@ -264,9 +251,8 @@ public class AttendanceInfoActivity extends Activity {
                     .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mSpinner.setAdapter(mSpinnerAdapter);
-            mQueryMessageButton.setVisibility(View.GONE);
-            mEditMessageButton.setVisibility(View.GONE);
-            mSpinner.setVisibility(View.VISIBLE);
+            mSpinner.setSelection(parentInfo.curretSelectIndex);
+            
         }
 
         

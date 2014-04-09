@@ -45,6 +45,7 @@ import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 import com.dingxi.xiaoyuantong.network.JSONParser;
 import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
+import com.dingxi.xiaoyuantong.util.Util;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -104,24 +105,30 @@ public class CampusNoticeActivity extends Activity {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 Log.d(TAG, "mSpinner onItemSelected()");
                 // TODO Auto-generated method stub
-                ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                parentInfo.defalutChild = mStudentList.get(arg2);
+                if (Util.IsNetworkAvailable(CampusNoticeActivity.this)) {
+                    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                    parentInfo.defalutChild = mStudentList.get(arg2);
 
-                mCampusNoticeList.clear();
-                mCampusNoticeAdapter.notifyDataSetChanged();
-                totalCount = 0;
-                toatlPage  = 0;
-                curretCount = 0;
-                curretPage = 0;
-                loadingImageView.setVisibility(View.VISIBLE);
-                emptyView.setVisibility(View.GONE);
-                loadingAnimation.start();
+                    mCampusNoticeList.clear();
+                    mCampusNoticeAdapter.notifyDataSetChanged();
+                    totalCount = 0;
+                    toatlPage  = 0;
+                    curretCount = 0;
+                    curretPage = 0;
+                    loadingImageView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                    loadingAnimation.start();
 
-                // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                mGetmCampusNoticeTask = new GetmCampusNoticeListTask(curretPage, pageCount,
-                        parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "", true);
+                    // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                    mGetmCampusNoticeTask = new GetmCampusNoticeListTask(curretPage, pageCount,
+                            parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "", true);
 
-                mGetmCampusNoticeTask.execute((Void) null);
+                    mGetmCampusNoticeTask.execute((Void) null);  
+                } else {
+                    Toast.makeText(CampusNoticeActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
+                }
+               
+                
             }
 
             @Override
@@ -164,30 +171,35 @@ public class CampusNoticeActivity extends Activity {
             @Override
             public void onRefresh(PullToRefreshBase<ListView> refreshView) {
                 Log.i(TAG, "onRefresh()");
-                String label = DateUtils.formatDateTime(getApplicationContext(),
-                        System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-                                | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                if(Util.IsNetworkAvailable(CampusNoticeActivity.this)){
+                    String label = DateUtils.formatDateTime(getApplicationContext(),
+                            System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
+                                    | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 
-                // Update the LastUpdatedLabel
-                refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+                    // Update the LastUpdatedLabel
+                    refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
-                    if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+                        if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
 
-                        TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-                        mGetmCampusNoticeTask = new GetmCampusNoticeListTask(curretPage, pageCount,
-                                teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "",
-                                true);
-                    } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-                        ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                        mGetmCampusNoticeTask = new GetmCampusNoticeListTask(curretPage, pageCount,
-                                parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "",
-                                true);
-                    }
-                    isFooterRefresh = true;
-                    mGetmCampusNoticeTask.execute((Void) null);
-
-               
-
+                            TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
+                            mGetmCampusNoticeTask = new GetmCampusNoticeListTask(curretPage, pageCount,
+                                    teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "",
+                                    true);
+                        } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+                            ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                            mGetmCampusNoticeTask = new GetmCampusNoticeListTask(curretPage, pageCount,
+                                    parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "",
+                                    true);
+                        }
+                        isFooterRefresh = true;
+                        mGetmCampusNoticeTask.execute((Void) null);
+                    
+                    
+                } else {
+                    mPullToRefreshListView.onRefreshComplete();
+                    Toast.makeText(CampusNoticeActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
+                }
+                
             }
         });
 
@@ -218,10 +230,13 @@ public class CampusNoticeActivity extends Activity {
                 // TODO Auto-generated method stub
                 Log.i(TAG, "arg2 " + arg2 + " arg3 " + arg3);
                 String id = mCampusNoticeList.get(arg2-1).id;
+                mCampusNoticeList.get(arg2-1).isRead = 1;
                 Log.i(TAG, "id " + id);
                 Intent intent = new Intent(CampusNoticeActivity.this,
                         CampusNoticeDetailActivity.class);
                 intent.putExtra(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID, id);
+                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_CONTENT, mCampusNoticeList.get(arg2-1).content);
+                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, mCampusNoticeList.get(arg2-1).optTime);
                 startActivity(intent);
             }
 
@@ -232,7 +247,7 @@ public class CampusNoticeActivity extends Activity {
             mEditMessageButton.setVisibility(View.VISIBLE);
             mSpinner.setVisibility(View.GONE);
         } else {
-
+            mSpinner.setVisibility(View.VISIBLE);
             ParentInfo parentInfo = (ParentInfo) curretUserInfo;
 
             if (parentInfo.childList != null) {
@@ -254,7 +269,8 @@ public class CampusNoticeActivity extends Activity {
             mSpinner.setAdapter(mSpinnerAdapter);
             mQueryMessageButton.setVisibility(View.GONE);
             mEditMessageButton.setVisibility(View.GONE);
-            mSpinner.setVisibility(View.VISIBLE);
+           
+            mSpinner.setSelection(parentInfo.curretSelectIndex);
         }
 
         
@@ -275,6 +291,16 @@ public class CampusNoticeActivity extends Activity {
        
     }
     
+    
+    @Override
+    protected void onStart() {
+        // TODO Auto-generated method stub
+        super.onStart();
+        if(mCampusNoticeList.size()>0){
+            mCampusNoticeAdapter.notifyDataSetChanged();
+            
+        }
+    }
     
     
     @Override
@@ -338,12 +364,11 @@ public class CampusNoticeActivity extends Activity {
             // TODO Auto-generated method stub
             String id = campusNoticeList.get(position).id;
             // Long.parseLong(id)
-            return 0;
+            return position;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.i(TAG, "getView()");
             HomeWorkHolder viewHolder;
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.homework_item, null);
@@ -356,11 +381,9 @@ public class CampusNoticeActivity extends Activity {
                 viewHolder = (HomeWorkHolder) convertView.getTag();
             }
 
-            Log.i(TAG, "homeWorkList.get(position).getId() " + campusNoticeList.get(position).id);
             // viewHolder.headerText.setText(campusNoticeList.get(position).id);
             viewHolder.headerText.setText(R.string.system_note);
-            Log.i(TAG, "homeWorkList.get(position).getContent() "
-                    + campusNoticeList.get(position).content);
+
             viewHolder.bodyText.setText(campusNoticeList.get(position).content);
             if (campusNoticeList.get(position).isRead == 0) {
                 viewHolder.isRead.setText(R.string.unread);
@@ -443,7 +466,12 @@ public class CampusNoticeActivity extends Activity {
         @Override
         protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-           
+            Log.i(TAG, "totalCount " + totalCount);
+            Log.i(TAG, "toatlPage " + toatlPage);
+            Log.i(TAG, "curretCount " + curretCount);
+            Log.i(TAG, "curretPage " + curretPage);
+            Log.d(TAG, "mCampusNoticeList.size() " + mCampusNoticeList.size());
+            
             ResponseMessage responseMessage = new ResponseMessage();
             StringBuilder info = new StringBuilder();
             info.append("{");
@@ -468,11 +496,6 @@ public class CampusNoticeActivity extends Activity {
             info.append("\"queryTime\":");
             info.append("\"" + queryTime + "\"");
             info.append("}");
-            Log.i(TAG, "totalCount " + totalCount);
-            Log.i(TAG, "toatlPage " + toatlPage);
-            Log.i(TAG, "curretCount " + curretCount);
-            Log.i(TAG, "curretPage " + curretPage);
-            Log.d(TAG, "mCampusNoticeList.size() " + mCampusNoticeList.size());
             Log.d(TAG, "info.toString() " + info.toString());
             ++curretPage;
 
@@ -516,6 +539,16 @@ public class CampusNoticeActivity extends Activity {
                 if(totalCount > 0){
                     toatlPage = totalCount % pageCount > 1 ? (totalCount / pageCount + 1)
                             : totalCount / pageCount;
+                    
+//                    if(totalCount % pageCount >= 1){
+//                        toatlPage = (totalCount / pageCount + 1);
+//                    } else if(totalCount % pageCount > 0 && totalCount % pageCount < 1) {
+//                        toatlPage = 1;
+//                    } else {
+//                        toatlPage = (totalCount / pageCount);
+//                    }
+                    
+                    
                     try {
 
                         ArrayList<CampusNotice> campusNoticeList = JSONParser
@@ -524,8 +557,12 @@ public class CampusNoticeActivity extends Activity {
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
 
                             for (CampusNotice campusNotice : campusNoticeList) {
-                                long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
-                                Log.i(TAG, "campusNotice insertResult " + insertResult);
+                                CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
+                                Log.i(TAG, "campus " + campus);
+                                if(campus != null){
+                                    campusNotice.isRead = 1;
+                                }
+
                             }
 
                             mCampusNoticeList.addAll(campusNoticeList);
@@ -559,8 +596,7 @@ public class CampusNoticeActivity extends Activity {
                         // mCampusNoticeAdapter.notifyDataSetChanged();
                         // };
 
-                        curretCount = mCampusNoticeList.size();
-                        mCampusNoticeAdapter.notifyDataSetChanged();
+                        curretCount = mCampusNoticeList.size();                       
                         mCampusNoticeListView.setSelection(curretPage * pageCount - 4);
 
                     } catch (JSONException e) {
@@ -570,7 +606,7 @@ public class CampusNoticeActivity extends Activity {
                     
                     campusNoticeDao.colseDb();
                     campusNoticeDao = null;
-
+                   
                     Log.i(TAG, "totalCount2 " + totalCount);
                     Log.i(TAG, "toatlPage2 " + toatlPage);
                     Log.i(TAG, "curretCount2 " + curretCount);
@@ -598,7 +634,7 @@ public class CampusNoticeActivity extends Activity {
                 loadingAnimation.stop();
                 loadingImageView.setVisibility(View.GONE);
             }
-
+            mCampusNoticeAdapter.notifyDataSetChanged();
         }
 
         @Override

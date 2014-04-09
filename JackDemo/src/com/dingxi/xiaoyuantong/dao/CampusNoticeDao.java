@@ -117,6 +117,9 @@ public class CampusNoticeDao {
         CampusNotice campusNotice = null;
         if (cursor != null && cursor.getCount() > 0) {
             campusNotice = new CampusNotice();
+            
+            
+            
             if (cursor.moveToNext()) {
 
                 campusNotice.id = cursor.getString(cursor

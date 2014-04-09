@@ -10,13 +10,7 @@
     
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            />
+        android:layout_height="match_parent" >
 
         
          <com.handmark.pulltorefresh.library.PullToRefreshListView

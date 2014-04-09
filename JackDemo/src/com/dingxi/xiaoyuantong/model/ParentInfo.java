@@ -9,4 +9,5 @@ public class ParentInfo extends UserInfo {
 	public ArrayList<StudentInfo> childList;
 	public StudentInfo defalutChild;
 	public ArrayList<String> nameList;
+	public int curretSelectIndex;
 }

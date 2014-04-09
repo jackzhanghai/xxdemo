@@ -495,7 +495,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				if (!TextUtils.isEmpty(curretUserInfo.defalutSchoolId)) {
 					curretSearchType = SearchType.GradeInfo;
 					mProgressDialog
-							.setMessage(getString(R.string.now_geting_classinfo));
+							.setMessage(getString(R.string.now_geting_gradeinfo));
 				} else {
 					errorCode = R.string.select_school;
 				}
@@ -505,7 +505,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				if (!TextUtils.isEmpty(mClassId)) {
 					curretSearchType = SearchType.SubjectInfo;
 					mProgressDialog
-							.setMessage(getString(R.string.now_geting_classinfo));
+							.setMessage(getString(R.string.now_geting_subjectinfo));
 				} else {
 					errorCode = R.string.select_class;
 				}

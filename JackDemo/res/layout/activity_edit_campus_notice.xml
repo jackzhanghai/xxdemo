@@ -23,6 +23,36 @@
             android:gravity="center_vertical" >
 
             <TextView
+                android:id="@+id/select_sendtype_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="4dp"
+                android:text="@string/select_send_type"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_sendtype_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+
+        <RelativeLayout
+           android:id="@+id/select_grade_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
                 android:id="@+id/select_grade_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,6 +75,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+             android:id="@+id/select_class_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -72,11 +103,7 @@
                 android:layout_marginRight="10dp"
                 android:background="@drawable/chooseschool_down" />
         </RelativeLayout>
-        
-         
     </LinearLayout>
-
-    
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -84,8 +111,8 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_weight="1.0"
         android:layout_marginTop="4dp"
+        android:layout_weight="1.0"
         android:background="@drawable/new_message_background" >
 
         <EditText
@@ -114,6 +141,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/login_button_selector"
             android:text="@string/confirm" />
+
         <Button
             android:id="@+id/edit_cancel_button"
             android:layout_width="wrap_content"

@@ -22,8 +22,7 @@ public class CampusNoticeDetailActivity extends Activity {
     private ImageButton mBackButton;
     private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    private CampusNotice curretCampusNotice;
-    private CampusNoticeDao curretCampusNoticeDao;
+
     private TextView noticeTite;
     private TextView noticeDate;
     private TextView noticeContent;
@@ -55,11 +54,12 @@ public class CampusNoticeDetailActivity extends Activity {
         curretUserInfo = mXiaoYunTongApplication.userInfo;
         
        String noticeID =  getIntent().getStringExtra(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID);
-       curretCampusNoticeDao =  new CampusNoticeDao(mXiaoYunTongApplication);
-       curretCampusNotice =  curretCampusNoticeDao.queryCampusNoticeByID(noticeID);
-       noticeTite.setText("校园通知");
-       noticeDate.setText(curretCampusNotice.optTime);
-       noticeContent.setText(curretCampusNotice.content);
+       String content =  getIntent().getStringExtra(CampusNoticeEntry.COLUMN_NAME_CONTENT);
+       String optTime =  getIntent().getStringExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME);
+
+       noticeTite.setText(R.string.system_note);
+       noticeDate.setText(optTime);
+       noticeContent.setText(content);
        
        confirmButton = (Button) findViewById(R.id.confirm_button);
        confirmButton.setOnClickListener(new OnClickListener() {
@@ -73,13 +73,20 @@ public class CampusNoticeDetailActivity extends Activity {
        
        CampusNoticeDao campusNoticeDao = new CampusNoticeDao(
     		   CampusNoticeDetailActivity.this);
-       ContentValues values = new ContentValues();
-       values.put(CampusNoticeEntry.COLUMN_NAME_IS_READ, "1");
        
+       CampusNotice campusNotice = campusNoticeDao.queryCampusNoticeByID(noticeID);
+       if(campusNotice == null){
+           campusNotice = new CampusNotice();
+           campusNotice.id = noticeID;
+           campusNotice.content = content;
+           campusNotice.optTime = optTime;
+           long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
+           HomePageActivity.campusNotieTotal -=1;
+           Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);  
+       }
        
-       long updateResult = campusNoticeDao
-				.updateCampusNoticeById(values,noticeID);
-       Log.i("CampusNoticeDetailActivity", "updateResult " + updateResult);
+      
+      
        
 
     }

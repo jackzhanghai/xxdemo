@@ -12,7 +12,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
+import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
+import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 
 public class HomeWorkDetailActivity extends Activity {
@@ -20,8 +22,8 @@ public class HomeWorkDetailActivity extends Activity {
     private View parentHeader;
     private ImageButton mBackButton;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    private HomeWorkInfo curretHomeWorkInfo;
-    private HomeWorkDao curretHomeDao;
+    //private HomeWorkInfo curretHomeWorkInfo;
+    //private HomeWorkDao curretHomeDao;
     private TextView homeWorkTite;
     private TextView homeWorkDate;
     private TextView homeWorkContent;
@@ -51,11 +53,27 @@ public class HomeWorkDetailActivity extends Activity {
         
         
        String homeWorkID =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID);
-       curretHomeDao =  new HomeWorkDao(mXiaoYunTongApplication);
-       curretHomeWorkInfo =  curretHomeDao.queryHomeWorkByID(homeWorkID);
+       String optTime =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_OPT_TIME);
+       String content = getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_CONTENT);
+       HomeWorkDao campusNoticeDao = new HomeWorkDao(
+               HomeWorkDetailActivity.this);
+       
+       HomeWorkInfo homeWorkInfo = campusNoticeDao.queryHomeWorkByID(homeWorkID);
+       if(homeWorkInfo == null){
+
+           homeWorkInfo =  new HomeWorkInfo();
+           homeWorkInfo.id = homeWorkID;
+           homeWorkInfo.content = content;
+           homeWorkInfo.optTime = optTime;
+          HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+          long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
+          HomePageActivity.homeWorkTotal -= 1;
+           Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
+       }
+
        homeWorkTite.setText(R.string.home_work);
-       homeWorkDate.setText(curretHomeWorkInfo.optTime);
-       homeWorkContent.setText(curretHomeWorkInfo.content);
+       homeWorkDate.setText(optTime);
+       homeWorkContent.setText(content);
        confirmButton = (Button) findViewById(R.id.confirm_button);
        confirmButton.setOnClickListener(new OnClickListener() {
 		
@@ -66,15 +84,9 @@ public class HomeWorkDetailActivity extends Activity {
 		}
 	});
        
-       HomeWorkDao campusNoticeDao = new HomeWorkDao(
-    		   HomeWorkDetailActivity.this);
-       ContentValues values = new ContentValues();
-       values.put(HomeWorkEntry.COLUMN_NAME_IS_READ, 1);
        
        
-      int updateResult = campusNoticeDao
-				.updateHomeWorkById(values,homeWorkID);
-       Log.i("CampusNoticeDetailActivity", "updateResult " + updateResult);
+       
        
     }
 
