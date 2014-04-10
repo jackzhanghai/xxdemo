@@ -5,7 +5,33 @@
     android:background="@drawable/home_page"
     android:orientation="vertical" >
 
-    <include layout="@layout/home_page_title_bar" />
+    <RelativeLayout
+        android:id="@+id/main_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/title"
+        android:gravity="center_vertical" >
+
+        <Spinner
+            android:id="@+id/main_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/main_spinner_selector"
+            android:gravity="center"
+            android:paddingLeft="10dip"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/query_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/query_message_selector"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,13 +50,12 @@
             android:id="@+id/roll_note_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="10dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textSize="18sp"
             android:textColor="@android:color/black"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="6dp"
-             />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <GridView
@@ -49,18 +74,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp" >
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp" >
 
         <Button
             android:id="@+id/exit_account"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/login_button_selector"
             android:layout_centerInParent="true"
+            android:background="@drawable/login_button_selector"
             android:text="@string/exit_account" />
-
     </RelativeLayout>
 
 </LinearLayout>

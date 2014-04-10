@@ -24,7 +24,7 @@
 
         android:layout_alignRight="@id/back_button"
         android:background="@drawable/main_spinner_selector" 
-        android:visibility="visible"
+        android:visibility="gone"
         android:paddingLeft="4dp" />
 
     <!-- 
@@ -33,10 +33,10 @@
         android:id="@+id/edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:paddingRight="6dp"
         android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@id/query_button"
         android:background="@drawable/edit_message_selector"
         android:visibility="gone" />
 
@@ -45,8 +45,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@id/edit_button"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
         android:background="@drawable/query_message_selector"
         android:visibility="gone" />
 

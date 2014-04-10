@@ -34,7 +34,6 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -61,7 +60,6 @@ public class HomePageActivity extends Activity {
 
     private static final int MSG_ROLL_TEXT = 0;
     private Spinner mSpinner;
-    private ImageButton backButton;
     private UserInfo userInfo;
 
     private ProgressDialog mProgressDialog;
@@ -113,20 +111,6 @@ public class HomePageActivity extends Activity {
         mStudentList = new ArrayList<StudentInfo>();
         campusNoticeContentList = new ArrayList<String>();
         gridview.setAdapter(mImageAdapter);
-
-        backButton = (ImageButton) findViewById(R.id.back_button);
-        backButton.setVisibility(View.GONE);
-        //
-        // backButton.setOnClickListener(new OnClickListener() {
-        //
-        // @Override
-        // public void onClick(View v) {
-        // Intent backIntent = new Intent(HomePageActivity.this, LoginActivity.class);
-        // backIntent.putExtra("auto", false);
-        // startActivity(backIntent);
-        // finish();
-        // }
-        // });
 
         exitAccountButton = (Button) findViewById(R.id.exit_account);
         exitAccountButton.setOnClickListener(new OnClickListener() {

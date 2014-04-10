@@ -5,7 +5,7 @@
     android:background="@drawable/home_page"
     android:orientation="vertical" >
 
-    <include layout="@layout/attendance_info_title_bar" />
+    <include layout="@layout/home_page_title_bar" />
 
     
     
