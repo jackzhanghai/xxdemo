@@ -37,7 +37,7 @@ public class LocationInfoActivity extends Activity {
 	
 	BMapManager mBMapMan = null;//
 	MapView mMapView = null;
-	String key = "GPaW4uhS7hx62Zgtm6ZrP45j";
+	String key = "YA9Y3C8usVBg9Eo4BezvO6Sn";
 	GetLocationTask mGetLocationTask;
 	private XiaoYunTongApplication mXiaoYunTongApplication;
 	private ProgressDialog mProgressDialog;
@@ -64,7 +64,7 @@ public class LocationInfoActivity extends Activity {
         GeoPoint point =new GeoPoint((int)(39.915* 1E6),(int)(116.404* 1E6));
         //用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)
         mMapController.setCenter(point);//设置地图中心点
-        mMapController.setZoom(12);//设置地图zoom级别
+        mMapController.setZoom(14);//设置地图zoom级别
      // TODO Auto-generated method stub
         mProgressDialog = new ProgressDialog(LocationInfoActivity.this);
         mProgressDialog.setMessage(getString(R.string.now_loading_locaton));
@@ -82,7 +82,7 @@ public class LocationInfoActivity extends Activity {
         });
         mProgressDialog.show();
         mGetLocationTask = new GetLocationTask();
-        mGetLocationTask.execute((Void) null);
+        mGetLocationTask.execute((Void) null); 
 
     }
     
@@ -110,6 +110,7 @@ public class LocationInfoActivity extends Activity {
                     mBMapMan.start();
             }
            super.onResume();
+        
     }
 
 
@@ -163,7 +164,9 @@ public class LocationInfoActivity extends Activity {
                                         ,Toast.LENGTH_LONG).show();
                             } else {
                                 double mLat1 = Double.parseDouble(locationInfo.lat);
+                                Log.i(TAG, "mLat1 " + mLat1);
                                 double mLon1 = Double.parseDouble(locationInfo.lng);
+                                Log.i(TAG, "mLon1 " + mLon1);
                                 GeoPoint p2 = new GeoPoint((int) (mLat1 * 1E6), (int) (mLon1 * 1E6));  
                                 Drawable mark= getResources().getDrawable(R.drawable.location_info);  
                                 OverlayItem item = new OverlayItem(p2,"item2","item2"); 
