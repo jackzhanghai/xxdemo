@@ -144,6 +144,7 @@ public class CampusNoticeActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CampusNoticeActivity.this, SearchMessageActivity.class);
+                intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_CAMPUS_NOTE);
                 startActivityForResult(intent, R.layout.activity_search_message);
 
             }

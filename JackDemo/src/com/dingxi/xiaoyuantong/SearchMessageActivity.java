@@ -47,17 +47,23 @@ public class SearchMessageActivity extends Activity {
     public static final String TAG = "SearchMessageActivity";
     // private View parentHeader;
     // private ImageButton mBackButton;
+    
+    
+    public static final int SEARCH_TYPE_HOME_WORK = 1;
+    public static final int SEARCH_TYPE_ATTENDACE = 2;
+    public static final int SEARCH_TYPE_CAMPUS_NOTE = 3;
+    public static final  String SEARCH_TYPE = "searchType";
     private  UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
     private ImageButton selectClassButton;
     private ImageButton selectGradeButton;
     private ImageButton selectStudentButton;
     private ImageButton selectTimeButton;
-    private String mSchoolId;
-    private String mGradeId;
-    private String mClassId;
-    private String mStudentId;
-    private String mData;
+    private String mSchoolId = "";
+    private String mGradeId = "";
+    private String mClassId = "";
+    private String mStudentId = "";
+    private String mData = "";
     private ProgressDialog mProgressDialog;
     private TextView selectClassTextView;
     private TextView selectGradeTextView;
@@ -74,12 +80,17 @@ public class SearchMessageActivity extends Activity {
     private Button sreachConfirmButton;
     private Button sreachCancelButton;
     private DatePickerDialog mTimePickerDialog;
+    private int curretSearch = SEARCH_TYPE_HOME_WORK;
+    
+    
 
     private enum SearchType {
         ClassInfo, GradeInfo, StudentInfo
     }
-
     private Calendar cal = Calendar.getInstance(); 
+    
+    
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +105,8 @@ public class SearchMessageActivity extends Activity {
             Log.i(TAG, "mSchoolId " + mSchoolId);
 
         }
+        
+        
         sreachConfirmButton = (Button) findViewById(R.id.sreach_confirm_button);
         sreachConfirmButton.setOnClickListener(new OnClickListener() {
 
@@ -101,22 +114,27 @@ public class SearchMessageActivity extends Activity {
             public void onClick(View v) {
                 
                 
-                if(TextUtils.isEmpty(mGradeId)){
-                    Toast.makeText(SearchMessageActivity.this, R.string.select_grade,
-                            Toast.LENGTH_LONG).show();
-                } else if(TextUtils.isEmpty(mClassId)){
-                    Toast.makeText(SearchMessageActivity.this, R.string.select_class,
-                            Toast.LENGTH_LONG).show();
-                } else if(TextUtils.isEmpty(mStudentId)){
-                    Toast.makeText(SearchMessageActivity.this, R.string.select_student,
-                            Toast.LENGTH_LONG).show();
-                } else if(TextUtils.isEmpty(mData)){
-                    Toast.makeText(SearchMessageActivity.this, R.string.select_time,
+                
+                if(curretSearch  == SEARCH_TYPE_HOME_WORK){
+                    
+                  
+                    
+                } else if(curretSearch  == SEARCH_TYPE_ATTENDACE){
+                    
+                    
+                    
+                } else if(curretSearch  == SEARCH_TYPE_CAMPUS_NOTE){
+                    
+                    
+                }
+                
+                
+                if(TextUtils.isEmpty(mGradeId) && TextUtils.isEmpty(mClassId) && TextUtils.isEmpty(mStudentId) && TextUtils.isEmpty(mData) ){
+                    Toast.makeText(SearchMessageActivity.this, R.string.mast_selet_one,
                             Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent = new Intent(SearchMessageActivity.this, HomeWorkActivity.class);
-                    
-                    
+
                     Log.i(TAG, "mGradeId " + mGradeId);
                     Log.i(TAG, "mClassId " + mClassId);
                     Log.i(TAG, "mStudentId " + mStudentId);
@@ -128,8 +146,38 @@ public class SearchMessageActivity extends Activity {
                     searchBundle.putString("mData", mData);
                     intent.putExtras(searchBundle);
                     setResult(RESULT_OK, intent);
-                    finish();   
+                    finish();    
                 }
+                
+//                if(TextUtils.isEmpty(mGradeId)){
+//                    Toast.makeText(SearchMessageActivity.this, R.string.select_grade,
+//                            Toast.LENGTH_LONG).show();
+//                } else if(TextUtils.isEmpty(mClassId)){
+//                    Toast.makeText(SearchMessageActivity.this, R.string.select_class,
+//                            Toast.LENGTH_LONG).show();
+//                } else if(TextUtils.isEmpty(mStudentId)){
+//                    Toast.makeText(SearchMessageActivity.this, R.string.select_student,
+//                            Toast.LENGTH_LONG).show();
+//                } else if(TextUtils.isEmpty(mData)){
+//                    Toast.makeText(SearchMessageActivity.this, R.string.select_time,
+//                            Toast.LENGTH_LONG).show();
+//                } else {
+//                    Intent intent = new Intent(SearchMessageActivity.this, HomeWorkActivity.class);
+//                    
+//                    
+//                    Log.i(TAG, "mGradeId " + mGradeId);
+//                    Log.i(TAG, "mClassId " + mClassId);
+//                    Log.i(TAG, "mStudentId " + mStudentId);
+//                    Log.i(TAG, "mData " + mData);
+//                    Bundle  searchBundle = new Bundle();
+//                    searchBundle.putString("mGradeId", mGradeId);
+//                    searchBundle.putString("mClassId", mClassId);
+//                    searchBundle.putString("mStudentId", mStudentId);
+//                    searchBundle.putString("mData", mData);
+//                    intent.putExtras(searchBundle);
+//                    setResult(RESULT_OK, intent);
+//                    finish();   
+//                }
                 
                 
 
@@ -179,6 +227,8 @@ public class SearchMessageActivity extends Activity {
 
             }
         });
+        
+        curretSearch = getIntent().getIntExtra(SEARCH_TYPE, SEARCH_TYPE_HOME_WORK);
 
         selectClassButton = (ImageButton) findViewById(R.id.select_class_button);
         selectClassButton.setOnClickListener(new OnClickListener() {
@@ -186,6 +236,9 @@ public class SearchMessageActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "selectClassButton OnClick");
+              
+                
+                
                 if (!TextUtils.isEmpty(mGradeId)) {
                     curretSearchType = SearchType.ClassInfo;
                     mProgressDialog = new ProgressDialog(SearchMessageActivity.this);

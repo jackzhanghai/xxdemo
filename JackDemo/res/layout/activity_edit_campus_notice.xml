@@ -122,6 +122,9 @@
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:layout_marginTop="6dp"
+            android:inputType="textMultiLine"
+   			android:gravity="left|top"
+   			android:minLines="6"
             android:hint="@string/edit_homewok_hint"
             android:singleLine="false" >
         </EditText>

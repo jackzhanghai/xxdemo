@@ -43,6 +43,7 @@
      <string name="select_class">请选择班级</string>
      <string name="no_class">没有班级</string>
     <string name="select_grade">请选择年级</string>
+    <string name="mast_selet_one">请至少选择一个条件</string>
      <string name="select_send_type">请选择发送类型</string>
     <string name="no_grade">没有年纪</string>
     <string name="select_student">请选择学生</string>

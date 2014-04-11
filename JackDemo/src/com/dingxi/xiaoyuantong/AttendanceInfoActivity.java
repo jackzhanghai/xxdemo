@@ -143,8 +143,8 @@ public class AttendanceInfoActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AttendanceInfoActivity.this,SearchMessageActivity.class);
-                startActivityForResult(intent, R.layout.activity_search_message);
-                
+                intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_ATTENDACE);
+                startActivityForResult(intent, R.layout.activity_search_message);               
             }
         });
         

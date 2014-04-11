@@ -223,6 +223,7 @@ public class HomeWorkActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeWorkActivity.this, SearchMessageActivity.class);
+                intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
                 startActivityForResult(intent, R.layout.activity_search_message);
 
             }
