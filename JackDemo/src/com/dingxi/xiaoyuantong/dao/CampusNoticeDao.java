@@ -66,6 +66,10 @@ public class CampusNoticeDao {
     	    selection,
     	    selectionArgs);
     	
+    	
+    	if(db!=null){
+    	    db.close();
+    	}
 		return count;
     }
 
@@ -308,6 +312,13 @@ public class CampusNoticeDao {
 	        		
 	        		campusNotices.add(CampusNotice);
 	        	}
+	        }
+	        
+	        if (cursor != null) {
+	            cursor.close();
+	        }
+	        if (db != null) {
+	            db.close();
 	        }
 		return campusNotices;
 	}

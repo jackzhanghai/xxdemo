@@ -59,7 +59,10 @@ public class OfficialSiteActivity extends Activity {
         public void onPageFinished(WebView view, String url) {
         	// TODO Auto-generated method stub
         	super.onPageFinished(view, url);
-        	 dialog.dismiss(); 
+        	if(dialog!=null && dialog.isShowing()){
+        	    dialog.dismiss(); 
+        	}
+        	 
         }
     }
 

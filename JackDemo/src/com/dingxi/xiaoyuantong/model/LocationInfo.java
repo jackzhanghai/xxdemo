@@ -6,4 +6,5 @@ public class LocationInfo {
 	public String lng;
 	public String lat;
 	public String optTime;
+	public String address;
 }
