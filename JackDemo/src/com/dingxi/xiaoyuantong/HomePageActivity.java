@@ -221,11 +221,11 @@ public class HomePageActivity extends Activity {
                     Intent intent = new Intent(HomePageActivity.this, ModifyPassWordActivity.class);
                     startActivity(intent);
                 } else if (position == 5) {
-                    if (!TextUtils.isEmpty("imei")) {
+                    ParentInfo parentInfo = (ParentInfo) userInfo;
+                    if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
                         Intent intent = new Intent(HomePageActivity.this,
                                 LocationInfoActivity.class);
-
-                        ParentInfo parentInfo = (ParentInfo) userInfo;
+                  
                         Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.stuName);
                         Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
                         Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);

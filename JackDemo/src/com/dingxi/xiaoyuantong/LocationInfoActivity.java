@@ -16,6 +16,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings.System;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -65,15 +66,25 @@ public class LocationInfoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate()");
+        
+        long startTime = java.lang.System.currentTimeMillis();
+        long endTime;
+        Log.d(TAG, "startTime " + startTime);
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
-        mBMapMan = new BMapManager(getApplication());
+        endTime = java.lang.System.currentTimeMillis();
+        Log.d(TAG, "1 " + (endTime - startTime));
+        mBMapMan = new BMapManager(mXiaoYunTongApplication);
         mBMapMan.init(key, null);
         // 注意：请在试用setContentView前初始化BMapManager对象，否则会报错
         setContentView(R.layout.activity_location_info);
+        endTime = java.lang.System.currentTimeMillis();
+        Log.d(TAG, "2 " + (endTime - startTime));
+        
         mMapView = (MapView) findViewById(R.id.bmapView);
         mMapView.setBuiltInZoomControls(true);
-
+        endTime = java.lang.System.currentTimeMillis();
+        Log.d(TAG, "3 " + (endTime - startTime));
         imei = getIntent().getStringExtra("imei");
         // 设置启用内置的缩放控件
         mMapController = mMapView.getController();
@@ -82,6 +93,8 @@ public class LocationInfoActivity extends Activity {
         // 用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)
         mMapController.setCenter(point);// 设置地图中心点
         mMapController.setZoom(14);// 设置地图zoom级别
+        endTime = java.lang.System.currentTimeMillis();
+        Log.d(TAG, "4 " + (endTime - startTime));
         // TODO Auto-generated method stub
         mProgressDialog = new ProgressDialog(LocationInfoActivity.this);
         mProgressDialog.setMessage(getString(R.string.now_loading_locaton));
@@ -100,7 +113,8 @@ public class LocationInfoActivity extends Activity {
         mProgressDialog.show();
         mGetLocationTask = new GetLocationTask();
         mGetLocationTask.execute((Void) null);
-
+        endTime = java.lang.System.currentTimeMillis();
+        Log.d(TAG, "5 " + (endTime - startTime));
     }
 
     @Override

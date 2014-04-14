@@ -17,17 +17,21 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.dingxi.xiaoyuantong.model.ParentInfo;
@@ -83,6 +87,27 @@ public class LoginActivity extends Activity {
 
 		mUserNameEditText = (EditText) findViewById(R.id.user_name);
 		mPasswordEditText = (EditText) findViewById(R.id.password);
+		mPasswordEditText.setOnEditorActionListener(new OnEditorActionListener() {
+            
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                // TODO Auto-generated method stub
+                Log.i(TAG, "mPasswordEditText actionId " + actionId +" event "+ event.getKeyCode());
+                return false;
+            }
+        });
+		mPasswordEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+            
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // TODO Auto-generated method stub
+                Log.i(TAG, "mPasswordEditText hasFocus " + hasFocus);
+               String pass = mPasswordEditText.getText().toString();
+
+                
+            }
+        });
+		
 		mAutoLoginCheckBox = (CheckBox) findViewById(R.id.auto_login_checkBox);
 		mRemberCheckBox = (CheckBox) findViewById(R.id.remember_password_checkBox);
 
@@ -330,10 +355,13 @@ public class LoginActivity extends Activity {
 	if (TextUtils.isEmpty(mPassword)) {
 			errorMessage = getString(R.string.input_password);
 			isError = true;
-		} else if (mPassword.length() < 4) {
+		} else if (mPassword.length() < 6) {
 			errorMessage = getString(R.string.error_invalid_password);
 			isError = true;
-		} else if (TextUtils.isEmpty(mUserName)) {
+		}else if(mPassword.length() >12){
+		    errorMessage = getString(R.string.error_invalid_password);
+            isError = true;
+		}else if (TextUtils.isEmpty(mUserName)) {
 			errorMessage = getString(R.string.input_accont);
 			isError = true;
 		}

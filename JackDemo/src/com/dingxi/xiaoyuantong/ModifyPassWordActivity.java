@@ -75,18 +75,24 @@ public class ModifyPassWordActivity extends Activity {
 				boolean isRight = true;
 				if(TextUtils.isEmpty(oldPassword)){
 					
-					Toast.makeText(ModifyPassWordActivity.this, "旧密码不能为空", Toast.LENGTH_LONG).show();
+					Toast.makeText(ModifyPassWordActivity.this, R.string.old_password_not_empty, Toast.LENGTH_LONG).show();
 					 isRight = false;
 				} else if(TextUtils.isEmpty(newPassword)){
-					Toast.makeText(ModifyPassWordActivity.this, "新密码不能为空", Toast.LENGTH_LONG).show();
+					Toast.makeText(ModifyPassWordActivity.this, R.string.new_password_not_empty, Toast.LENGTH_LONG).show();
 					 isRight = false;
 				} else if(TextUtils.isEmpty(newPasswordAgain)) {
-					Toast.makeText(ModifyPassWordActivity.this, "新密码不能为空", Toast.LENGTH_LONG).show();
+					Toast.makeText(ModifyPassWordActivity.this, R.string.new_password_not_empty, Toast.LENGTH_LONG).show();
 					 isRight = false;
 				} else if(!newPasswordAgain.equals(newPassword)){
-					Toast.makeText(ModifyPassWordActivity.this, "两次新密码不一致请重新输入", Toast.LENGTH_LONG).show();
+					Toast.makeText(ModifyPassWordActivity.this, R.string.two_password_not_sample, Toast.LENGTH_LONG).show();
 					isRight = false;
-				}
+				} else if(oldPassword.length()<6 || newPassword.length()<6 || newPasswordAgain.length() <6){
+				    Toast.makeText(ModifyPassWordActivity.this, R.string.input_valid_password, Toast.LENGTH_LONG).show();
+                    isRight = false;
+				}else if(oldPassword.length()>12 || newPassword.length()>12 || newPasswordAgain.length() >12){
+				    Toast.makeText(ModifyPassWordActivity.this, R.string.input_valid_password, Toast.LENGTH_LONG).show();
+                    isRight = false;
+                }
 				
 				if(isRight){
 					modifyPassWord(oldPassword,newPassword);
