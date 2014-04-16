@@ -49,6 +49,7 @@ import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
+import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 import com.dingxi.xiaoyuantong.network.JSONParser;
 import com.dingxi.xiaoyuantong.network.ResponseMessage;
@@ -59,6 +60,7 @@ public class HomePageActivity extends Activity {
     protected static final String TAG = "HomePageActivity";
 
     private static final int MSG_ROLL_TEXT = 0;
+    private static final int MSG_NO_DATA = 1;
     private Spinner mSpinner;
     private UserInfo userInfo;
 
@@ -74,8 +76,9 @@ public class HomePageActivity extends Activity {
     GridView gridview;
     private TextView rollNoteText;
     private ArrayList<StudentInfo> mStudentList;
-    private ArrayList<String> campusNoticeContentList;
-    // private ArrayList<CampusNotice> campusNoticeList = new ArrayList<CampusNotice>();
+    //private ArrayList<String> campusNoticeContentList;
+   private ArrayList<CampusNotice> campusNoticeLists;
+   private CampusNotice curretNotice;
     
     private XiaoyuantongDbHelper xiaoyuantongDbHelpers;
     private XiaoYunTongApplication mXiaoYunTongApplication;
@@ -88,10 +91,24 @@ public class HomePageActivity extends Activity {
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
             super.handleMessage(msg);
+            
+            switch (msg.what) {
+            case MSG_ROLL_TEXT:
+                String text = (String) msg.obj;
+                Log.d(TAG, "text " + text);
+                rollNoteText.setClickable(true);
+                rollNoteText.setText(text);
+                break;
+            case MSG_NO_DATA:                
+                rollNoteText.setText("");
+                rollNoteText.setClickable(false);
+                break;
+            default:
+                break;
+            }
 
-            String text = (String) msg.obj;
-            Log.d(TAG, "text " + text);
-            rollNoteText.setText(text);
+
+           
 
         }
     };
@@ -106,10 +123,28 @@ public class HomePageActivity extends Activity {
 
         gridview = (GridView) findViewById(R.id.gridview);
         rollNoteText = (TextView) findViewById(R.id.roll_note_text);
+        rollNoteText.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Intent intent = new Intent(HomePageActivity.this,
+                        CampusNoticeDetailActivity.class);
+                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID, curretNotice.id);
+                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_CONTENT, curretNotice.content);
+                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, curretNotice.optTime);
+                startActivity(intent);
+//                /
+                
+            }
+        });
+        
+        
         mImageAdapter = new ImageAdapter(this);
         mSpinnerInfo = new ArrayList<String>();
         mStudentList = new ArrayList<StudentInfo>();
-        campusNoticeContentList = new ArrayList<String>();
+        //campusNoticeContentList = new ArrayList<String>();
+        campusNoticeLists = new ArrayList<CampusNotice>();
         gridview.setAdapter(mImageAdapter);
 
         exitAccountButton = (Button) findViewById(R.id.exit_account);
@@ -165,7 +200,7 @@ public class HomePageActivity extends Activity {
 
                 homeWorkTotal = 0;
                 campusNotieTotal = 0;
-                campusNoticeContentList.clear();
+                campusNoticeLists.clear();
                 if(rollTextThread!=null && rollTextThread.isAlive()){
                     rollTextThread.interrupt(); 
                 }
@@ -345,6 +380,9 @@ public class HomePageActivity extends Activity {
             } else {
                 convertViewHolder.numberText.setVisibility(View.GONE);
                 convertView.setBackgroundResource(R.drawable.button_ordinary);
+                
+                rollTextHandler.sendEmptyMessage(MSG_NO_DATA);
+                campusNoticeLists.clear();
             }
 
         }
@@ -371,14 +409,16 @@ public class HomePageActivity extends Activity {
             // TODO Auto-generated method stub
             super.run();
 
-            while (campusNoticeContentList != null && campusNoticeContentList.size() > 0
+            while (campusNoticeLists != null && campusNoticeLists.size() > 0
                     && (!isFinish)) {
-                for (int i = 0; i < campusNoticeContentList.size(); i++) {
+                for (int i = 0; i < campusNoticeLists.size(); i++) {
 
                     Message message = Message.obtain();
                     message.what = MSG_ROLL_TEXT;
-                    message.obj = campusNoticeContentList.get(i);
-                    Log.d(TAG, "rollText " + campusNoticeContentList.get(i));
+                    message.obj = campusNoticeLists.get(i).content;
+                    curretNotice = campusNoticeLists.get(i);
+                    //message.arg1 = campusNoticeList.get(i).id;
+                    Log.d(TAG, "rollText " + campusNoticeLists.get(i).content);
                     rollTextHandler.sendMessage(message);
                     try {
                         Thread.sleep(10000);
@@ -389,6 +429,10 @@ public class HomePageActivity extends Activity {
 
                 }
 
+            }
+            
+            if(rollTextHandler!=null){
+                rollTextHandler.sendEmptyMessage(MSG_NO_DATA);
             }
 
         }
@@ -480,17 +524,18 @@ public class HomePageActivity extends Activity {
             public TextView numberText;
             public ImageView image;
         }
+        
 
-        // references to our images
+        //R.drawable.officialweb,R.string.official_site,
         private Integer[] teacherPictures = { R.drawable.homework, R.drawable.message,
-                R.drawable.check, R.drawable.officialweb, R.drawable.change_password };
+                R.drawable.check,  R.drawable.change_password };
         private Integer[] teacherTitles = { R.string.home_work, R.string.system_note,
-                R.string.attendance_information, R.string.official_site, R.string.change_password };
+                R.string.attendance_information, R.string.change_password };
         private Integer[] parentPictures = { R.drawable.homework, R.drawable.message,
-                R.drawable.check, R.drawable.officialweb, R.drawable.change_password,
+                R.drawable.check, R.drawable.change_password,
                 R.drawable.position };
         private Integer[] parentTitles = { R.string.home_work, R.string.system_note,
-                R.string.attendance_information, R.string.official_site, R.string.change_password,
+                R.string.attendance_information,  R.string.change_password,
                 R.string.position_orientation };
     }
 
@@ -721,7 +766,7 @@ public class HomePageActivity extends Activity {
                             if(campus==null){
                                 
                                 campusNotieTotal += 1;
-                                campusNoticeContentList.add(0, campusNotice.content);
+                                campusNoticeLists.add(0, campusNotice);
                             }
                             Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                         }
@@ -752,22 +797,25 @@ public class HomePageActivity extends Activity {
             mGetAllNoteTask = null;
             Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
             Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
-            Log.i(TAG, "campusNoticeContentList.size() " + campusNoticeContentList.size());
+            Log.i(TAG, "campusNoticeContentList.size() " + campusNoticeLists.size());
            
-            if (campusNoticeContentList != null && campusNoticeContentList.size() > 0) {
+            if (campusNoticeLists != null && campusNoticeLists.size() > 0) {
 
-                if (campusNoticeContentList.size() > 1) {
+                
+                
+                if (campusNoticeLists.size() > 0) {
                     if (rollTextThread != null && rollTextThread.isAlive()) {
 
                     } else {
                         rollTextThread = new RollTextThread();
                         rollTextThread.start();
                     }
-                } else if (campusNoticeContentList.size() == 1) {
-                    String content = campusNoticeContentList.get(0);
-                    Log.i(TAG, "content " + content);
-                    rollNoteText.setText(content);
-                }
+                } 
+//                else if (campusNoticeList.size() == 1) {
+//                    String content = campusNoticeList.get(0).content;
+//                    Log.i(TAG, "content " + content);
+//                    rollNoteText.setText(content);
+//                }
 
             }
             if (homeWorkTotal > 0 || campusNotieTotal > 0) {               

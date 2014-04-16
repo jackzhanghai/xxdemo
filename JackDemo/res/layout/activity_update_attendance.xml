@@ -30,6 +30,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="10dp"
+                android:textColor="@android:color/background_dark"
                 android:paddingLeft="4dp"
                 android:text="@string/student_name"
                 android:textSize="18sp" />
@@ -38,6 +39,7 @@
                 android:id="@+id/password_line"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/background_dark"
                 android:layout_marginLeft="4dp"
                 android:layout_toRightOf="@id/stu_name"
                 android:background="@drawable/dividing_line" />
@@ -49,6 +51,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
+                android:textColor="@android:color/background_dark"
                 android:layout_marginLeft="6dp"
                 android:layout_marginTop="10dp"
                 android:layout_toRightOf="@id/password_line"
@@ -70,6 +73,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="4dp"
+                android:textColor="@android:color/background_dark"
                 android:layout_marginTop="10dp"
                 android:paddingLeft="4dp"
                 android:text="@string/att_time"
@@ -80,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
+                android:textColor="@android:color/background_dark"
                 android:layout_toRightOf="@id/att_time"
                 android:background="@drawable/dividing_line" />
 
@@ -92,6 +97,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginTop="10dp"
+                android:textColor="@android:color/background_dark"
                 android:layout_toRightOf="@id/password_line"
                 android:paddingLeft="4dp"
                 android:text="@string/student_name" />

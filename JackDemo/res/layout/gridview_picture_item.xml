@@ -22,6 +22,7 @@
 
         <TextView
             android:id="@+id/title"
+            android:textColor="@android:color/background_dark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"			            
             android:layout_gravity="bottom|center_horizontal"
@@ -38,6 +39,7 @@
          android:layout_height="wrap_content"
          android:gravity="center"
          android:visibility="gone"
+         android:textColor="@android:color/background_dark"
          android:layout_gravity="right"
          android:background="@drawable/new_notie_icon"
          android:text="5"

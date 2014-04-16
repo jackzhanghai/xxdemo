@@ -30,6 +30,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginTop="10dp"
+                android:textColor="@android:color/background_dark"
                 android:paddingLeft="4dp"
                 android:text="@string/select_send_type"
                 android:textSize="18sp" />
@@ -59,6 +60,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="6dp"
+                android:textColor="@android:color/background_dark"
                 android:layout_marginTop="10dp"
                 android:paddingLeft="4dp"
                 android:text="@string/select_grade"
@@ -90,6 +92,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginTop="10dp"
+                android:textColor="@android:color/background_dark"
                 android:paddingLeft="4dp"
                 android:text="@string/select_class"
                 android:textSize="18sp" />
