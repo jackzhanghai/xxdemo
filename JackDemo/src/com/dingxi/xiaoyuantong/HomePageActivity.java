@@ -249,13 +249,15 @@ public class HomePageActivity extends Activity {
                 } else if (position == 2) {
                     Intent intent = new Intent(HomePageActivity.this, AttendanceInfoActivity.class);
                     startActivity(intent);
-                } else if (position == 3) {
-                    Intent intent = new Intent(HomePageActivity.this, OfficialSiteActivity.class);
-                    startActivity(intent);
-                } else if (position == 4) {
+                }
+//                else if (position == 3) {
+//                    Intent intent = new Intent(HomePageActivity.this, OfficialSiteActivity.class);
+//                    startActivity(intent);
+//                } 
+                else if (position == 3) {
                     Intent intent = new Intent(HomePageActivity.this, ModifyPassWordActivity.class);
                     startActivity(intent);
-                } else if (position == 5) {
+                } else if (position == 4) {
                     ParentInfo parentInfo = (ParentInfo) userInfo;
                     if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
                         Intent intent = new Intent(HomePageActivity.this,
