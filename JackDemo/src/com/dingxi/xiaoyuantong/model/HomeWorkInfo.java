@@ -25,7 +25,7 @@ public class HomeWorkInfo {
     public String content;// 短信内容
 
     public String optTime;// 操作时间
-
+    public String sendName;// 操作时间
     // public java.util.Date sendTime;// 发送时间
 
     public String status;// 作业评分

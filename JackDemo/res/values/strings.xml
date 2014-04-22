@@ -128,5 +128,7 @@
     <string name="two_password_not_sample">两次新密码不一致请重新输入</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="send_time">发布时间：</string>
+    <string name="send_name">发布老师：</string>
 
 </resources>

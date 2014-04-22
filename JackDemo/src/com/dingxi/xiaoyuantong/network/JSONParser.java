@@ -258,7 +258,8 @@ public class JSONParser {
                 homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
                 //homeWorkInfo.stuName = obj.getString("stuName");
                 homeWorkInfo.optTime = obj.getString("optTime");
-
+                homeWorkInfo.sendName = obj.getString("userName");
+                
                 mHomeWorkList.add(homeWorkInfo);
             }
             if (mHomeWorkList.size() > 0) {

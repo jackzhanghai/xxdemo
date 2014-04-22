@@ -389,6 +389,8 @@ public class HomeWorkActivity extends Activity {
                 viewHolder.headerText = (TextView) convertView.findViewById(R.id.message_header);
                 viewHolder.isRead = (TextView) convertView.findViewById(R.id.is_read);
                 viewHolder.bodyText = (TextView) convertView.findViewById(R.id.message_body);
+                viewHolder.sendTime = (TextView) convertView.findViewById(R.id.send_time);
+                viewHolder.sendName = (TextView) convertView.findViewById(R.id.send_name);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (HomeWorkHolder) convertView.getTag();
@@ -397,6 +399,8 @@ public class HomeWorkActivity extends Activity {
             // viewHolder.headerText.setText(homeWorkList.get(position).id);
             viewHolder.headerText.setText(R.string.home_work);
             viewHolder.bodyText.setText(homeWorkList.get(position).content);
+            viewHolder.sendTime.setText(homeWorkList.get(position).optTime);
+            viewHolder.sendName.setText(homeWorkList.get(position).sendName);
             if (homeWorkList.get(position).isRead == 0) {
                 viewHolder.isRead.setText(R.string.unread);
             } else {
@@ -411,6 +415,8 @@ public class HomeWorkActivity extends Activity {
             TextView headerText;
             TextView isRead;
             TextView bodyText;
+            TextView sendTime;
+            TextView sendName;
 
         }
     }
