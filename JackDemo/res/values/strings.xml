@@ -130,5 +130,8 @@
     <string name="error_field_required">This field is required</string>
     <string name="send_time">发布时间：</string>
     <string name="send_name">发布老师：</string>
+     <string name="now_location">实时定位</string>
+    <string name="history_location">历史轨迹</string>
+    
 
 </resources>

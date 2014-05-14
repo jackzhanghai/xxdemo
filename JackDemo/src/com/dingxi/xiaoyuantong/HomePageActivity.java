@@ -106,10 +106,6 @@ public class HomePageActivity extends Activity {
             default:
                 break;
             }
-
-
-           
-
         }
     };
 
@@ -266,7 +262,7 @@ public class HomePageActivity extends Activity {
                         Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.stuName);
                         Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
                         Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);
-
+                        intent.putExtra("childId", parentInfo.defalutChild.id);
                         intent.putExtra("imei", parentInfo.defalutChild.imei);
                         startActivity(intent);
                     } else {

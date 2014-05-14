@@ -24,8 +24,11 @@ public class RestClient {
     //private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
    //private static String servicePoint = "http://hcyforget.vicp.cc:9999/M-School/phoneService.ws";
     // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
-   //private static String servicePoint = "http://114.215.170.121:80/phoneService.ws";
-   private static String servicePoint = "http://114.215.170.121:80/M-School/phoneService.ws";
+   //private static String servicePoint = "http://114.215.170.121:80/phoneService.ws?wsdl";
+   //private static String servicePoint = "http://114.215.170.121:80/M-School/phoneService.ws";
+   private static String servicePoint = "http://htht.nat123.net/M-School/phoneService.ws";
+   //private static String servicePoint = "http://114.215.170.121/M-School/phoneService.ws";
+  // http://htht.nat123.net/M-School/phoneService.ws?wsdl
 
     public static String getAllSchool() throws IOException, XmlPullParserException {
 
@@ -193,6 +196,50 @@ public class RestClient {
 
     };
 
+    //获取历史位置信息
+    
+    public static String getHisPosition(String searchDay,String startTime, String endTime, String fkStudentId)throws IOException,
+    XmlPullParserException{
+        
+        
+
+        String soapAction = nameSpace + "/getHisPosition";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getHisPosition");
+        rpc.addProperty("searchDay", searchDay);
+        rpc.addProperty("startTime", startTime);
+        rpc.addProperty("endTime", endTime);
+        rpc.addProperty("fkStudentId", fkStudentId);
+        
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(servicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getGpsPosition result " + result);
+        return result;
+
+    };
+    
+    
+    
+    //获取最新位置信息
     public static String getGpsPosition(String id, String ticket, String imei) throws IOException,
             XmlPullParserException {
 

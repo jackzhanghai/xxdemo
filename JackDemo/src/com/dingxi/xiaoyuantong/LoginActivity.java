@@ -254,7 +254,7 @@ public class LoginActivity extends Activity {
 			}
 			break;
 		}
-		Log.d(TAG, "isAutoLogin " + isAutoLogin + " isRemberPassWord　"
+		Log.d(TAG, "isAutoLogin " + isAutoLogin + " isRemberPassWord "
 				+ isRemberPassWord);
 	}
 
@@ -427,40 +427,46 @@ public class LoginActivity extends Activity {
                
                 try {                    
                     
-                    if(mUserType == UserType.ROLE_PARENT){
-                        mXiaoYunTongApplication.userInfo = new ParentInfo();                                
-                    }else if(mUserType == UserType.ROLE_TEACHER){
-                        String fkClassId = JSONParser.getStringByTag(responseMessage.body,
-                                    "fkClassId");                      
-                            String fkSchoolId = JSONParser.getStringByTag(responseMessage.body,
-                                    "fkSchoolId");
-                           TeacherInfo teacherInfo  = new TeacherInfo();
-                           teacherInfo.defalutClassId = fkClassId;
-                           teacherInfo.defalutSchoolId = fkSchoolId;
-                           mXiaoYunTongApplication.userInfo = teacherInfo;                        
-                                                     
+                    String id = JSONParser.getStringByTag(responseMessage.body, "id");
+                    if(!TextUtils.isEmpty(id)){
+                        if(mUserType == UserType.ROLE_PARENT){
+                            mXiaoYunTongApplication.userInfo = new ParentInfo();                                
+                        }else if(mUserType == UserType.ROLE_TEACHER){
+                            String fkClassId = JSONParser.getStringByTag(responseMessage.body,
+                                        "fkClassId");                      
+                                String fkSchoolId = JSONParser.getStringByTag(responseMessage.body,
+                                        "fkSchoolId");
+                               TeacherInfo teacherInfo  = new TeacherInfo();
+                               teacherInfo.defalutClassId = fkClassId;
+                               teacherInfo.defalutSchoolId = fkSchoolId;
+                               mXiaoYunTongApplication.userInfo = teacherInfo;                        
+                                                         
+                        }
+
+                        mXiaoYunTongApplication.userInfo.id = id;
+                        String ticket = JSONParser.getStringByTag(responseMessage.body,
+                                "ticket");
+                        mXiaoYunTongApplication.userInfo.ticket = ticket;
+                        mXiaoYunTongApplication.userInfo.roleType =  mUserType;
+                        Log.d(TAG, "userInfo.roleType " + mUserType);
+
+                        SharedPreferences settings = getSharedPreferences(
+                                PREFS_USER_INFO, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(lOGIN_USER_NAME, mUserName);
+                        editor.putString(LOGIN_PASSWORD, mPassword);
+                        editor.putString(LOGIN_ROLE_ID, mUserType.toString());
+                        editor.putBoolean(IS_AUTO_LOGIN, isAutoLogin);
+                        editor.putBoolean(IS_REMEMBER_PASSWORD,
+                                isRemberPassWord);
+
+                        editor.commit();
+                        isLoginSuccss = true;  
+                        
                     }
                     
-                    String id = JSONParser.getStringByTag(responseMessage.body, "id");
-                    mXiaoYunTongApplication.userInfo.id = id;
-                    String ticket = JSONParser.getStringByTag(responseMessage.body,
-                            "ticket");
-                    mXiaoYunTongApplication.userInfo.ticket = ticket;
-                    mXiaoYunTongApplication.userInfo.roleType =  mUserType;
-                    Log.d(TAG, "userInfo.roleType " + mUserType);
-
-                    SharedPreferences settings = getSharedPreferences(
-                            PREFS_USER_INFO, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putString(lOGIN_USER_NAME, mUserName);
-                    editor.putString(LOGIN_PASSWORD, mPassword);
-                    editor.putString(LOGIN_ROLE_ID, mUserType.toString());
-                    editor.putBoolean(IS_AUTO_LOGIN, isAutoLogin);
-                    editor.putBoolean(IS_REMEMBER_PASSWORD,
-                            isRemberPassWord);
-
-                    editor.commit();
-                    isLoginSuccss = true;
+                    
+                    
                                        
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
@@ -473,6 +479,10 @@ public class LoginActivity extends Activity {
                             HomePageActivity.class);
                     startActivity(loginIntent);
                     finish();
+                } else {
+                    
+                    Toast.makeText(LoginActivity.this, responseMessage.message,
+                            Toast.LENGTH_LONG).show(); 
                 }
                 
 

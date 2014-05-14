@@ -6,12 +6,12 @@
     android:orientation="vertical"
     tools:context="com.dingxi.xiaoyuantong.LoginActivity" >
 
-
     <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginTop="6dp"
         android:orientation="horizontal" >
 
@@ -19,7 +19,7 @@
             android:id="@+id/radio_teacher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.0"
             android:background="@drawable/teacher_auth_selector"
             android:button="@null"
             android:onClick="onRadioButtonClicked" />
@@ -28,7 +28,8 @@
             android:id="@+id/radio_parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center|right"
+            android:layout_weight="1.0"
             android:background="@drawable/parent_auth_selector"
             android:button="@null"
             android:onClick="onRadioButtonClicked" />
@@ -38,6 +39,7 @@
         android:id="@+id/who_auth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/background_dark"
         android:layout_gravity="center_horizontal"
         android:textSize="16sp" />
 
@@ -133,6 +135,7 @@
             android:id="@+id/remember_password_checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/background_dark"
             android:onClick="onCheckBoxButtonClicked"
             android:text="@string/remember_password" />
 
@@ -140,6 +143,7 @@
             android:id="@+id/auto_login_checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/background_dark"
             android:layout_alignParentRight="true"
             android:onClick="onCheckBoxButtonClicked"
             android:text="@string/auto_login" />
