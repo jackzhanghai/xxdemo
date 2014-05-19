@@ -407,6 +407,7 @@ public class HomePageActivity extends Activity {
             // TODO Auto-generated method stub
             super.run();
 
+            Thread.currentThread().setName("RollTextThread");
             while (campusNoticeLists != null && campusNoticeLists.size() > 0
                     && (!isFinish)) {
                 for (int i = 0; i < campusNoticeLists.size(); i++) {
@@ -424,7 +425,6 @@ public class HomePageActivity extends Activity {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-
                 }
 
             }
@@ -445,11 +445,14 @@ public class HomePageActivity extends Activity {
 
         public int getCount() {
             int count = 0;
-            if (userInfo.roleType == UserType.ROLE_PARENT) {
-                count = parentPictures.length;
-            } else {
-                count = teacherPictures.length;
+            if(userInfo!=null){
+                if (userInfo.roleType == UserType.ROLE_PARENT) {
+                    count = parentPictures.length;
+                } else {
+                    count = teacherPictures.length;
+                }
             }
+            
             return count;
         }
 
@@ -492,7 +495,7 @@ public class HomePageActivity extends Activity {
                 convertView.setBackgroundResource(R.drawable.button_ordinary);
                 viewHolder.numberText.setVisibility(View.GONE);
             }
-            //
+            
 
             if (campusNotieTotal > 0 && position == 1) {
 
@@ -622,7 +625,7 @@ public class HomePageActivity extends Activity {
     public class GetAllNoteTask extends AsyncTask<Void, String, ResponseMessage> {
         @Override
         protected ResponseMessage doInBackground(Void... params) {
-
+            Thread.currentThread().setName("GetAllNoteTask");
             ResponseMessage responseMessage = null;
             StringBuilder info = new StringBuilder();
             try {
@@ -835,6 +838,8 @@ public class HomePageActivity extends Activity {
         protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            
+            Thread.currentThread().setName("GetAllChildTask");
             ResponseMessage responseMessage = new ResponseMessage();
             try {
 

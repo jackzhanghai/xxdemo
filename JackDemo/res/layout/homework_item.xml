@@ -86,7 +86,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginBottom="40dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="4dp"
                 android:text="@string/send_time"
                 android:textColor="@android:color/background_dark" />
 
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginLeft="14dp"
+                android:layout_marginLeft="4dp"
                 android:layout_toRightOf="@+id/send_time_lable"
                 android:text="ttt"
                 android:textColor="@android:color/background_dark" />

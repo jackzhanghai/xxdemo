@@ -20,15 +20,15 @@ public class RestClient {
     public static final String WEB_INTERFACE_GET_ALL_SCHOOL = "getAllSchools";
     private static final String TAG = "RestClient";
     private static String nameSpace = "http://webservice.school.htht.com";// http://webservice.school.htht.com
-    // http://webservice.school.htht.com
-    //private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
+   // http://webservice.school.htht.com
+   //private static String servicePoint = "http://112.90.87.82:8090/phoneService.ws";
    //private static String servicePoint = "http://hcyforget.vicp.cc:9999/M-School/phoneService.ws";
-    // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
+   // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
    //private static String servicePoint = "http://114.215.170.121:80/phoneService.ws?wsdl";
    //private static String servicePoint = "http://114.215.170.121:80/M-School/phoneService.ws";
    private static String servicePoint = "http://htht.nat123.net/M-School/phoneService.ws";
    //private static String servicePoint = "http://114.215.170.121/M-School/phoneService.ws";
-  // http://htht.nat123.net/M-School/phoneService.ws?wsdl
+   // http://htht.nat123.net/M-School/phoneService.ws
 
     public static String getAllSchool() throws IOException, XmlPullParserException {
 
@@ -276,6 +276,9 @@ public class RestClient {
 
     };
 
+    
+    
+    
     // 学校年级联动
     public static String getGradeInfos(String id, String ticket, String fkSchoolId)
             throws IOException, XmlPullParserException {
@@ -288,7 +291,23 @@ public class RestClient {
         return response;
 
     };
+    
+    
+    //rtls(String imei)
 
+    public static String getRtls(String imei)
+            throws IOException, XmlPullParserException {
+        
+        Log.i(TAG, "getRtls()");
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("imei", imei);
+
+        String response = requestData(map, "rtls");
+       
+        Log.i(TAG, "getRtls result " + response);
+        return response;
+    };
+    
     // 年级班级联动
     public static String getClassInfos(String id, String ticket, String fkGradeId)
             throws IOException, XmlPullParserException {

@@ -444,6 +444,44 @@ public class JSONParser {
 		return attendanceInfoList;
 	}
     
+	public static ArrayList<LocationInfo> toParserHostryLocationInfo(String locationInfo) throws JSONException {
+        // TODO Auto-generated method stub
+        ArrayList<LocationInfo> attendanceInfoList =  new ArrayList<LocationInfo>();
+        JSONObject jsonObj;
+        try {
+            jsonObj = new JSONObject(locationInfo);
+            
+            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+            if (jsonObj.has("rows") && total > 0) {
+                JSONArray data = jsonObj.getJSONArray("rows");
+               
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject obj = (JSONObject) data.get(i);
+
+                    LocationInfo LocationInfo = new LocationInfo();
+                    LocationInfo.lat = obj.getString("lat");
+                    LocationInfo.lng = obj.getString("lng");
+                    LocationInfo.speed = obj.getString("speed");
+
+  
+                    attendanceInfoList.add(LocationInfo);
+                } 
+                
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+            throw e;
+           
+        } finally{
+ 
+        }
+        
+        Log.i("JSONParser", "attendanceInfoList.size() " + attendanceInfoList.size());
+        return attendanceInfoList;
+    }
+	
     
 //    private void praseMessageInfos(String homeWorksInfo) throws JSONException {
 //        // TODO Auto-generated method stub
