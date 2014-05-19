@@ -18,6 +18,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -94,7 +95,22 @@ public class LocationInfoActivity extends FragmentActivity {
     private LinearLayout mTimeLayout;
     private ImageButton mBackButton;
     private ImageButton mLoctionButton;
+    private Handler handler = new Handler( );
+    private Runnable runnable = new Runnable( ) {
 
+        public void run ( ) {
+            
+            mLoctionButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.right_title_bar_selector));
+            //mLoctionButton.setBackground(background);
+            mLoctionButton.setClickable(true);
+
+        //handler.postDelayed(this,1000);     //postDelayed(this,1000)方法安排一个Runnable对象到主线程队列中
+        handler.removeCallbacks(runnable); 
+        }
+
+        };
+        
+        
     private CaldroidFragment dialogCaldroidFragment;
 
     // CalendarView calendarView;
@@ -129,7 +145,7 @@ public class LocationInfoActivity extends FragmentActivity {
                 mLoctionButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.un_loction));
                 //mLoctionButton.setBackground(background);
                 mLoctionButton.setClickable(false);
-                
+                handler.postDelayed(runnable,60000); 
                 mGetRtlsTask = new GetRtlsTask();
                 mGetRtlsTask.execute((Void) null);
                 //finish();
@@ -446,13 +462,8 @@ public class LocationInfoActivity extends FragmentActivity {
             mGetRtlsTask = null;
             Log.i(TAG, "responseMessage.body " + responseMessage.body);
             if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-                if (responseMessage.total > 0) {
-
-                  
-                } else {
-                    Toast.makeText(LocationInfoActivity.this, R.string.not_location_data,
-                            Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(LocationInfoActivity.this, R.string.send_command,
+                        Toast.LENGTH_LONG).show();
 
                 mProgressDialog.dismiss();
             } else {

@@ -132,6 +132,7 @@
     <string name="send_name">老师：</string>
      <string name="now_location">实时定位</string>
     <string name="history_location">轨迹回放</string>
+     <string name="send_command">命令已下发，请稍后查询</string>
     
 
 </resources>

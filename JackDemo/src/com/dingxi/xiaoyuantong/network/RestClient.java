@@ -26,8 +26,8 @@ public class RestClient {
    // http://hcyforget.vicp.cc:9009/M-School/phoneService.ws?wsdl
    //private static String servicePoint = "http://114.215.170.121:80/phoneService.ws?wsdl";
    //private static String servicePoint = "http://114.215.170.121:80/M-School/phoneService.ws";
-   private static String servicePoint = "http://htht.nat123.net/M-School/phoneService.ws";
-   //private static String servicePoint = "http://114.215.170.121/M-School/phoneService.ws";
+   //private static String servicePoint = "http://htht.nat123.net/M-School/phoneService.ws";
+   private static String servicePoint = "http://114.215.170.121/M-School/phoneService.ws";
    // http://htht.nat123.net/M-School/phoneService.ws
 
     public static String getAllSchool() throws IOException, XmlPullParserException {
