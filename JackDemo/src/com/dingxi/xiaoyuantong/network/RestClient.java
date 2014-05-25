@@ -201,8 +201,6 @@ public class RestClient {
     public static String getHisPosition(String searchDay,String startTime, String endTime, String fkStudentId)throws IOException,
     XmlPullParserException{
         
-        
-
         String soapAction = nameSpace + "/getHisPosition";
 
         String result = null;
@@ -232,7 +230,7 @@ public class RestClient {
             }
             result = object.getProperty(0).toString();
         }
-        Log.i(TAG, "getGpsPosition result " + result);
+        Log.i(TAG, "getHisPosition result " + result);
         return result;
 
     };

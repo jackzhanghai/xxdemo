@@ -462,7 +462,7 @@ public class JSONParser {
                     LocationInfo LocationInfo = new LocationInfo();
                     LocationInfo.lat = obj.getString("lat");
                     LocationInfo.lng = obj.getString("lng");
-                    LocationInfo.speed = obj.getString("speed");
+                    LocationInfo.optTime = obj.getString("opt_time");
 
   
                     attendanceInfoList.add(LocationInfo);

@@ -148,9 +148,7 @@ public class LocationInfoActivity extends FragmentActivity {
                 handler.postDelayed(runnable,60000); 
                 mGetRtlsTask = new GetRtlsTask();
                 mGetRtlsTask.execute((Void) null);
-                //finish();
                 
-                //TO DO  add timer
             }
         });
         

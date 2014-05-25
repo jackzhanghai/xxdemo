@@ -71,9 +71,9 @@
                 android:id="@+id/message_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/send_time_lable"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="4dp"
                 android:padding="3dp"
                 android:text="TextView"
                 android:textColor="@android:color/background_dark"
@@ -84,8 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="40dp"
+                android:layout_toLeftOf="@+id/send_time"
+                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:text="@string/send_time"
                 android:textColor="@android:color/background_dark" />
@@ -95,8 +95,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:layout_marginLeft="4dp"
-                android:layout_toRightOf="@+id/send_time_lable"
+                android:layout_marginRight="4dp"
                 android:text="ttt"
                 android:textColor="@android:color/background_dark" />
 
@@ -104,9 +105,10 @@
                 android:id="@+id/send_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_above="@+id/send_time"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="4dp"
                 android:text="vvvv"
                 android:textColor="@android:color/background_dark" />
 
@@ -114,9 +116,9 @@
                 android:id="@+id/send_name_lable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10dp"
+				android:layout_above="@+id/send_time"
                 android:layout_marginRight="10dp"
+                 android:layout_marginBottom="4dp"
                 android:layout_toLeftOf="@+id/send_name"
                 android:text="@string/send_name"
                 android:textColor="@android:color/background_dark" />

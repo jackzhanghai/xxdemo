@@ -7,5 +7,5 @@ public class LocationInfo {
 	public String lat;
 	public String optTime;
 	public String address;
-    public String speed;
+    //public String speed;
 }
