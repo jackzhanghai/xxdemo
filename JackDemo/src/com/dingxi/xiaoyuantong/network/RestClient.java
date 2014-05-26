@@ -27,8 +27,10 @@ public class RestClient {
    //private static String servicePoint = "http://114.215.170.121:80/phoneService.ws?wsdl";
    //private static String servicePoint = "http://114.215.170.121:80/M-School/phoneService.ws";
    //private static String servicePoint = "http://htht.nat123.net/M-School/phoneService.ws";
-   private static String servicePoint = "http://114.215.170.121/M-School/phoneService.ws";
+   //private static String servicePoint = "http://114.215.170.121/M-School/phoneService.ws";
    // http://htht.nat123.net/M-School/phoneService.ws
+   //http://skylm1234.nat123.net/M-School/messageService.ws
+   private static String servicePoint = "http://skylm1234.nat123.net/M-School/phoneService.ws";
 
     public static String getAllSchool() throws IOException, XmlPullParserException {
 
@@ -537,8 +539,101 @@ public class RestClient {
         map.put("id", id);
         map.put("ticket", ticket);
         map.put("info", info);
-        String response = requestData(map, "updateAttendance");
-        return response;
+        return requestData(map, "updateAttendance");
+    }
+    
+    
+    public static String addLeaveMessage(String senderId,String receiversId,String content,String ticket,String roleId,String studentId) throws IOException, XmlPullParserException{
+       
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("senderId", senderId);
+        map.put("receiversId", receiversId);
+        map.put("content", content);
+        map.put("ticket", ticket);
+        map.put("info", roleId);
+        map.put("info",studentId);
+        
+        return requestData(map, "addMessage");
+    }
+    
+    
+    public static String replyLeaveMessage(String messageId,String userId,String content,String ticket,String roleId)
+            throws IOException, XmlPullParserException {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("messageId", messageId);
+        map.put("userId", userId);
+        map.put("content", content);
+        map.put("ticket", ticket);
+        map.put("roleId", roleId);
+        return requestData(map, "replyMessage");
+    }
+    
+    public static  String getLeaveMessages(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows) throws IOException, XmlPullParserException{
+        
+
+        
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace,"getMessages");
+        
+        rpc.addProperty("userId", userId);
+        rpc.addProperty("sOrR", sOrR);
+        rpc.addProperty("startTime", startTime);
+        rpc.addProperty("endTime", endTime);
+        rpc.addProperty("roleId", roleId);//String.valueOf(page)
+        rpc.addProperty("page", page);//String.valueOf(rows)
+        rpc.addProperty("rows", rows);//String.valueOf(rows)
+        
+        String soapAction = nameSpace + "/" + "getMessages";
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE("http://skylm1234.nat123.net/M-School/messageService.ws");
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "request getMessages result " + result);
+        return result;
+    }
+    
+    
+    public static    String addInnerMessage(String senderId,String receiversId,String content,String ticket) throws IOException, XmlPullParserException{
+        
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("senderId", senderId);
+        map.put("receiversId", receiversId);
+        map.put("content", content);
+        map.put("ticket", ticket);
+        
+        return requestData(map, "addInnerMessage");
+        
+    }
+    
+    public static  String getInnerMessages(String userId,String sOrR,String startTime,String endTime,String page,String rows) throws IOException, XmlPullParserException{
+        
+        
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("userId", userId);
+        map.put("sOrR", sOrR);
+        map.put("startTime", startTime);
+        map.put("endTime", endTime);
+        map.put("page", page);
+        map.put("rows", rows);
+        
+        return requestData(map, "getInnerMessages");
     }
 
 }

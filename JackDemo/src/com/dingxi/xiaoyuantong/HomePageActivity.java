@@ -245,15 +245,17 @@ public class HomePageActivity extends Activity {
                 } else if (position == 2) {
                     Intent intent = new Intent(HomePageActivity.this, AttendanceInfoActivity.class);
                     startActivity(intent);
-                }
-//                else if (position == 3) {
-//                    Intent intent = new Intent(HomePageActivity.this, OfficialSiteActivity.class);
-//                    startActivity(intent);
-//                } 
-                else if (position == 3) {
+                } else if (position == 3) {
                     Intent intent = new Intent(HomePageActivity.this, ModifyPassWordActivity.class);
                     startActivity(intent);
                 } else if (position == 4) {
+                    Intent intent = new Intent(HomePageActivity.this, LeaveMessageActivity.class);
+                    startActivity(intent);
+                } else if(position == 5){
+                    Intent intent = new Intent(HomePageActivity.this, InnerMessageActivity.class);
+                    startActivity(intent);
+                } else if(position == 6){
+                    
                     ParentInfo parentInfo = (ParentInfo) userInfo;
                     if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
                         Intent intent = new Intent(HomePageActivity.this,
@@ -269,7 +271,6 @@ public class HomePageActivity extends Activity {
                         Toast.makeText(HomePageActivity.this, R.string.no_bound_phone,
                                 Toast.LENGTH_LONG).show();
                     }
-
                 }
 
             }
@@ -327,14 +328,12 @@ public class HomePageActivity extends Activity {
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
         Log.i(TAG, "onResume()");
     }
 
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
         super.onStart();
         Log.i(TAG, "OnStart()");
         Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
@@ -529,15 +528,18 @@ public class HomePageActivity extends Activity {
 
         //R.drawable.officialweb,R.string.official_site,
         private Integer[] teacherPictures = { R.drawable.homework, R.drawable.message,
-                R.drawable.check,  R.drawable.change_password };
+                R.drawable.check,  R.drawable.change_password,R.drawable.change_password ,R.drawable.change_password };
         private Integer[] teacherTitles = { R.string.home_work, R.string.system_note,
-                R.string.attendance_information, R.string.change_password };
+                R.string.attendance_information, R.string.change_password, R.string.leave_message,R.string.inner_message};
+        
+        
+        
         private Integer[] parentPictures = { R.drawable.homework, R.drawable.message,
                 R.drawable.check, R.drawable.change_password,
-                R.drawable.position };
+                R.drawable.change_password, R.drawable.change_password,R.drawable.position};
         private Integer[] parentTitles = { R.string.home_work, R.string.system_note,
                 R.string.attendance_information,  R.string.change_password,
-                R.string.position_orientation };
+                R.string.leave_message,R.string.inner_message,R.string.position_orientation};
     }
 
     // public class GetAllClassTask extends AsyncTask<Void, Void, String> {
