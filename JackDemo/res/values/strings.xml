@@ -28,7 +28,10 @@
     <string name="connection_server_error">连接服务器错误</string>
     <string name="connection_error">连接错误</string>
     <string name="not_network">网络不可用请检查网络</string>
-    <string name="now_geting_childinfo">正在获取孩子信息...</string>
+    <string name="now_geting_studentinfo">正在获取学生信息..</string>
+     <string name="now_geting_childinfo">正在获取孩子信息...</string>
+       <string name="now_geting_parentinfo">正在获取家长信息..</string>
+     <string name="now_geting_techerinfo">正在获取老师信息...</string>
     <string name="now_geting_gradeinfo">正在获取年纪信息...</string>
     <string name="now_geting_subjectinfo">正在获取科目信息...</string>
     <string name="now_geting_classinfo">正在获取班级信息...</string>
@@ -38,6 +41,10 @@
     <string name="no_school">没有学校</string>
     <string name="please_check_child">请选择孩子</string>
     <string name="no_child">没有孩子</string>
+    <string name="please_check_teacher">请选择老师</string>
+    <string name="no_teacher">没有老师</string>
+    <string name="please_check_parent">请选择家长</string>
+    <string name="no_parent">没有家长</string>
     <string name="select_class">请选择班级</string>
     <string name="no_class">没有班级</string>
     <string name="select_grade">请选择年级</string>
@@ -124,5 +131,7 @@
     <string name="send_command">命令已下发，请稍后查询</string>
     <string name="leave_message">留言信息</string>
     <string name="inner_message">校园短信</string>
+    <string name="message_sender">发送者</string>
+    <string name="message_resever">接收者</string>
 
 </resources>

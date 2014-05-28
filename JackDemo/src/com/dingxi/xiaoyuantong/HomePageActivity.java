@@ -44,6 +44,7 @@ import com.dingxi.xiaoyuantong.dao.CampusNoticeDao;
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
 import com.dingxi.xiaoyuantong.db.XiaoyuantongDbHelper;
 import com.dingxi.xiaoyuantong.model.CampusNotice;
+import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
@@ -75,7 +76,7 @@ public class HomePageActivity extends Activity {
     private RollTextThread rollTextThread;
     GridView gridview;
     private TextView rollNoteText;
-    private ArrayList<StudentInfo> mStudentList;
+    private ArrayList<ChildInfo> mChildInfoList;
     //private ArrayList<String> campusNoticeContentList;
    private ArrayList<CampusNotice> campusNoticeLists;
    private CampusNotice curretNotice;
@@ -138,7 +139,7 @@ public class HomePageActivity extends Activity {
         
         mImageAdapter = new ImageAdapter(this);
         mSpinnerInfo = new ArrayList<String>();
-        mStudentList = new ArrayList<StudentInfo>();
+        mChildInfoList = new ArrayList<ChildInfo>();
         //campusNoticeContentList = new ArrayList<String>();
         campusNoticeLists = new ArrayList<CampusNotice>();
         gridview.setAdapter(mImageAdapter);
@@ -205,7 +206,7 @@ public class HomePageActivity extends Activity {
 
                 ParentInfo parentInfo = (ParentInfo) userInfo;
                
-                parentInfo.defalutChild = mStudentList.get(position);
+                parentInfo.defalutChild = mChildInfoList.get(position);
                 parentInfo.curretSelectIndex = position;
                 mGetAllNoteTask = new GetAllNoteTask();
                 mGetAllNoteTask.execute((Void) null);
@@ -261,7 +262,7 @@ public class HomePageActivity extends Activity {
                         Intent intent = new Intent(HomePageActivity.this,
                                 LocationInfoActivity.class);
                   
-                        Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.stuName);
+                        Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.name);
                         Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
                         Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);
                         intent.putExtra("childId", parentInfo.defalutChild.id);
@@ -840,7 +841,6 @@ public class HomePageActivity extends Activity {
         protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            
             Thread.currentThread().setName("GetAllChildTask");
             ResponseMessage responseMessage = new ResponseMessage();
             try {
@@ -874,24 +874,24 @@ public class HomePageActivity extends Activity {
             mGetAllChildTask = null;
             if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
 
-                mStudentList.clear();
+                mChildInfoList.clear();
 
                 try {
-                    ArrayList<StudentInfo> studentList = JSONParser
+                    ArrayList<ChildInfo> studentList = JSONParser
                             .parseChildInfo(responseMessage.body);
-                    mStudentList.addAll(studentList);
+                    mChildInfoList.addAll(studentList);
                 } catch (JSONException exception) {
                     exception.printStackTrace();
                 }
 
-                if (mStudentList.size() > 0) {
+                if (mChildInfoList.size() > 0) {
                     ParentInfo parentInfo = (ParentInfo) userInfo;
 
-                    parentInfo.childList = mStudentList;
-                    parentInfo.defalutChild = mStudentList.get(0);
+                    parentInfo.childList = mChildInfoList;
+                    parentInfo.defalutChild = mChildInfoList.get(0);
                     mSpinnerInfo.clear();
-                    for (StudentInfo studentInfo : mStudentList) {
-                        mSpinnerInfo.add(studentInfo.stuName);
+                    for (ChildInfo studentInfo : mChildInfoList) {
+                        mSpinnerInfo.add(studentInfo.name);
                     }
                     parentInfo.nameList = mSpinnerInfo;
 //                    mGetAllNoteTask = new GetAllNoteTask();

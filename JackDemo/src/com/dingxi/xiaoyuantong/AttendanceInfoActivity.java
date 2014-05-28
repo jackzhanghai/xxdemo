@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import com.dingxi.xiaoyuantong.HomeWorkActivity.GetHomeWorTask;
 import com.dingxi.xiaoyuantong.model.AttendanceInfo;
+import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
@@ -72,7 +73,7 @@ public class AttendanceInfoActivity extends Activity {
     private AnimationDrawable loadingAnimation;
     private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    private ArrayList<StudentInfo> mStudentList;
+    private ArrayList<ChildInfo> mStudentList;
     private ArrayAdapter<String> mSpinnerAdapter;
     private ArrayList<String> mSpinnerInfo;
 
@@ -236,7 +237,7 @@ public class AttendanceInfoActivity extends Activity {
             if (parentInfo.childList != null) {
                 mStudentList = parentInfo.childList;
             } else {
-                mStudentList = new ArrayList<StudentInfo>();
+                mStudentList = new ArrayList<ChildInfo>();
             }
 
             if (parentInfo.nameList != null) {

@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
+import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
@@ -73,7 +74,7 @@ public class InnerMessageActivity extends Activity {
     private View emptyView;
     private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    private ArrayList<StudentInfo> mStudentList;
+    private ArrayList<ChildInfo> mStudentList;
     private ArrayAdapter<String> mSpinnerAdapter;
     private ArrayList<String> mSpinnerInfo;
     ListView mHomeWorkListView;
@@ -85,10 +86,12 @@ public class InnerMessageActivity extends Activity {
     int curretPage;
     int pageCount = 5;
     public GetHomeWorTask mHomeWorTask;
+  
     private String mEndTime;
     private String mEndDate;
     private String mStartTime;
     private String mStartDate;
+   
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +114,10 @@ public class InnerMessageActivity extends Activity {
                     if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                         TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
                        // String userId,String sOrR,String startTime,String endTime,String page,String rows
-                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
                     } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                         ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
                         
                     }
                     mHomeWorTask.execute((Void) null);
@@ -180,7 +183,7 @@ public class InnerMessageActivity extends Activity {
                     loadingAnimation.start();
 
                     // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
 
                     mHomeWorTask.execute((Void) null);
                 } else {
@@ -204,7 +207,7 @@ public class InnerMessageActivity extends Activity {
             if (parentInfo.childList != null) {
                 mStudentList = parentInfo.childList;
             } else {
-                mStudentList = new ArrayList<StudentInfo>();
+                mStudentList = new ArrayList<ChildInfo>();
             }
 
             if (parentInfo.nameList != null) {
@@ -314,7 +317,7 @@ public class InnerMessageActivity extends Activity {
             }
 
             
-            mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+            mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
             mHomeWorTask.execute((Void) null);
             /*
             if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
@@ -357,10 +360,10 @@ public class InnerMessageActivity extends Activity {
             loadingAnimation.start();
             if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                 TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                 ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
             }
 
             mHomeWorTask.execute((Void) null);
@@ -485,10 +488,10 @@ public class InnerMessageActivity extends Activity {
                 if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                     TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
                 } else {
                     ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount);
+                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
                 }
                 mHomeWorTask.execute((Void) null);
             } else {

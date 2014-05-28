@@ -1,0 +1,192 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home_page"
+    android:orientation="vertical" >
+
+    <include layout="@layout/home_page_title_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+             android:id="@+id/select_grade_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/select_grade_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/background_dark"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="4dp"
+                android:text="@string/select_grade"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_grade_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/select_class_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/select_class_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:textColor="@android:color/background_dark"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="4dp"
+                android:text="@string/select_class"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_class_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+        
+         <RelativeLayout
+            android:id="@+id/select_student_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/select_student_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@android:color/background_dark"
+                android:paddingLeft="4dp"
+                android:text="@string/select_student"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_student_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+        
+         <RelativeLayout
+             android:id="@+id/select_parent_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/input_background"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/select_parent_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@android:color/background_dark"
+                android:paddingLeft="4dp"
+                android:text="@string/please_check_parent"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/select_parent_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/chooseschool_down" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_weight="1.0"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/new_message_background" >
+
+        <EditText
+            android:id="@+id/edit_homework_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="4dp"
+            android:inputType="textMultiLine"
+   			android:gravity="left|top"
+   			android:minLines="6"
+            android:hint="@string/edit_homewok_hint"
+            android:singleLine="false" >
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/edit_ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/login_button_selector"
+            android:text="@string/confirm" />
+        <Button
+            android:id="@+id/edit_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/login_button_selector"
+            android:text="@string/cancel" />
+    </LinearLayout>
+
+</LinearLayout>

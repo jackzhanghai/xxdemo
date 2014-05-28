@@ -16,13 +16,17 @@ import org.json.JSONObject;
 
 import com.dingxi.xiaoyuantong.model.AttendanceInfo;
 import com.dingxi.xiaoyuantong.model.CampusNotice;
+import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.ClassInfo;
 import com.dingxi.xiaoyuantong.model.GradeInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
+import com.dingxi.xiaoyuantong.model.LeaveMessage;
 import com.dingxi.xiaoyuantong.model.LocationInfo;
+import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.SchoolInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
 import com.dingxi.xiaoyuantong.model.SubjectInfo;
+import com.dingxi.xiaoyuantong.model.TeacherInfo;
 
 import android.content.Context;
 import android.util.Log;
@@ -83,7 +87,7 @@ public class JSONParser {
 		if (jsonObj.has(tag)) {
 			return jsonObj.getInt(tag);
 		}
-		return -1;
+		return 0;
 	}
     
     public static String getStringByTag(String json, String tag) throws JSONException {
@@ -136,21 +140,21 @@ public class JSONParser {
         return schoolList;
     }
 
-    public static ArrayList<StudentInfo>  parseChildInfo(String childInfo) throws JSONException {
+    public static ArrayList<ChildInfo>  parseChildInfo(String childInfo) throws JSONException {
         // TODO Auto-generated method stub
         JSONObject jsonObj = new JSONObject(childInfo);
-        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
-        ArrayList<StudentInfo> studentList = new ArrayList<StudentInfo>();
-        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+        //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        ArrayList<ChildInfo> studentList = new ArrayList<ChildInfo>();
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = (JSONObject) data.get(i);
 
-                StudentInfo studentInfo = new StudentInfo();
-
+                ChildInfo studentInfo = new ChildInfo();
+                
                 studentInfo.imei = obj.getString("imei");
                 studentInfo.id = obj.getString("id");
-                studentInfo.stuName = obj.getString("stuName");
+                studentInfo.name = obj.getString("stuName");
                 studentInfo.fkGradeId = obj.getString("fkGradeId");
                 studentInfo.fkClassId = obj.getString("fkClassId");
                 studentInfo.fkSchoolId = obj.getString("fkSchoolId");
@@ -162,14 +166,66 @@ public class JSONParser {
         
     }
     
+    public static ArrayList<ParentInfo>  parseParentInfo(String childInfo) throws JSONException {
+        // TODO Auto-generated method stub
+        JSONObject jsonObj = new JSONObject(childInfo);
+        //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        ArrayList<ParentInfo> studentList = new ArrayList<ParentInfo>();
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                ParentInfo studentInfo = new ParentInfo();
+                /*
+                studentInfo.imei = obj.getString("imei");
+                studentInfo.id = obj.getString("id");
+                studentInfo.stuName = obj.getString("stuName");
+                studentInfo.fkGradeId = obj.getString("fkGradeId");
+                studentInfo.fkClassId = obj.getString("fkClassId");
+                studentInfo.fkSchoolId = obj.getString("fkSchoolId");
+                */
+                studentList.add(studentInfo);
+            }
+        }
+        return null;
+
+        
+    }
     
     
+    public static ArrayList<TeacherInfo>  parseTeacherInfo(String childInfo) throws JSONException {
+        // TODO Auto-generated method stub
+        JSONObject jsonObj = new JSONObject(childInfo);
+        //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        ArrayList<TeacherInfo> studentList = new ArrayList<TeacherInfo>();
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+
+                TeacherInfo studentInfo = new TeacherInfo();
+                /*
+                studentInfo.imei = obj.getString("imei");
+                studentInfo.id = obj.getString("id");
+                studentInfo.stuName = obj.getString("stuName");
+                studentInfo.fkGradeId = obj.getString("fkGradeId");
+                studentInfo.fkClassId = obj.getString("fkClassId");
+                studentInfo.fkSchoolId = obj.getString("fkSchoolId");
+                */
+                studentList.add(studentInfo);
+            }
+        }
+        return null;
+
+        
+    }
     
     public static ArrayList<ClassInfo> toParserCalssInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);
-        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-        ArrayList<ClassInfo> classInfoList = new ArrayList<ClassInfo>(total);
+        ArrayList<ClassInfo> classInfoList = new ArrayList<ClassInfo>();
 
         if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
@@ -188,9 +244,9 @@ public class JSONParser {
 
     public static ArrayList<GradeInfo> toParserGradeInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);
-        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+       // int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-        ArrayList<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>(total);
+        ArrayList<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>();
 
         if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
@@ -267,55 +323,6 @@ public class JSONParser {
             }
         }
 		return mHomeWorkList;
-
-    }
-    
-    
-    private void praseHomeWorksss(String homeWorksInfo) {
-
-        JSONObject jsonObj;
-        
-        try {
-            jsonObj = new JSONObject(homeWorksInfo);
-            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
-
-            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
-                JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
-
-                ArrayList<HomeWorkInfo> homeWorkInfoList = new ArrayList<HomeWorkInfo>();
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject obj = (JSONObject) data.get(i);
-
-                    // {"fkGradeId":"3","optTime":"2014-03-20 13:28:35","fkClassId":"2","status":"","fkSubjectId":0,"smsType":"1",
-                    // "fkSchoolId":2,"sendType":"1","id":"402881f344dd52b00144dd54f6680001",
-                    // "content":"我是测试数据","className":"初一年级1班","fkStudentId":"402881f144d8e6200144d90fea740011","stuName":"bbbbb"}
-                    HomeWorkInfo homeWorkInfo = new HomeWorkInfo();
-
-                    homeWorkInfo.content = obj.getString("content");
-                    homeWorkInfo.id = obj.getString("id");
-                    homeWorkInfo.optTime = obj.getString("optTime");
-                    homeWorkInfo.fkGradeId = obj.getInt("fkGradeId");
-                    //homeWorkInfo.status = obj.getString("status");
-                    homeWorkInfo.fkClassId = obj.getInt("fkClassId");
-                    homeWorkInfo.fkSubjectId = obj.getInt("fkSubjectId");
-                    homeWorkInfo.smsType = obj.getInt("smsType");
-                    homeWorkInfo.fkSchoolId = obj.getInt("fkSchoolId");
-                    homeWorkInfo.className = obj.getString("className");
-                    homeWorkInfo.sendType = obj.getInt("sendType");
-                    homeWorkInfo.fkStudentId = obj.getString("fkStudentId");
-
-                    homeWorkInfoList.add(homeWorkInfo);
-                }
-
-              
-                
-               
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally{
-        }
 
     }
     
@@ -464,7 +471,6 @@ public class JSONParser {
                     LocationInfo.lng = obj.getString("lng");
                     LocationInfo.optTime = obj.getString("opt_time");
 
-  
                     attendanceInfoList.add(LocationInfo);
                 } 
                 
@@ -483,6 +489,39 @@ public class JSONParser {
     }
 	
     
+	public static ArrayList<LeaveMessage> praseLeaveMessage(String homeWorksInfo) throws JSONException {
+        // TODO Auto-generated method stub
+        ArrayList<LeaveMessage> mLeaveMessageList = new ArrayList<LeaveMessage>();
+        JSONObject jsonObj = new JSONObject(homeWorksInfo);
+       // int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject obj = (JSONObject) data.get(i);
+               // {"content":"dasgdag","sender":"张三4","id":"402880e64603f5eb014603f734a40001","receiver":"张老师","student":"","date":"2014-05-16 15:37:50"},
+                LeaveMessage leaveMessage = new LeaveMessage();
+
+                
+                leaveMessage.content= obj.getString("content");
+                leaveMessage.sender= obj.getString("sender");
+                leaveMessage.messageId= obj.getString("id");
+                leaveMessage.receiver= obj.getString("receiver");
+                leaveMessage.student= obj.getString("student");
+                leaveMessage.date= obj.getString("date");
+
+                
+                mLeaveMessageList.add(leaveMessage);
+            }
+            if (mLeaveMessageList.size() > 0) {
+
+            }
+        }
+        return mLeaveMessageList;
+
+    }
+	
 //    private void praseMessageInfos(String homeWorksInfo) throws JSONException {
 //        // TODO Auto-generated method stub
 //        JSONObject jsonObj = new JSONObject(homeWorksInfo);

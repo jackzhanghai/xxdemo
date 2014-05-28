@@ -7,4 +7,6 @@ public class TeacherInfo extends UserInfo {
 	public List<ClassInfo> classList;
 	public String defalutSchoolId;
 	public String defalutClassId;
+	public String name;
+	public String id;
 }

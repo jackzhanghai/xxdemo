@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
+import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
@@ -67,7 +68,7 @@ public class HomeWorkActivity extends Activity {
     private View emptyView;
     private static UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    private ArrayList<StudentInfo> mStudentList;
+    private ArrayList<ChildInfo> mStudentList;
     private ArrayAdapter<String> mSpinnerAdapter;
     private ArrayList<String> mSpinnerInfo;
     ListView mHomeWorkListView;
@@ -198,7 +199,7 @@ public class HomeWorkActivity extends Activity {
             if (parentInfo.childList != null) {
                 mStudentList = parentInfo.childList;
             } else {
-                mStudentList = new ArrayList<StudentInfo>();
+                mStudentList = new ArrayList<ChildInfo>();
             }
 
             if (parentInfo.nameList != null) {

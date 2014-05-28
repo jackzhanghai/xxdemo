@@ -6,8 +6,9 @@ import java.util.List;
 public class ParentInfo extends UserInfo {
 
 	
-	public ArrayList<StudentInfo> childList;
-	public StudentInfo defalutChild;
+	public ArrayList<ChildInfo> childList;
+	public ChildInfo defalutChild;
 	public ArrayList<String> nameList;
 	public int curretSelectIndex;
+	public String parentName;
 }

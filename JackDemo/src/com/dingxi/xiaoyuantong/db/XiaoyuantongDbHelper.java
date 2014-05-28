@@ -1,6 +1,7 @@
 package com.dingxi.xiaoyuantong.db;
 
 import com.dingxi.xiaoyuantong.model.AttendanceInfo.AttendanceInfoEntry;
+import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -13,7 +14,7 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 
 	// If you change the database schema, you must increment the database
 	// version.
-	public static final int DATABASE_VERSION = 1;
+	public static final int DATABASE_VERSION = 2;
 	public static final String DATABASE_NAME = "xiaoyuantong.db";
 
 	private static final String TAG = "XiaoyuantongDbHelper";
@@ -55,6 +56,33 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 					+ " integer, "
 					+ AttendanceInfoEntry.COLUMN_NAME_STU_NAME
 					+ " varchar(60))");
+			
+			
+			/*
+             public static final String COLUMN_NAME_CONTENT = "content";
+        public static final String COLUMN_NAME_SENDER = "sender";
+        public static final String COLUMN_NAME_RECEIVER = "receiver";
+        public static final String COLUMN_NAME_STUDENT = "student";
+        public static final String COLUMN_NAME_DATE = "date";*/
+
+			db.execSQL("CREATE TABLE IF NOT EXISTS "
+                    + LeaveMessageEntry.TABLE_NAME
+                    + " (id integer primary key autoincrement, "
+                    + LeaveMessageEntry.COLUMN_NAME_ENTRY_ID + " varchar(60) unique, "
+                    + LeaveMessageEntry.COLUMN_NAME_CONTENT
+                    + " varchar(60), "
+                    + LeaveMessageEntry.COLUMN_NAME_SENDER
+                    + " varchar(60), "
+                    + LeaveMessageEntry.COLUMN_NAME_RECEIVER
+                    + " varchar(60), "
+                    + LeaveMessageEntry.COLUMN_NAME_STUDENT
+                    + " varchar(60), "
+                    + LeaveMessageEntry.COLUMN_NAME_DATE
+                    + " varchar(60),"
+                    + LeaveMessageEntry.COLUMN_NAME_IS_READ
+                    + " integer)"
+			        );
+			
 		} catch (SQLException sQLException) {
 			sQLException.printStackTrace();
 			Log.e(TAG, sQLException.getMessage());
@@ -72,6 +100,9 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_DELETE_ENTRIES);
 		SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + "home_work";
 		db.execSQL(SQL_DELETE_ENTRIES);
+		
+		SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + LeaveMessageEntry.TABLE_NAME;
+        db.execSQL(SQL_DELETE_ENTRIES);
 		onCreate(db);
 	}
 
