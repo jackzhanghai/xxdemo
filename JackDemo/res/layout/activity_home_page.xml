@@ -17,10 +17,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="6dp"
+            android:paddingLeft="10dip"
             android:background="@drawable/main_spinner_selector"
             android:gravity="center"
-            android:paddingLeft="10dip"
             android:visibility="gone" />
 
         <ImageButton
@@ -37,6 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#40bed742"
+        android:visibility="visible"
         android:gravity="center_vertical" >
 
         <ImageView
@@ -67,7 +68,8 @@
         android:gravity="center"
         android:horizontalSpacing="4dp"
         android:numColumns="auto_fit"
-        android:paddingTop="30dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
         android:stretchMode="columnWidth"
         android:verticalSpacing="30dp" />
 

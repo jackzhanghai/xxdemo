@@ -224,7 +224,7 @@ public class HomePageActivity extends Activity {
             mSpinner.setVisibility(View.VISIBLE);
             mSpinner.setPromptId(R.string.please_check_child);
             mSpinnerAdapter = new ArrayAdapter<String>(HomePageActivity.this,
-                    android.R.layout.simple_spinner_item, mSpinnerInfo);
+                    R.layout.spinner_checked_text, mSpinnerInfo);
             mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mSpinner.setAdapter(mSpinnerAdapter);
         } else {// if (curretUserInfo.roleType == UserType.ROLE_TEACHER)

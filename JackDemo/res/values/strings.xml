@@ -133,5 +133,12 @@
     <string name="inner_message">校园短信</string>
     <string name="message_sender">发送者</string>
     <string name="message_resever">接收者</string>
+    <string name="select_search_type">选择类型</string>
+     <string name="search_type_all">全部</string>
+     <string name="search_type_sender">发件箱</string>
+     <string name="search_type_receiver">收件箱</string>
+    <string name="select_start_time">请选择开始时间</string>
+    <string name="select_end_time">请选择结束时间</string>
+    
 
 </resources>

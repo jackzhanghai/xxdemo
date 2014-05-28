@@ -233,9 +233,9 @@ public class LeaveMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LeaveMessageActivity.this, SearchMessageActivity.class);
+                Intent intent = new Intent(LeaveMessageActivity.this, SearchLeaveMessageActivity.class);
                 intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
-                startActivityForResult(intent, R.layout.activity_search_message);
+                startActivityForResult(intent, R.layout.activity_search_leave_message);
 
             }
         });
@@ -450,26 +450,18 @@ public class LeaveMessageActivity extends Activity {
                 curretPage = 0;
                 mHomeWorkList.clear();
                 Bundle searchBundle = data.getExtras();
-                searchBundle.getString("mGradeId");
-                String classId2 = searchBundle.getString("mClassId");
-                String studentId = searchBundle.getString("mStudentId");
-                String date = searchBundle.getString("mData");
+                
+                String mTypeId = searchBundle.getString("mTypeId");
+                String mStartData = searchBundle.getString("mStartData");
+                String mEndData = searchBundle.getString("mEndData");
 
                 mHomeWorkAdapter.notifyDataSetChanged();
 
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
-                if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-                    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                            "","", curretUserInfo.roleType.toString(), "", "");
-                } else {
-                    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                            "", "", curretUserInfo.roleType.toString(), "", "");
-                }
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, mTypeId,
+                        mStartData, mEndData, curretUserInfo.roleType.toString(), "", "");
                 mHomeWorTask.execute((Void) null);
             } else {
                 mPullToRefreshView.onRefreshComplete();

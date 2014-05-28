@@ -121,9 +121,9 @@ public class JSONParser {
 
     public static ArrayList<StudentInfo> toParserStudentInfoList(String searchTypeReslut) throws JSONException {
         JSONObject jsonObj = new JSONObject(searchTypeReslut);
-        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-        ArrayList<StudentInfo> schoolList = new ArrayList<StudentInfo>(total);
+        ArrayList<StudentInfo> schoolList = new ArrayList<StudentInfo>();
 
         if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
@@ -131,9 +131,8 @@ public class JSONParser {
                 JSONObject obj = (JSONObject) data.get(i);
 
                 StudentInfo studentInfo = new StudentInfo();
-
-                studentInfo.stuName = obj.getString("stuName");
                 studentInfo.id = obj.getString("id");
+                studentInfo.stuName = obj.getString("name");
                 schoolList.add(studentInfo);
             }
         }
