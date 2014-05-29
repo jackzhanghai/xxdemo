@@ -156,7 +156,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 		    selectClassArea.setVisibility(View.VISIBLE);
 		    studentNameText.setText(R.string.select_student);
 		    parentNameText.setText(R.string.please_check_parent);
-		    //1.获取年纪集合 2. 获取班级集合  ，3.获取学生集合  4. 获取学生家长集合
+		    //1.获取年级集合 2. 获取班级集合  ，3.获取学生集合  4. 获取学生家长集合
 		    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 		    //teacherInfo.defalutClassId;
 		    
@@ -549,7 +549,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
                 parentNameList = new String[parentInfoList.size()];
 
                 for (int i = 0; i < parentInfoList.size(); i++) {
-                    parentNameList[i] = parentInfoList.get(i).parentName;
+                    parentNameList[i] = parentInfoList.get(i).name;
                 }
             }
         }
@@ -834,7 +834,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
                                     int which) {
                                 mPrentId = parentInfoList.get(which).id;
                                 studentNameText.setText(parentInfoList
-                                        .get(which).parentName);
+                                        .get(which).name);
                                 Log.d(TAG, "mPrentId " + mPrentId);
                             }
                         });

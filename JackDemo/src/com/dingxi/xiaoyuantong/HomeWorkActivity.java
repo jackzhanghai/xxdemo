@@ -66,7 +66,7 @@ public class HomeWorkActivity extends Activity {
     private ImageView loadingImageView;
     private AnimationDrawable loadingAnimation;
     private View emptyView;
-    private static UserInfo curretUserInfo;
+    private UserInfo curretUserInfo;
     private XiaoYunTongApplication mXiaoYunTongApplication;
     private ArrayList<ChildInfo> mStudentList;
     private ArrayAdapter<String> mSpinnerAdapter;
@@ -152,7 +152,7 @@ public class HomeWorkActivity extends Activity {
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 
         curretUserInfo = mXiaoYunTongApplication.userInfo;
-
+        Log.i(TAG, "curretUserInfo.id " + curretUserInfo.id);
         mSpinner = (Spinner) findViewById(R.id.main_spinner);
         mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -209,7 +209,7 @@ public class HomeWorkActivity extends Activity {
             }
 
             mSpinnerAdapter = new ArrayAdapter<String>(HomeWorkActivity.this,
-                    android.R.layout.simple_spinner_item, mSpinnerInfo);
+                    R.layout.spinner_checked_text, mSpinnerInfo);
             mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mSpinner.setAdapter(mSpinnerAdapter);

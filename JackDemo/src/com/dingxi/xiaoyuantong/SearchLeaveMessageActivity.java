@@ -49,7 +49,7 @@ public class SearchLeaveMessageActivity extends Activity {
     private TextView selectStartTimeTextView;
     private TextView selectTypeTextView;
     private TextView selectEndTimeTextView;
-    private String typeNameList[] = {getString(R.string.search_type_all),getString(R.string.search_type_receiver),getString(R.string.search_type_sender)};;
+   
     private Button sreachConfirmButton;
     private Button sreachCancelButton;
     private DatePickerDialog mTimePickerDialog;
@@ -137,7 +137,7 @@ public class SearchLeaveMessageActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Log.d(TAG, "selectGradeButton OnClick");
-
+               String typeNameList[] = {getString(R.string.search_type_all),getString(R.string.search_type_receiver),getString(R.string.search_type_sender)};;
                     AlertDialog.Builder builder = new AlertDialog.Builder(SearchLeaveMessageActivity.this);
                     builder.setTitle(R.string.select_search_type).setItems(typeNameList,
                             new DialogInterface.OnClickListener() {

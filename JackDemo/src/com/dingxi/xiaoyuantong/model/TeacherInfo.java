@@ -8,5 +8,5 @@ public class TeacherInfo extends UserInfo {
 	public String defalutSchoolId;
 	public String defalutClassId;
 	public String name;
-	public String id;
+	//public String id;
 }

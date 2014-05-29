@@ -265,7 +265,7 @@ public class CampusNoticeActivity extends Activity {
             }
 
             mSpinnerAdapter = new ArrayAdapter<String>(CampusNoticeActivity.this,
-                    android.R.layout.simple_spinner_item, mSpinnerInfo);
+                    R.layout.spinner_checked_text, mSpinnerInfo);
             mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mSpinner.setAdapter(mSpinnerAdapter);

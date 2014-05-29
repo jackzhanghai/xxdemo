@@ -118,7 +118,7 @@
             android:background="@android:color/transparent"
             android:hint="@string/error_invalid_password"
             android:inputType="textPassword"
-            android:maxLength="12"
+            android:maxLength="16"
             android:maxLines="1"
             android:paddingLeft="4dp"
             android:singleLine="true" />

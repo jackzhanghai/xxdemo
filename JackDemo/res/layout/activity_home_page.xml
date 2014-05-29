@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/title"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:gravity="center_vertical" >
 
         <Spinner
@@ -34,10 +36,11 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/ads_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#40bed742"
-        android:visibility="visible"
+        android:visibility="gone"
         android:gravity="center_vertical" >
 
         <ImageView
@@ -54,6 +57,7 @@
             android:layout_marginLeft="6dp"
             android:layout_marginRight="10dp"
             android:textColor="@android:color/background_dark"
+            android:maxLength="14"
             android:ellipsize="end"
             android:singleLine="true"
             android:textSize="18sp" />

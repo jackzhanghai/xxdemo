@@ -91,7 +91,7 @@ public class RestClient {
 
     }
 
-    private static String requestData(Map<String, String> map, String url) throws IOException,
+    private static String requestDatas(Map<String, String> map, String url) throws IOException,
             XmlPullParserException {
 
         String result = null;
@@ -168,6 +168,7 @@ public class RestClient {
 
     }
 
+    /*
     public static String exit(String id, String fkRoleId, String ticket) throws IOException,
             XmlPullParserException {
 
@@ -176,25 +177,46 @@ public class RestClient {
         map.put("fkRoleId", fkRoleId);
         map.put("ticket", ticket);
 
-        String response = requestData(map, "exit");
+       // String response = requestData(map, "exit");
         return response;
 
     };
+    */
 
     public static String getAllChilds(String id,String ticket)
             throws IOException, XmlPullParserException {
 
-        Map<String, String> map = new HashMap<String, String>();
-        id.trim();
-        map.put("id", id);
-        Log.d(TAG, "id " + id);
-        ticket.trim();
-        map.put("ticket", ticket);
-        Log.d(TAG, "ticket " + ticket);
+        
+        String soapAction = nameSpace + "/getAllChilds";
 
-        String response = requestData(map, "getAllChilds");
-        Log.i(TAG, "getAllChilds response " + response);
-        return response;
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getAllChilds");
+        rpc.addProperty("id", id);       
+        rpc.addProperty("ticket", ticket);
+       
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getAllChilds result " + result);
+        return result;
 
     };
 
@@ -282,13 +304,42 @@ public class RestClient {
     // 学校年级联动
     public static String getGradeInfos(String id, String ticket, String fkSchoolId)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("fkSchoolId", fkSchoolId);
-        map.put("ticket", ticket);
+        
+        Log.i(TAG, "getGradeInfos()");
+        String soapAction = nameSpace + "/getGradeInfos";
+        Log.i(TAG, "id " + id);
+        Log.i(TAG, "ticket " + ticket);
+        Log.i(TAG, "fkSchoolId " + fkSchoolId);
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getGradeInfos");
+        rpc.addProperty("id", id);       
+        rpc.addProperty("ticket", ticket);
+        rpc.addProperty("fkSchoolId", fkSchoolId);
 
-        String response = requestData(map, "getGradeInfos");
-        return response;
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getGradeInfos result " + result);
+        return result;
+        
+        
 
     };
     
@@ -299,37 +350,109 @@ public class RestClient {
             throws IOException, XmlPullParserException {
         
         Log.i(TAG, "getRtls()");
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("imei", imei);
 
-        String response = requestData(map, "rtls");
-       
-        Log.i(TAG, "getRtls result " + response);
-        return response;
+        
+        String soapAction = nameSpace + "/rtls";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "rtls");
+        rpc.addProperty("imei", imei);       
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getRtls result " + result);
+        return result;
+        
     };
     
     // 年级班级联动
     public static String getClassInfos(String id, String ticket, String fkGradeId)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("fkGradeId", fkGradeId);
-        map.put("ticket", ticket);
 
-        String response = requestData(map, "getClassInfos");
-        return response;
+        String soapAction = nameSpace + "/getClassInfos";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getClassInfos");
+        rpc.addProperty("id", id);   
+        rpc.addProperty("ticket", ticket); 
+        rpc.addProperty("fkGradeId", fkGradeId); 
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getClassInfos result " + result);
+        return result;
 
     };
 
     // 班级学生联动
     public static String getStudentInfos(String id, String ticket, String fkClassId)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("fkRoleId", fkClassId);
-        map.put("ticket", ticket);
-        String response = requestData(map, "getStudentInfos");
-        return response;
+
+        
+        String soapAction = nameSpace + "/getStudentInfos";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "getStudentInfos");
+        rpc.addProperty("id", id);   
+        rpc.addProperty("ticket", ticket); 
+        rpc.addProperty("fkClassId", fkClassId); 
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "getStudentInfos result " + result);
+        return result;
     }
 
     // 获取科目
@@ -486,12 +609,36 @@ public class RestClient {
     // 添加校园通知
     public static String addMessageInfos(String id, String ticket, String info)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("ticket", ticket);
-        map.put("info", info);
-        String response = requestData(map, "addMessageInfos");
-        return response;
+
+        String soapAction = nameSpace + "/addMessageInfos";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "addMessageInfos");
+        rpc.addProperty("id", id);   
+        rpc.addProperty("ticket", ticket); 
+        rpc.addProperty("info", info); 
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "addMessageInfos result " + result);
+        return result;
     }
 
     // 获取考勤信息
@@ -535,11 +682,36 @@ public class RestClient {
     // 修改考勤信息
     public static String updateAttendance(String id, String ticket, String info)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", id);
-        map.put("ticket", ticket);
-        map.put("info", info);
-        return requestData(map, "updateAttendance");
+       
+        
+        
+        String soapAction = nameSpace + "/updateAttendance";
+
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace, "updateAttendance");
+        rpc.addProperty("id", id);   
+        rpc.addProperty("ticket", ticket); 
+        rpc.addProperty("info", info); 
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.bodyOut = rpc;
+        HttpTransportSE transport = new HttpTransportSE(phoneServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "updateAttendance result " + result);
+        return result;
     }
     
     
@@ -585,13 +757,43 @@ public class RestClient {
     
     public static String replyLeaveMessage(String messageId,String userId,String content,String ticket,String roleId)
             throws IOException, XmlPullParserException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("messageId", messageId);
-        map.put("userId", userId);
-        map.put("content", content);
-        map.put("ticket", ticket);
-        map.put("roleId", roleId);
-        return requestData(map, "replyMessage");
+        
+        
+        String result = null;
+        SoapObject rpc = new SoapObject(nameSpace,"replyMessage");
+        
+        rpc.addProperty("messageId", messageId);
+        rpc.addProperty("userId", userId);
+        rpc.addProperty("content", content);
+        rpc.addProperty("ticket", ticket);
+        rpc.addProperty("roleId", roleId);//String.valueOf(page)
+
+        
+        String soapAction = nameSpace + "/" + "replyMessage";
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+
+        envelope.bodyOut = rpc;
+
+        HttpTransportSE transport = new HttpTransportSE(messageServicePoint);
+
+        transport.call(soapAction, envelope);
+
+        if (envelope.getResponse() != null) {
+
+            SoapObject object = (SoapObject) envelope.bodyIn;
+            int count = object.getPropertyCount();
+            Log.i(TAG, "PropertyCount " + count);
+            for (int i = 0; i < count; i++) {
+
+                String property = object.getProperty(i).toString();
+                Log.i(TAG, "requestData property " + property);
+            }
+            result = object.getProperty(0).toString();
+        }
+        Log.i(TAG, "request getMessages result " + result);
+        return result;
+        
     }
     
     public static  String getLeaveMessages(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows) throws IOException, XmlPullParserException{

@@ -2,23 +2,20 @@
 <resources>
 
     <string name="app_name">校园通</string>
-    <string name="title_activity_home_page">HomePageActivity</string>
-    <string name="title_activity_splash">SplashActivity</string>
-    <string name="dummy_button">Dummy Button</string>
     <string name="home_work">家庭作业</string>
     <string name="system_note">校园通知</string>
     <string name="attendance_information">考勤信息</string>
     <string name="official_site">官方网站</string>
     <string name="change_password">修改密码</string>
     <string name="position_orientation">位置定位 </string>
-    <string name="confirm_login">登陆</string>
+    <string name="confirm_login">登录</string>
     <string name="exit_account">退出账号</string>
     <string name="confirm">确认</string>
     <string name="cancel">取消</string>
     <string name="remember_password">记住密码</string>
-    <string name="auto_login">自动登陆</string>
+    <string name="auto_login">自动登录</string>
     <string name="loading_school">正在获取学校，请等待...</string>
-    <string name="now_logining">正在登陆...</string>
+    <string name="now_logining">正在登录...</string>
     <string name="input_accont">请输入账户</string>
     <string name="input_password">请输入密码</string>
     <string name="teacher_authority">教师权限登录</string>
@@ -32,7 +29,7 @@
      <string name="now_geting_childinfo">正在获取孩子信息...</string>
        <string name="now_geting_parentinfo">正在获取家长信息..</string>
      <string name="now_geting_techerinfo">正在获取老师信息...</string>
-    <string name="now_geting_gradeinfo">正在获取年纪信息...</string>
+    <string name="now_geting_gradeinfo">正在获取年级信息...</string>
     <string name="now_geting_subjectinfo">正在获取科目信息...</string>
     <string name="now_geting_classinfo">正在获取班级信息...</string>
     <string name="now_adding_homework">正在添加家庭作业...</string>
@@ -50,7 +47,7 @@
     <string name="select_grade">请选择年级</string>
     <string name="mast_selet_one">请至少选择一个条件</string>
     <string name="select_send_type">请选择发送类型</string>
-    <string name="no_grade">没有年纪</string>
+    <string name="no_grade">没有年级</string>
     <string name="select_student">请选择学生</string>
     <string name="no_student">没有学生</string>
     <string name="select_subject">请选择科目</string>
@@ -97,28 +94,8 @@
     <string name="select_parent">指定发送</string>
     <string name="location_time">时间：</string>
     <string name="location_address">位置：</string>
-    <string name="title_activity_attendance_info">AttendanceInfoActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_home_work">HomeWorkActivity</string>
-    <string name="title_activity_location_info">LocationInfoActivity</string>
-    <string name="title_activity_campus_notice">CampusNoticeActivity</string>
-    <string name="title_activity_modify_pass_word">ModifyPassWordActivity</string>
-    <string name="title_activity_official_site">OfficialSiteActivity</string>
-    <string name="title_activity_edit_home_work">EditHomeWorkActivity</string>
-    <string name="title_activity_edit_campus_notice">EditCampusNoticeActivity</string>
-    <string name="title_activity_home_work_detail">HomeWorkDetailActivity</string>
-    <string name="title_activity_search_message">SearchMessageActivity</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in_register"><b>Sign in</b> or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="action_forgot_password">Recover lost password</string>
-    <string name="login_progress_signing_in">Signing in&#8230;</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">大于6位小于12位的密码</string>
-    <string name="input_valid_password">请输入大于6位小于12位的密码</string>
+    <string name="error_invalid_password">大于6位小于16位的密码</string>
+    <string name="input_valid_password">请输入大于6位小于16位的密码</string>
     <string name="old_password_not_empty">旧密码不能为空</string>
     <string name="new_password_not_empty">新密码不能为空</string>
     <string name="two_password_not_sample">两次新密码不一致请重新输入</string>

@@ -75,6 +75,7 @@ public class HomePageActivity extends Activity {
     public static int campusNotieTotal;
     private RollTextThread rollTextThread;
     GridView gridview;
+    private View adsView;
     private TextView rollNoteText;
     private ArrayList<ChildInfo> mChildInfoList;
     //private ArrayList<String> campusNoticeContentList;
@@ -95,12 +96,14 @@ public class HomePageActivity extends Activity {
             
             switch (msg.what) {
             case MSG_ROLL_TEXT:
+                adsView.setVisibility(View.VISIBLE);
                 String text = (String) msg.obj;
                 Log.d(TAG, "text " + text);
                 rollNoteText.setClickable(true);
                 rollNoteText.setText(text);
                 break;
-            case MSG_NO_DATA:                
+            case MSG_NO_DATA:  
+                adsView.setVisibility(View.GONE);
                 rollNoteText.setText("");
                 rollNoteText.setClickable(false);
                 break;
@@ -119,6 +122,7 @@ public class HomePageActivity extends Activity {
         userInfo = mXiaoYunTongApplication.userInfo;
 
         gridview = (GridView) findViewById(R.id.gridview);
+        adsView = (View)findViewById(R.id.ads_view);
         rollNoteText = (TextView) findViewById(R.id.roll_note_text);
         rollNoteText.setOnClickListener(new OnClickListener() {
             
@@ -142,6 +146,8 @@ public class HomePageActivity extends Activity {
         mChildInfoList = new ArrayList<ChildInfo>();
         //campusNoticeContentList = new ArrayList<String>();
         campusNoticeLists = new ArrayList<CampusNotice>();
+  
+        
         gridview.setAdapter(mImageAdapter);
 
         exitAccountButton = (Button) findViewById(R.id.exit_account);
@@ -253,25 +259,32 @@ public class HomePageActivity extends Activity {
                     Intent intent = new Intent(HomePageActivity.this, LeaveMessageActivity.class);
                     startActivity(intent);
                 } else if(position == 5){
-                    Intent intent = new Intent(HomePageActivity.this, InnerMessageActivity.class);
-                    startActivity(intent);
+                    //Intent intent = new Intent(HomePageActivity.this, InnerMessageActivity.class);
+                    //startActivity(intent);
                 } else if(position == 6){
                     
                     ParentInfo parentInfo = (ParentInfo) userInfo;
-                    if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
-                        Intent intent = new Intent(HomePageActivity.this,
-                                LocationInfoActivity.class);
-                  
-                        Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.name);
-                        Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
-                        Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);
-                        intent.putExtra("childId", parentInfo.defalutChild.id);
-                        intent.putExtra("imei", parentInfo.defalutChild.imei);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(HomePageActivity.this, R.string.no_bound_phone,
+                    if(parentInfo.defalutChild == null){
+                        Toast.makeText(HomePageActivity.this, R.string.please_check_child,
                                 Toast.LENGTH_LONG).show();
-                    }
+                    }else {
+                        
+                        if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
+                            Intent intent = new Intent(HomePageActivity.this,
+                                    LocationInfoActivity.class);
+                      
+                            Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.name);
+                            Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
+                            Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);
+                            intent.putExtra("childId", parentInfo.defalutChild.id);
+                            intent.putExtra("imei", parentInfo.defalutChild.imei);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(HomePageActivity.this, R.string.no_bound_phone,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        
+                    } 
                 }
 
             }
@@ -529,7 +542,7 @@ public class HomePageActivity extends Activity {
 
         //R.drawable.officialweb,R.string.official_site,
         private Integer[] teacherPictures = { R.drawable.homework, R.drawable.message,
-                R.drawable.check,  R.drawable.change_password,R.drawable.change_password ,R.drawable.change_password };
+                R.drawable.check,  R.drawable.change_password,R.drawable.leave_message,R.drawable.inner_message };
         private Integer[] teacherTitles = { R.string.home_work, R.string.system_note,
                 R.string.attendance_information, R.string.change_password, R.string.leave_message,R.string.inner_message};
         
@@ -537,7 +550,7 @@ public class HomePageActivity extends Activity {
         
         private Integer[] parentPictures = { R.drawable.homework, R.drawable.message,
                 R.drawable.check, R.drawable.change_password,
-                R.drawable.change_password, R.drawable.change_password,R.drawable.position};
+                R.drawable.leave_message,R.drawable.inner_message,R.drawable.position};
         private Integer[] parentTitles = { R.string.home_work, R.string.system_note,
                 R.string.attendance_information,  R.string.change_password,
                 R.string.leave_message,R.string.inner_message,R.string.position_orientation};

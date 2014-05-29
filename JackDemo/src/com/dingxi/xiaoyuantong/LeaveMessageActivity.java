@@ -219,7 +219,7 @@ public class LeaveMessageActivity extends Activity {
             }
 
             mSpinnerAdapter = new ArrayAdapter<String>(LeaveMessageActivity.this,
-                    android.R.layout.simple_spinner_item, mSpinnerInfo);
+                    R.layout.spinner_checked_text, mSpinnerInfo);
             mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mSpinner.setAdapter(mSpinnerAdapter);
@@ -441,7 +441,7 @@ public class LeaveMessageActivity extends Activity {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == R.layout.activity_search_message) {
+        if (resultCode == RESULT_OK && requestCode == R.layout.activity_search_leave_message) {
 
             if (Util.IsNetworkAvailable(LeaveMessageActivity.this)) {
                 totalCount = 0;

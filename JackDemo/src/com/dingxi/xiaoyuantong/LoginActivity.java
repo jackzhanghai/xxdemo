@@ -87,6 +87,7 @@ public class LoginActivity extends Activity {
 
 		mUserNameEditText = (EditText) findViewById(R.id.user_name);
 		mPasswordEditText = (EditText) findViewById(R.id.password);
+		/*
 		mPasswordEditText.setOnEditorActionListener(new OnEditorActionListener() {
             
             @Override
@@ -96,6 +97,7 @@ public class LoginActivity extends Activity {
                 return false;
             }
         });
+        */
 		mPasswordEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
             
             @Override
@@ -444,6 +446,7 @@ public class LoginActivity extends Activity {
                         }
 
                         mXiaoYunTongApplication.userInfo.id = id;
+                        Log.d(TAG, "mXiaoYunTongApplication.userInfo.id " + mXiaoYunTongApplication.userInfo.id);
                         String ticket = JSONParser.getStringByTag(responseMessage.body,
                                 "ticket");
                         mXiaoYunTongApplication.userInfo.ticket = ticket;

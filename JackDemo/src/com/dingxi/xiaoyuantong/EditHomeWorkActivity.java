@@ -47,8 +47,8 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	private ImageButton selectClassButton;
 	private ImageButton selectGradeButton;
 	private ImageButton selectSubjectButton;
-	private TextView classNameText;
 	private TextView gradeNameText;
+	private TextView classNameText;
 	private TextView subjectNameText;
 	private EditText contentEditText;
 	private Button sendHomeWorkButton;
@@ -59,7 +59,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	private String mClassId;
 	private String mGradeId;
 	private String mSubjectId;
-	private String mSchoolId;
+	//private String mSchoolId;
 	private SearchType curretSearchType;
 	public List<ClassInfo> classInfoList;
 	public String[] classNameList;
@@ -88,7 +88,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 		});
 		mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 		curretUserInfo = (TeacherInfo) mXiaoYunTongApplication.userInfo;
-		mSchoolId = curretUserInfo.defalutSchoolId;
+		Log.i(TAG, "curretUserInfo.id " + curretUserInfo.id);
 		gradeNameText = (TextView) findViewById(R.id.select_grade_text);
 		classNameText = (TextView) findViewById(R.id.select_class_text);
 		subjectNameText = (TextView) findViewById(R.id.select_subject_text);
@@ -190,14 +190,14 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				if (curretSearchType == SearchType.GradeInfo) {
 					responseMessage.body = RestClient.getGradeInfos(
 							curretUserInfo.id, curretUserInfo.ticket,
-							mSchoolId);
+							curretUserInfo.defalutSchoolId);
 				} else if (curretSearchType == SearchType.ClassInfo) {
 					responseMessage.body = RestClient.getClassInfos(
 							curretUserInfo.id, curretUserInfo.ticket, mGradeId);
 				} else if (curretSearchType == SearchType.SubjectInfo) {
 					responseMessage.body = RestClient.getSubjectInfoT(
 							curretUserInfo.id, curretUserInfo.ticket,
-							mSchoolId);
+							curretUserInfo.defalutSchoolId);
 				}
 
 				if (TextUtils.isEmpty(responseMessage.body)) {
@@ -207,7 +207,6 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				}
 
 			} catch (ConnectTimeoutException stex) {
-				responseMessage.code = -1;
 				responseMessage.message = getString(R.string.request_time_out);
 			} catch (SocketTimeoutException stex) {
 				responseMessage.message = getString(R.string.server_time_out);
@@ -295,7 +294,7 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 				throws JSONException {
 			// TODO Auto-generated method stub
 			if (!TextUtils.isEmpty(searchTypeReslut)) {
-				Log.d(TAG, "result schoolsInfo " + searchTypeReslut);
+				Log.d(TAG, "result parseGradeInfo " + searchTypeReslut);
 
 				if (JSONParser.getIntByTag(searchTypeReslut,
 						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
@@ -310,11 +309,14 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			}
 			if (gradeInfoList != null && gradeInfoList.size() > 0) {
 				gradeNameList = new String[gradeInfoList.size()];
-
 				for (int i = 0; i < gradeInfoList.size(); i++) {
 					gradeNameList[i] = gradeInfoList.get(i).name;
-
 				}
+				classNameText.setText(R.string.select_class);
+                subjectNameText.setText(R.string.select_subject);
+				mClassId = null;
+				mSubjectId = null;
+				
 			}
 		}
 
@@ -340,6 +342,8 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 					classNameList[i] = classInfoList.get(i).name;
 				}
 			}
+			subjectNameText.setText(R.string.select_subject);
+			mSubjectId = null;
 		}
 
 		private void parseSubjectInfo(String reslut) throws JSONException {
@@ -476,36 +480,33 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		if (Util.IsNetworkAvailable(EditHomeWorkActivity.this)) {
-			mProgressDialog = new ProgressDialog(EditHomeWorkActivity.this);
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			
 			int errorCode = -1;
+			int nowDoing = 0 ;
 			switch (v.getId()) {
+			case R.id.select_grade_button:
+                if (!TextUtils.isEmpty(curretUserInfo.defalutSchoolId)) {
+                    curretSearchType = SearchType.GradeInfo;
+                    nowDoing = R.string.now_geting_gradeinfo;
+                } else {
+                    errorCode = R.string.select_school;
+                }
+
+                break;
 			case R.id.select_class_button:
 
 				if (!TextUtils.isEmpty(mGradeId)) {
 					curretSearchType = SearchType.ClassInfo;
-					mProgressDialog
-							.setMessage(getString(R.string.now_geting_classinfo));
+					nowDoing = R.string.now_geting_classinfo;
 				} else {
 					errorCode = R.string.select_grade;
-				}
-
-				break;
-			case R.id.select_grade_button:
-				if (!TextUtils.isEmpty(curretUserInfo.defalutSchoolId)) {
-					curretSearchType = SearchType.GradeInfo;
-					mProgressDialog
-							.setMessage(getString(R.string.now_geting_gradeinfo));
-				} else {
-					errorCode = R.string.select_school;
 				}
 
 				break;
 			case R.id.select_subject_button:
 				if (!TextUtils.isEmpty(mClassId)) {
 					curretSearchType = SearchType.SubjectInfo;
-					mProgressDialog
-							.setMessage(getString(R.string.now_geting_subjectinfo));
+					nowDoing = R.string.now_geting_subjectinfo;
 				} else {
 					errorCode = R.string.select_class;
 				}
@@ -520,6 +521,9 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 						Toast.LENGTH_LONG).show();
 				mProgressDialog = null;
 			} else {
+			    mProgressDialog = new ProgressDialog(EditHomeWorkActivity.this);
+	            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			    mProgressDialog.setMessage(getString(nowDoing));
 				mProgressDialog.setOnCancelListener(new OnCancelListener() {
 
 					@Override
