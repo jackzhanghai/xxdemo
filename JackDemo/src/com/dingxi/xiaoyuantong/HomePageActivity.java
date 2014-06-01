@@ -209,13 +209,34 @@ public class HomePageActivity extends Activity {
                 }
                
                // mImageAdapter.notifyDataSetChanged();
+                
+                
+                mProgressDialog = new ProgressDialog(HomePageActivity.this);
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
+                    mProgressDialog.setMessage(getString(R.string.now_geting_childinfo));
+                    mProgressDialog.setOnCancelListener(new OnCancelListener() {
+
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+
+                            // TODO Auto-generated method stub
+                            if (mGetAllChildTask != null && !mGetAllChildTask.isCancelled()) {
+                                mGetAllChildTask.cancel(true);
+                                // isCancelLogin = true;
+                            }
+                        }
+                    });
+                   
+
+                
                 ParentInfo parentInfo = (ParentInfo) userInfo;
                
                 parentInfo.defalutChild = mChildInfoList.get(position);
                 parentInfo.curretSelectIndex = position;
                 mGetAllNoteTask = new GetAllNoteTask();
                 mGetAllNoteTask.execute((Void) null);
+                mProgressDialog.show();
             }
 
             @Override
@@ -818,8 +839,6 @@ public class HomePageActivity extends Activity {
            
             if (campusNoticeLists != null && campusNoticeLists.size() > 0) {
 
-                
-                
                 if (campusNoticeLists.size() > 0) {
                     if (rollTextThread != null && rollTextThread.isAlive()) {
 
@@ -839,12 +858,18 @@ public class HomePageActivity extends Activity {
                 //mImageAdapter.notifyDataSetChanged();
                 getPoPoCount();
             }
+         if (mProgressDialog != null) {
+             mProgressDialog.dismiss();
+          }
             
         }
 
         @Override
         protected void onCancelled() {
             mGetAllNoteTask = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+             }
 
         }
     }
