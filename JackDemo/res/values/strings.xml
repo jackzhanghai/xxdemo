@@ -52,6 +52,7 @@
     <string name="no_student">没有学生</string>
     <string name="select_subject">请选择科目</string>
     <string name="no_subject">没有科目</string>
+    <string name="no_parents">没有父母信息</string>
     <string name="input_old_password">输入旧密码： </string>
     <string name="input_new_password">输入新密码： </string>
     <string name="input_new_password_again">输入新密码： </string>

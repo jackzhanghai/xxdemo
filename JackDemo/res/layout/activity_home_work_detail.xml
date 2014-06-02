@@ -40,6 +40,7 @@
                  android:layout_marginTop="10dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:textColor="@android:color/background_dark"
                 android:layout_marginLeft="10dp"
                 android:text="TextView" />
 
@@ -62,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="5dp"
+                android:textSize="19sp"
                 android:text="TextView" />
 
         </LinearLayout>

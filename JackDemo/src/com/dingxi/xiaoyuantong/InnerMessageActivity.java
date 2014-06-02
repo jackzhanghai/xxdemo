@@ -626,8 +626,7 @@ public class InnerMessageActivity extends Activity {
                     toatlPage = 0;
                     --curretPage;
                     emptyView.setVisibility(View.VISIBLE);
-                    Toast.makeText(InnerMessageActivity.this, R.string.no_data, Toast.LENGTH_LONG)
-                            .show();
+                    
                 }
 
             } else {

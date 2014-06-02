@@ -617,8 +617,6 @@ public class CampusNoticeActivity extends Activity {
                 }else {
                     --curretPage;
                     emptyView.setVisibility(View.VISIBLE);
-                    Toast.makeText(CampusNoticeActivity.this, R.string.no_data, Toast.LENGTH_LONG)
-                            .show();
                 }
                
 

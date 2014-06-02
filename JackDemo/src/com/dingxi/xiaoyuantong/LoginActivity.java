@@ -360,7 +360,7 @@ public class LoginActivity extends Activity {
 		} else if (mPassword.length() < 6) {
 			errorMessage = getString(R.string.error_invalid_password);
 			isError = true;
-		}else if(mPassword.length() >12){
+		}else if(mPassword.length() >16){
 		    errorMessage = getString(R.string.error_invalid_password);
             isError = true;
 		}else if (TextUtils.isEmpty(mUserName)) {
@@ -373,7 +373,13 @@ public class LoginActivity extends Activity {
 			Toast.makeText(LoginActivity.this, errorMessage,
 					Toast.LENGTH_LONG).show();
 		} else {
-			autoLogin();
+			
+			if(Util.IsNetworkAvailable(LoginActivity.this)){
+				autoLogin();
+			} else {
+				Toast.makeText(LoginActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
+			}
+			
 		}
 	}
 
@@ -550,8 +556,7 @@ public class LoginActivity extends Activity {
 				if(responseMessage.total>0){
 					parseSchoolInfo(responseMessage.body);
 				}else {
-					Toast.makeText(LoginActivity.this, R.string.no_data,
-							Toast.LENGTH_LONG).show();
+					//Toast.makeText(LoginActivity.this, R.string.no_data Toast.LENGTH_LONG).show();
 				}				
 				mProgressDialog.dismiss();
 				//showDialog(R.id.choose_school);

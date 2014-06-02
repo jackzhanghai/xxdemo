@@ -457,7 +457,8 @@ public class EditHomeWorkActivity extends Activity implements OnClickListener {
 			    
 			    mProgressDialog.dismiss();   
 			    Intent backIntent = new Intent(EditHomeWorkActivity.this,HomeWorkActivity.class);
-			    startActivity(backIntent);
+			    //startActivity(backIntent);
+			    setResult(RESULT_OK, backIntent);
 			    EditHomeWorkActivity.this.finish();
 							
 			} else {

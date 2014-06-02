@@ -167,24 +167,26 @@ public class JSONParser {
     
     public static ArrayList<ParentInfo>  parseParentInfo(String childInfo) throws JSONException {
         // TODO Auto-generated method stub
+    	
+    	JSONArray
         JSONObject jsonObj = new JSONObject(childInfo);
         //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
-        ArrayList<ParentInfo> studentList = new ArrayList<ParentInfo>();
+        ArrayList<ParentInfo> parentInfotList = new ArrayList<ParentInfo>();
         if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
             for (int i = 0; i < data.length(); i++) {
-                JSONObject obj = (JSONObject) data.get(i);
 
-                ParentInfo studentInfo = new ParentInfo();
+                ParentInfo parentInfo = new ParentInfo();
+                parentInfo.id = obj.getString("id");
                 /*
                 studentInfo.imei = obj.getString("imei");
-                studentInfo.id = obj.getString("id");
+               
                 studentInfo.stuName = obj.getString("stuName");
                 studentInfo.fkGradeId = obj.getString("fkGradeId");
                 studentInfo.fkClassId = obj.getString("fkClassId");
                 studentInfo.fkSchoolId = obj.getString("fkSchoolId");
                 */
-                studentList.add(studentInfo);
+                parentInfotList.add(parentInfo);
             }
         }
         return null;

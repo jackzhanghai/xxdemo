@@ -55,6 +55,7 @@ import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 import com.dingxi.xiaoyuantong.network.JSONParser;
 import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
+import com.dingxi.xiaoyuantong.util.Util;
 
 public class HomePageActivity extends Activity {
 
@@ -283,29 +284,38 @@ public class HomePageActivity extends Activity {
                     //Intent intent = new Intent(HomePageActivity.this, InnerMessageActivity.class);
                     //startActivity(intent);
                 } else if(position == 6){
-                    
-                    ParentInfo parentInfo = (ParentInfo) userInfo;
-                    if(parentInfo.defalutChild == null){
-                        Toast.makeText(HomePageActivity.this, R.string.please_check_child,
-                                Toast.LENGTH_LONG).show();
-                    }else {
-                        
-                        if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
-                            Intent intent = new Intent(HomePageActivity.this,
-                                    LocationInfoActivity.class);
-                      
-                            Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.name);
-                            Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
-                            Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);
-                            intent.putExtra("childId", parentInfo.defalutChild.id);
-                            intent.putExtra("imei", parentInfo.defalutChild.imei);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(HomePageActivity.this, R.string.no_bound_phone,
+                	
+                	
+                	if(Util.IsNetworkAvailable(HomePageActivity.this)){
+                		ParentInfo parentInfo = (ParentInfo) userInfo;
+                        if(parentInfo.defalutChild == null){
+                            Toast.makeText(HomePageActivity.this, R.string.please_check_child,
                                     Toast.LENGTH_LONG).show();
-                        }
-                        
-                    } 
+                        }else {
+                            
+                            if (!TextUtils.isEmpty(parentInfo.defalutChild.imei)) {
+                                Intent intent = new Intent(HomePageActivity.this,
+                                        LocationInfoActivity.class);
+                          
+                                Log.i(TAG, "deflutStudentInfo.name " + parentInfo.defalutChild.name);
+                                Log.i(TAG, "deflutStudentInfo.imei " + parentInfo.defalutChild.imei);
+                                Log.i(TAG, "deflutStudentInfo.id " + parentInfo.defalutChild.id);
+                                intent.putExtra("childId", parentInfo.defalutChild.id);
+                                intent.putExtra("imei", parentInfo.defalutChild.imei);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(HomePageActivity.this, R.string.no_bound_phone,
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            
+                        } 
+					} else {
+						
+						 Toast.makeText(HomePageActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
+					}
+                	
+                    
+                    
                 }
 
             }

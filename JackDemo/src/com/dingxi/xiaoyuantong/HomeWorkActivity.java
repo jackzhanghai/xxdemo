@@ -237,7 +237,7 @@ public class HomeWorkActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(HomeWorkActivity.this, EditHomeWorkActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,R.layout.activity_edit_home_work);
 
             }
         });
@@ -427,6 +427,7 @@ public class HomeWorkActivity extends Activity {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d(TAG, "requestCode  " + requestCode + " resultCode " + resultCode);
         if (resultCode == RESULT_OK && requestCode == R.layout.activity_search_message) {
 
             if (Util.IsNetworkAvailable(HomeWorkActivity.this)) {
@@ -465,6 +466,27 @@ public class HomeWorkActivity extends Activity {
                         .show();
             }
 
+        }  else  if(resultCode == RESULT_OK && requestCode == R.layout.activity_edit_home_work){
+        	
+        	if (Util.IsNetworkAvailable(HomeWorkActivity.this)) {
+                if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
+                    loadingImageView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                    loadingAnimation.start();
+                    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
+                    mHomeWorTask = new GetHomeWorTask(0, 5,
+                            teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "", true);
+                    mHomeWorTask.execute((Void) null);
+                } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
+                    // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                    // mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
+                    // curretUserInfo.fkSchoolId, "",
+                    // "", parentInfo.defalutChild.id, "", true);
+                }
+            } else {
+                Toast.makeText(HomeWorkActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
+            }
+        	
         }
     }
 
@@ -626,8 +648,6 @@ public class HomeWorkActivity extends Activity {
                     toatlPage = 0;
                     --curretPage;
                     emptyView.setVisibility(View.VISIBLE);
-                    Toast.makeText(HomeWorkActivity.this, R.string.no_data, Toast.LENGTH_LONG)
-                            .show();
                 }
 
             } else {

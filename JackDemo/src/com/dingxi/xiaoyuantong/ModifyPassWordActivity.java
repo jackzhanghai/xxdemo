@@ -27,6 +27,7 @@ import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.network.JSONParser;
 import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
+import com.dingxi.xiaoyuantong.util.Util;
 
 public class ModifyPassWordActivity extends Activity {
 
@@ -89,13 +90,20 @@ public class ModifyPassWordActivity extends Activity {
 				} else if(oldPassword.length()<6 || newPassword.length()<6 || newPasswordAgain.length() <6){
 				    Toast.makeText(ModifyPassWordActivity.this, R.string.input_valid_password, Toast.LENGTH_LONG).show();
                     isRight = false;
-				}else if(oldPassword.length()>12 || newPassword.length()>12 || newPasswordAgain.length() >12){
+				}else if(oldPassword.length()>16 || newPassword.length()>16 || newPasswordAgain.length() >16){
 				    Toast.makeText(ModifyPassWordActivity.this, R.string.input_valid_password, Toast.LENGTH_LONG).show();
                     isRight = false;
                 }
 				
 				if(isRight){
-					modifyPassWord(oldPassword,newPassword);
+					if(Util.IsNetworkAvailable(ModifyPassWordActivity.this)){
+						modifyPassWord(oldPassword,newPassword);
+						
+					} else {
+						
+						 Toast.makeText(ModifyPassWordActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
+					}
+					
 				}
 			}
 		});

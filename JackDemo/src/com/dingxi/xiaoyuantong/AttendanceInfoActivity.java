@@ -22,6 +22,7 @@ import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 import com.dingxi.xiaoyuantong.network.JSONParser;
 import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
+import com.dingxi.xiaoyuantong.util.Util;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -257,17 +258,26 @@ public class AttendanceInfoActivity extends Activity {
         }
 
         
-        if(curretUserInfo.roleType == UserType.ROLE_TEACHER){
-            loadingImageView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-            loadingAnimation.start();
-        	TeacherInfo teacherInfo  = (TeacherInfo) curretUserInfo;       	
-        	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "");
-        	mGetAttendanceInfoTask.execute((Void) null);
-        } else  if(curretUserInfo.roleType == UserType.ROLE_PARENT){
-//        	ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
-//        	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
+        
+        if (Util.IsNetworkAvailable(AttendanceInfoActivity.this)) {
+        	
+        	if(curretUserInfo.roleType == UserType.ROLE_TEACHER){
+                loadingImageView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+                loadingAnimation.start();
+            	TeacherInfo teacherInfo  = (TeacherInfo) curretUserInfo;       	
+            	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, teacherInfo.defalutSchoolId, teacherInfo.defalutClassId, "", "", "");
+            	mGetAttendanceInfoTask.execute((Void) null);
+            } else  if(curretUserInfo.roleType == UserType.ROLE_PARENT){
+//            	ParentInfo  parentInfo = (ParentInfo) curretUserInfo;
+//            	mGetAttendanceInfoTask = new GetAttendanceInfoTask(curretPage, pageCount, parentInfo.defalutChild.fkSchoolId, "", "", parentInfo.defalutChild.id, "");
+            }
+        }else {
+        	
+        	Toast.makeText(AttendanceInfoActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
         }
+        
+        
        
         
 	}
@@ -512,8 +522,7 @@ public class AttendanceInfoActivity extends Activity {
                     --curretPage;
                     mAttendanceInfoList.clear();
                     emptyView.setVisibility(View.VISIBLE);
-                     Toast.makeText(AttendanceInfoActivity.this, R.string.no_data, Toast.LENGTH_LONG)
-                     .show();
+                     //Toast.makeText(AttendanceInfoActivity.this, R.string.no_data, Toast.LENGTH_LONG).show();
                 } 
 
             }else {

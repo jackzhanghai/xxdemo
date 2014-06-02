@@ -11,4 +11,5 @@ public class ParentInfo extends UserInfo {
 	public ArrayList<String> nameList;
 	public int curretSelectIndex;
 	public String name;
+	
 }

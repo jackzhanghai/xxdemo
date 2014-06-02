@@ -53,12 +53,11 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 	private ImageButton selectClassButton;
 	private ImageButton selectGradeButton;
 	private ImageButton selectStudentButton;
-	private ImageButton selectParentButton;
+	//private ImageButton selectParentButton;
 	
 	private TextView classNameText;
 	private TextView gradeNameText;
 	private TextView studentNameText;
-	private TextView parentNameText;
 	private EditText contentEditText;
 	
 	private View selectGradeArea;
@@ -102,7 +101,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
     public String[] childNameList;
     
 	private enum SearchType {
-		ClassInfo, GradeInfo, StudentInfo,ParentInfo,TeacherInfo,ChildInfo
+		ClassInfo, GradeInfo, StudentInfo,ChildInfo
 	}
 
 	@Override
@@ -126,10 +125,9 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 		gradeNameText = (TextView) findViewById(R.id.select_grade_text);
         classNameText = (TextView) findViewById(R.id.select_class_text);
         studentNameText = (TextView) findViewById(R.id.select_student_text);
-        parentNameText  = (TextView) findViewById(R.id.select_parent_text);
 
-        selectGradeArea = findViewById(R.id.select_student_area);
-        selectClassArea =  findViewById(R.id.select_parent_area);
+        selectGradeArea = findViewById(R.id.select_grade_area);
+        selectClassArea =  findViewById(R.id.select_class_area);
         
         selectGradeButton = (ImageButton) findViewById(R.id.select_grade_button);
         selectGradeButton.setOnClickListener(this);
@@ -137,15 +135,13 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
         selectClassButton.setOnClickListener(this);
         selectStudentButton = (ImageButton) findViewById(R.id.select_student_button);
         selectStudentButton.setOnClickListener(this);
-        selectParentButton = (ImageButton) findViewById(R.id.select_parent_button);
-        selectParentButton.setOnClickListener(this);
+
         
 		if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
 		    
 		    selectGradeArea.setVisibility(View.GONE);
 		    selectClassArea.setVisibility(View.GONE);
 		    gradeNameText.setText(R.string.please_check_child);
-		    parentNameText.setText(R.string.please_check_teacher);
 		    //1.选择孩子 2. 选择老师集合。
 		    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
             //parentInfo.defalutChild;
@@ -155,10 +151,10 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 		    selectGradeArea.setVisibility(View.VISIBLE);
 		    selectClassArea.setVisibility(View.VISIBLE);
 		    studentNameText.setText(R.string.select_student);
-		    parentNameText.setText(R.string.please_check_parent);
 		    //1.获取年级集合 2. 获取班级集合  ，3.获取学生集合  4. 获取学生家长集合
 		    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 		    //teacherInfo.defalutClassId;
+		    
 		    
 		}
 		//mSchoolId = curretUserInfo.defalutSchoolId;
@@ -203,7 +199,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 						});
 						String content = contentEditText.getText().toString();
 						mProgressDialog.show();
-						//mSendHomeWorkTask = new SendHomeWorkTask(curretUserInfo.defalutSchoolId,mGradeId, mClassId, mStudentId, content);
+						mSendHomeWorkTask = new SendHomeWorkTask("",mGradeId, mClassId, mStudentId, content);
 						mSendHomeWorkTask.execute((Void) null);
 					}
 				}
@@ -248,10 +244,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 	        } else if (TextUtils.isEmpty(mStudentId)){
 	            Toast.makeText(EditLeaveMessageActivity.this, R.string.select_student,
 	                    Toast.LENGTH_LONG).show();
-	        } else if (TextUtils.isEmpty(mPrentId)){
-	            Toast.makeText(EditLeaveMessageActivity.this, R.string.select_parent,
-	                    Toast.LENGTH_LONG).show();
-	        }else {//mPrentId
+	        } else {//mPrentId
 	            isOk = true;
 	        } 
 		    
@@ -281,12 +274,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 				} else if (curretSearchType == SearchType.StudentInfo) {
 					responseMessage.body = RestClient.getStudentByClassroom(
 					        mClassId);
-				} else if (curretSearchType == SearchType.ParentInfo) {
-                    responseMessage.body = RestClient.getParentsByStudentId(mStudentId);
-                } else if (curretSearchType == SearchType.TeacherInfo) {
-                    
-                    responseMessage.body = RestClient.getTeacherByStudentId(mStudentId, curretUserInfo.roleType.toString());
-                } else if (curretSearchType == SearchType.ChildInfo) {
+				}  else if (curretSearchType == SearchType.ChildInfo) {
                     responseMessage.body = RestClient.getAllChilds(curretUserInfo.id, curretUserInfo.ticket);        
                 }
 
@@ -344,21 +332,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}else if (curretSearchType == SearchType.TeacherInfo) {
-                    try {
-                        parseTeacherInfo(responseMessage.body);
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }else if (curretSearchType == SearchType.ParentInfo) {
-                    try {
-                        parseParentInfo(responseMessage.body);
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }else if (curretSearchType == SearchType.ChildInfo) {
+				}else if (curretSearchType == SearchType.ChildInfo) {
                     try {
                         parseChildInfo(responseMessage.body);
                     } catch (JSONException e) {
@@ -393,23 +367,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
                         Toast.makeText(EditLeaveMessageActivity.this,
                                 R.string.no_subject, Toast.LENGTH_LONG).show(); 
                     }
-				}else if (curretSearchType == SearchType.ParentInfo) {
-                    
-                    if(parentNameList!=null && parentNameList.length>0){
-                        showDialog(R.id.select_parent_button);
-                    }else {
-                        Toast.makeText(EditLeaveMessageActivity.this,
-                                R.string.no_subject, Toast.LENGTH_LONG).show(); 
-                    }
-                }else if (curretSearchType == SearchType.TeacherInfo) {
-                    
-                    if(teacherNameList!=null && teacherNameList.length>0){
-                        showDialog(R.id.select_parent_button);
-                    }else {
-                        Toast.makeText(EditLeaveMessageActivity.this,
-                                R.string.no_subject, Toast.LENGTH_LONG).show(); 
-                    }
-                }else if (curretSearchType == SearchType.ChildInfo) {
+				}else if (curretSearchType == SearchType.ChildInfo) {
                     
                     if(childNameList!=null && childNameList.length>0){
                         showDialog(R.id.select_student_button);
@@ -606,9 +564,38 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 		
 			ResponseMessage responseMessage = new ResponseMessage();
 			try {    
-			    responseMessage.body =  RestClient.addLeaveMessage(curretUserInfo.id, "", content, curretUserInfo.ticket, curretUserInfo.roleType.toString(), mStudentId);
-
+				
+				
+				
+				responseMessage.body = RestClient.getParentsByStudentId(mStudentId);
 				responseMessage.praseBody();
+				if(responseMessage.datas !=null){
+					ArrayList<ParentInfo> parentInfos = JSONParser.parseParentInfo(responseMessage.datas);
+					
+					StringBuilder info = new StringBuilder();
+					int i = 0;
+					for (ParentInfo parentInfo : parentInfos) {
+						if (i == parentInfos.size()) {
+							info.append(" + parentInfo.id + ");
+						} else {					
+							info.append(" + parentInfo.id + ");
+			                info.append(",");	
+						}
+						 
+					}
+					
+					Log.i(TAG, "info"+ info);
+		           
+					responseMessage.body =  RestClient.addLeaveMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket, curretUserInfo.roleType.toString(), mStudentId);
+					responseMessage.praseBody();
+				} else {
+					
+					responseMessage.message = getString(R.string.no_parents);
+				}
+				
+			  
+
+				
 			} catch (ConnectTimeoutException stex) {
 				responseMessage.message = getString(R.string.request_time_out);
 			} catch (SocketTimeoutException stex) {
@@ -701,30 +688,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 				
 
 				break;
-			case R.id.select_parent_button:
-			    
-			    if(curretUserInfo.roleType == UserType.ROLE_PARENT){
-			        
-			        if (!TextUtils.isEmpty(mStudentId)) {
-			            curretSearchType = SearchType.TeacherInfo;
-                        mProgressDialog
-                                .setMessage(getString(R.string.now_geting_techerinfo));
-                    } else {
-                        errorCode = R.string.please_check_child;
-                    } 
-			        			        
-			    } else {
-			        if (!TextUtils.isEmpty(mStudentId)) {
-                        curretSearchType = SearchType.ParentInfo;
-                        mProgressDialog
-                                .setMessage(getString(R.string.now_geting_parentinfo));
-                    } else {
-                        errorCode = R.string.select_class;
-                    } 
-			    }
-
-
-                break;
+			
 			default:
 				break;
 			}
@@ -823,24 +787,6 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 			}
 			break;
 			
-		case R.id.select_parent_button:
-
-            if (parentInfoList != null && parentInfoList.size() > 0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        EditLeaveMessageActivity.this);
-                builder.setTitle(R.string.select_parent).setItems(
-                        parentNameList, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                mPrentId = parentInfoList.get(which).id;
-                                studentNameText.setText(parentInfoList
-                                        .get(which).name);
-                                Log.d(TAG, "mPrentId " + mPrentId);
-                            }
-                        });
-                return builder.create();
-            }
-            break;
 		default:
 			break;
 		}

@@ -108,36 +108,6 @@
                 android:background="@drawable/chooseschool_down" />
         </RelativeLayout>
         
-         <RelativeLayout
-             android:id="@+id/select_parent_area"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/input_background"
-            android:gravity="center_vertical" >
-
-            <TextView
-                android:id="@+id/select_parent_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@android:color/background_dark"
-                android:paddingLeft="4dp"
-                android:text="@string/please_check_parent"
-                android:textSize="18sp" />
-
-            <ImageButton
-                android:id="@+id/select_parent_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/chooseschool_down" />
-        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
