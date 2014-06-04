@@ -13,6 +13,16 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:gravity="center_vertical" >
+        
+        <Button
+            android:id="@+id/exit_account"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="4dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/login_button_selector"
+            android:text="@string/exit_account" />
 
         <Spinner
             android:id="@+id/main_spinner"
@@ -33,6 +43,9 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/query_message_selector"
             android:visibility="gone" />
+
+        
+
     </RelativeLayout>
 
     <LinearLayout
@@ -77,19 +90,5 @@
         android:stretchMode="columnWidth"
         android:verticalSpacing="30dp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="10dp" >
-
-        <Button
-            android:id="@+id/exit_account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/login_button_selector"
-            android:text="@string/exit_account" />
-    </RelativeLayout>
 
 </LinearLayout>

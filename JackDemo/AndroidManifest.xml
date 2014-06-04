@@ -69,6 +69,11 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         
+        <activity
+            android:name="com.dingxi.xiaoyuantong.LeaveMessageDetailActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        
           <activity
             android:name="com.dingxi.xiaoyuantong.InnerMessageActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
@@ -78,6 +83,11 @@
             android:name="com.dingxi.xiaoyuantong.EditLeaveMessageActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <activity
+            android:name="com.dingxi.xiaoyuantong.ParentEditLeaveMessageActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+          
         
           <activity
             android:name="com.dingxi.xiaoyuantong.EditInnerMessageActivity"

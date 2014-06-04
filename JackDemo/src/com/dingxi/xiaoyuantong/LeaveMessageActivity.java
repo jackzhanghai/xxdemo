@@ -92,7 +92,7 @@ public class LeaveMessageActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_work);
+        setContentView(R.layout.activity_leave_message);
         mPullToRefreshView = (PullToRefreshListView) findViewById(R.id.home_work_list);
 
         mPullToRefreshView.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -171,7 +171,7 @@ public class LeaveMessageActivity extends Activity {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 Log.i(TAG, "arg2 " + arg2 + "arg3 " + arg3);
                 if (Util.IsNetworkAvailable(LeaveMessageActivity.this)) {
-                    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                    //ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                    
                     mHomeWorkList.clear();
                     mHomeWorkAdapter.notifyDataSetChanged();
@@ -182,8 +182,6 @@ public class LeaveMessageActivity extends Activity {
                     loadingImageView.setVisibility(View.VISIBLE);
                     emptyView.setVisibility(View.GONE);
                     loadingAnimation.start();
-
-                    // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                     mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                             "", "", curretUserInfo.roleType.toString(), "", "");
 
@@ -245,8 +243,15 @@ public class LeaveMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LeaveMessageActivity.this, EditLeaveMessageActivity.class);
-                startActivity(intent);
+                
+                if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
+                    
+                    Intent intent = new Intent(LeaveMessageActivity.this, EditLeaveMessageActivity.class);
+                    startActivity(intent);
+                } else {                  
+                    Intent intent = new Intent(LeaveMessageActivity.this, ParentEditLeaveMessageActivity.class);
+                    startActivity(intent); 
+                }
 
             }
         });
@@ -269,7 +274,7 @@ public class LeaveMessageActivity extends Activity {
                 String id = mHomeWorkList.get(arg2 - 1).messageId;
                 mHomeWorkList.get(arg2 - 1).isRead = 1;
                 Log.i(TAG, "id " + id);
-                Intent intent = new Intent(LeaveMessageActivity.this, HomeWorkDetailActivity.class);
+                Intent intent = new Intent(LeaveMessageActivity.this, LeaveMessageDetailActivity.class);
                 intent.putExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID, id);
                 intent.putExtra(LeaveMessageEntry.COLUMN_NAME_DATE, mHomeWorkList.get(arg2 - 1).date);
                 intent.putExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT, mHomeWorkList.get(arg2 - 1).content);
@@ -562,8 +567,7 @@ public class LeaveMessageActivity extends Activity {
                         } else {
                             --curretPage;
                             if (totalCount == curretCount) {
-                                Toast.makeText(LeaveMessageActivity.this, R.string.no_more_data,
-                                        Toast.LENGTH_SHORT).show();
+                               // Toast.makeText(LeaveMessageActivity.this, R.string.no_more_data,Toast.LENGTH_SHORT).show();
                             }
 
                         }

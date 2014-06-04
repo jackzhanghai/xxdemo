@@ -34,7 +34,6 @@ import com.dingxi.xiaoyuantong.model.ClassInfo;
 import com.dingxi.xiaoyuantong.model.GradeInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
-import com.dingxi.xiaoyuantong.model.SubjectInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
@@ -43,25 +42,20 @@ import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
 import com.dingxi.xiaoyuantong.util.Util;
 
-public class EditInnerMessageActivity extends Activity implements OnClickListener {
+public class ParentEditLeaveMessageActivity extends Activity implements OnClickListener {
 
-	public static final String TAG = "EditLeaveMessageActivity";
+	public static final String TAG = "ParentEditLeaveMessageActivity";
 	private ImageButton mBackButton;
-	//private TeacherInfo curretUserInfo;
 	private UserInfo curretUserInfo;
 	private XiaoYunTongApplication mXiaoYunTongApplication;
-	private ImageButton selectClassButton;
-	private ImageButton selectGradeButton;
-	private ImageButton selectStudentButton;
-	//private ImageButton selectParentButton;
+	private ImageButton selectChildButton;
+	private ImageButton selectTeacherButton;
 	
-	private TextView classNameText;
-	private TextView gradeNameText;
-	private TextView studentNameText;
+	private TextView childNameText;
+	private TextView teacherNameText;
+	
 	private EditText contentEditText;
 	
-	private View selectGradeArea;
-	private View selectClassArea;
 	
 	private Button sendHomeWorkButton;
 	private Button editcancelButton;
@@ -70,28 +64,15 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 	private ProgressDialog mProgressDialog;
 	
 	
-	private String mClassId;
-	private String mGradeId;
-	private String mStudentId;
+	//private String mStudentId;
 	private String mChild;
 	//private String mSchoolId;
-	private String mPrentId;
+	//private String mPrentId;
 	private String mTeacherId;
 	
 	
 	private SearchType curretSearchType;
 	
-	public List<ClassInfo> classInfoList;
-	public String[] classNameList;
-	
-	public ArrayList<GradeInfo> gradeInfoList;
-	public String[] gradeNameList;
-	
-	public List<StudentInfo> studentInfoList;
-	public String[] studentNameList;
-	
-	public List<ParentInfo> parentInfoList;
-    public String[] parentNameList;
     
     public List<TeacherInfo> techerInfoList;
     public String[] teacherNameList;
@@ -101,13 +82,13 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
     public String[] childNameList;
     
 	private enum SearchType {
-		ClassInfo, GradeInfo, StudentInfo,ChildInfo
+		ChildInfo,TeacherInfo
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_leave_message);
+		setContentView(R.layout.activity_parent_edit_leave_message);
 
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mBackButton.setOnClickListener(new OnClickListener() {
@@ -122,36 +103,29 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 		mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
 		curretUserInfo = (TeacherInfo) mXiaoYunTongApplication.userInfo;
 		
-		gradeNameText = (TextView) findViewById(R.id.select_grade_text);
-        classNameText = (TextView) findViewById(R.id.select_class_text);
-        studentNameText = (TextView) findViewById(R.id.select_student_text);
+		childNameText = (TextView) findViewById(R.id.select_child_text);
+		teacherNameText = (TextView) findViewById(R.id.select_teacher_text);
+		
 
-        selectGradeArea = findViewById(R.id.select_grade_area);
-        selectClassArea =  findViewById(R.id.select_class_area);
+
         
-        selectGradeButton = (ImageButton) findViewById(R.id.select_grade_button);
-        selectGradeButton.setOnClickListener(this);
-        selectClassButton = (ImageButton) findViewById(R.id.select_class_button);
-        selectClassButton.setOnClickListener(this);
-        selectStudentButton = (ImageButton) findViewById(R.id.select_student_button);
-        selectStudentButton.setOnClickListener(this);
+        selectChildButton = (ImageButton) findViewById(R.id.select_child_button);
+        selectChildButton.setOnClickListener(this);
+        selectTeacherButton = (ImageButton) findViewById(R.id.select_teacher_button);
+        selectTeacherButton.setOnClickListener(this);
+       
+
 
         
 		if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-		    
-		    selectGradeArea.setVisibility(View.GONE);
-		    selectClassArea.setVisibility(View.GONE);
-		    gradeNameText.setText(R.string.please_check_child);
+
 		    //1.选择孩子 2. 选择老师集合。
 		    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
             //parentInfo.defalutChild;
             
             
 		} else {
-		    selectGradeArea.setVisibility(View.VISIBLE);
-		    selectClassArea.setVisibility(View.VISIBLE);
-		    studentNameText.setText(R.string.select_student);
-		    //1.获取年级集合 2. 获取班级集合  ，3.获取学生集合  4. 获取学生家长集合
+
 		    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
 		    //teacherInfo.defalutClassId;
 		    
@@ -166,7 +140,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				EditInnerMessageActivity.this.finish();
+				ParentEditLeaveMessageActivity.this.finish();
 			}
 		});
 		
@@ -178,9 +152,9 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				// TODO Auto-generated method stub
 
 				if(checkText()){
-					if (Util.IsNetworkAvailable(EditInnerMessageActivity.this)) {
+					if (Util.IsNetworkAvailable(ParentEditLeaveMessageActivity.this)) {
 						mProgressDialog = new ProgressDialog(
-								EditInnerMessageActivity.this);
+								ParentEditLeaveMessageActivity.this);
 						mProgressDialog
 								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						mProgressDialog
@@ -199,7 +173,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 						});
 						String content = contentEditText.getText().toString();
 						mProgressDialog.show();
-						mSendHomeWorkTask = new SendHomeWorkTask("",mGradeId, mClassId, mStudentId, content);
+						mSendHomeWorkTask = new SendHomeWorkTask("","", "", "", content);
 						mSendHomeWorkTask.execute((Void) null);
 					}
 				}
@@ -218,13 +192,13 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 		
 		if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
 		    if (TextUtils.isEmpty(content)) {
-                Toast.makeText(EditInnerMessageActivity.this, R.string.please_input_content,
+                Toast.makeText(ParentEditLeaveMessageActivity.this, R.string.please_input_content,
                         Toast.LENGTH_LONG).show();
-            } else if (TextUtils.isEmpty(mStudentId)){
-                Toast.makeText(EditInnerMessageActivity.this, R.string.please_check_child,
+            } else if (TextUtils.isEmpty(mChild)){
+                Toast.makeText(ParentEditLeaveMessageActivity.this, R.string.please_check_child,
                         Toast.LENGTH_LONG).show();
             } else if (TextUtils.isEmpty(mTeacherId)){
-                Toast.makeText(EditInnerMessageActivity.this, R.string.please_check_teacher,
+                Toast.makeText(ParentEditLeaveMessageActivity.this, R.string.please_check_teacher,
                         Toast.LENGTH_LONG).show();
             }else {//mPrentId
                 isOk = true;
@@ -233,16 +207,13 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 		} else {
 		    
 		    if (TextUtils.isEmpty(content)) {
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.please_input_content,
+	            Toast.makeText(ParentEditLeaveMessageActivity.this, R.string.please_input_content,
 	                    Toast.LENGTH_LONG).show();
-	        } else if (TextUtils.isEmpty(mClassId)) {
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.select_class,
+	        }else if (TextUtils.isEmpty(mChild)) {
+	            Toast.makeText(ParentEditLeaveMessageActivity.this, R.string.please_check_child,
 	                    Toast.LENGTH_LONG).show();
-	        } else if (TextUtils.isEmpty(mGradeId)) {
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.select_grade,
-	                    Toast.LENGTH_LONG).show();
-	        } else if (TextUtils.isEmpty(mStudentId)){
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.select_student,
+	        } else if (TextUtils.isEmpty(mTeacherId)){
+	            Toast.makeText(ParentEditLeaveMessageActivity.this, R.string.please_check_teacher,
 	                    Toast.LENGTH_LONG).show();
 	        } else {//mPrentId
 	            isOk = true;
@@ -264,21 +235,14 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			ResponseMessage responseMessage = new ResponseMessage();
 			try {
 
-				if (curretSearchType == SearchType.GradeInfo) {
-					responseMessage.body = RestClient.getMyGrade(
-							curretUserInfo.id,
-							curretUserInfo.roleType.toString());
-				} else if (curretSearchType == SearchType.ClassInfo) {
-					responseMessage.body = RestClient.getMyClassroomByGrade(
-							curretUserInfo.id, curretUserInfo.roleType.toString(), mGradeId);
-				} else if (curretSearchType == SearchType.StudentInfo) {
-					responseMessage.body = RestClient.getStudentByClassroom(
-					        mClassId);
-				}  else if (curretSearchType == SearchType.ChildInfo) {
+				if (curretSearchType == SearchType.TeacherInfo) {
+				    responseMessage.body = RestClient.getTeacherByStudentId(mChild, "0");
+	
+				}else if (curretSearchType == SearchType.ChildInfo) {
                     responseMessage.body = RestClient.getAllChilds(curretUserInfo.id, curretUserInfo.ticket);        
                 }
 
-				 responseMessage.praseBody(EditInnerMessageActivity.this);
+				 responseMessage.praseBody(ParentEditLeaveMessageActivity.this);
 
 			} catch (ConnectTimeoutException stex) {
 				responseMessage.message = getString(R.string.request_time_out);
@@ -309,30 +273,14 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
 
 			    
-				if (curretSearchType == SearchType.GradeInfo) {
+				if (curretSearchType == SearchType.TeacherInfo) {
 					try {
-						parseGradeInfo(responseMessage.body);
+						parseTeacherInfo(responseMessage.body);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				} 
-				
-				else if (curretSearchType == SearchType.ClassInfo) {
-					try {
-						parseClassInfo(responseMessage.body);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else if (curretSearchType == SearchType.StudentInfo) {
-					try {
-						parseStudentInfo(responseMessage.body);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}else if (curretSearchType == SearchType.ChildInfo) {
+				} else if (curretSearchType == SearchType.ChildInfo) {
                     try {
                         parseChildInfo(responseMessage.body);
                     } catch (JSONException e) {
@@ -343,36 +291,23 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				
 				
 				mProgressDialog.dismiss();
-				if (curretSearchType == SearchType.GradeInfo) {
-				    if(gradeNameList!=null && gradeNameList.length>0){
-				        showDialog(R.id.select_grade_button);
+				if (curretSearchType == SearchType.TeacherInfo) {
+	
+				    
+				    
+				    if(teacherNameList!=null && teacherNameList.length>0){
+				        showDialog(R.id.select_teacher_button);
 				    }else {
-				        Toast.makeText(EditInnerMessageActivity.this,
+				        Toast.makeText(ParentEditLeaveMessageActivity.this,
 		                        R.string.no_grade, Toast.LENGTH_LONG).show(); 
 				    }
 					
-				} else if (curretSearchType == SearchType.ClassInfo) {
-				    if(classNameList!=null && classNameList.length>0){
-				        showDialog(R.id.select_class_button);
-                    }else {
-                        Toast.makeText(EditInnerMessageActivity.this,
-                                R.string.no_class, Toast.LENGTH_LONG).show(); 
-                    }
-					
-				} else if (curretSearchType == SearchType.StudentInfo) {
-					
-					if(studentNameList!=null && studentNameList.length>0){
-					    showDialog(R.id.select_student_button);
-                    }else {
-                        Toast.makeText(EditInnerMessageActivity.this,
-                                R.string.no_subject, Toast.LENGTH_LONG).show(); 
-                    }
-				}else if (curretSearchType == SearchType.ChildInfo) {
+				} else if (curretSearchType == SearchType.ChildInfo) {
                     
                     if(childNameList!=null && childNameList.length>0){
                         showDialog(R.id.select_student_button);
                     }else {
-                        Toast.makeText(EditInnerMessageActivity.this,
+                        Toast.makeText(ParentEditLeaveMessageActivity.this,
                                 R.string.no_subject, Toast.LENGTH_LONG).show(); 
                     }
                 }
@@ -381,88 +316,13 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				*/
 			} else {
 				mProgressDialog.dismiss();
-				Toast.makeText(EditInnerMessageActivity.this,
+				Toast.makeText(ParentEditLeaveMessageActivity.this,
 						responseMessage.message, Toast.LENGTH_LONG).show();
 			}
 			
 
 		}
 
-		private void parseGradeInfo(String searchTypeReslut)
-				throws JSONException {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(searchTypeReslut)) {
-				Log.d(TAG, "result schoolsInfo " + searchTypeReslut);
-
-				if (JSONParser.getIntByTag(searchTypeReslut,
-						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-					gradeInfoList = JSONParser
-							.toParserGradeInfoList(searchTypeReslut);
-				} else {
-					JSONParser.getStringByTag(searchTypeReslut,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-				}
-
-			}
-			if (gradeInfoList != null && gradeInfoList.size() > 0) {
-				gradeNameList = new String[gradeInfoList.size()];
-
-				for (int i = 0; i < gradeInfoList.size(); i++) {
-					gradeNameList[i] = gradeInfoList.get(i).name;
-
-				}
-			}
-		}
-
-		private void parseClassInfo(String reslut) throws JSONException {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(reslut)) {
-				Log.d(TAG, "result schoolsInfo " + reslut);
-
-				if (JSONParser.getIntByTag(reslut,
-						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-					classInfoList = JSONParser.toParserCalssInfoList(reslut);
-				} else {
-					JSONParser.getStringByTag(reslut,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-				}
-
-			}
-			if (classInfoList != null && classInfoList.size() > 0) {
-				classNameList = new String[classInfoList.size()];
-
-				for (int i = 0; i < classInfoList.size(); i++) {
-					classNameList[i] = classInfoList.get(i).name;
-				}
-			}
-		}
-
-		private void parseStudentInfo(String reslut) throws JSONException {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(reslut)) {
-				Log.d(TAG, "result schoolsInfo " + reslut);
-
-				if (JSONParser.getIntByTag(reslut,
-						ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-					studentInfoList = JSONParser.toParserStudentInfoList(reslut);
-							//.toParserSubjectInfoList(reslut);
-				} else {
-					JSONParser.getStringByTag(reslut,
-							ResponseMessage.RESULT_TAG_MESSAGE);
-				}
-
-			}
-			if (studentInfoList != null && studentInfoList.size() > 0) {
-				studentNameList = new String[studentInfoList.size()];
-
-				for (int i = 0; i < studentInfoList.size(); i++) {
-				    studentNameList[i] = studentInfoList.get(i).stuName;
-				}
-			}
-		}
 		
 		private void parseTeacherInfo(String reslut) throws JSONException {
             // TODO Auto-generated method stub
@@ -484,30 +344,6 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 
                 for (int i = 0; i < techerInfoList.size(); i++) {
                     teacherNameList[i] = techerInfoList.get(i).name;
-                }
-            }
-        }
-
-		private void parseParentInfo(String reslut) throws JSONException {
-            // TODO Auto-generated method stub
-            if (!TextUtils.isEmpty(reslut)) {
-                Log.d(TAG, "result schoolsInfo " + reslut);
-
-                if (JSONParser.getIntByTag(reslut,
-                        ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-                    parentInfoList = JSONParser.parseParentInfo(reslut);
-                } else {
-                    JSONParser.getStringByTag(reslut,
-                            ResponseMessage.RESULT_TAG_MESSAGE);
-                }
-
-            }
-            if (parentInfoList != null && parentInfoList.size() > 0) {
-                parentNameList = new String[parentInfoList.size()];
-
-                for (int i = 0; i < parentInfoList.size(); i++) {
-                    parentNameList[i] = parentInfoList.get(i).name;
                 }
             }
         }
@@ -567,7 +403,8 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				
 				
 				
-				responseMessage.body = RestClient.getParentsByStudentId(mStudentId);
+				//responseMessage.body = RestClient.getParentsByStudentId(mStudentId);
+				responseMessage.body = RestClient.getTeacherByStudentId(mChild, "0");
 				responseMessage.praseBody();
 				if(responseMessage.datas !=null){
 					ArrayList<ParentInfo> parentInfos = JSONParser.parseParentInfo(responseMessage.datas);
@@ -586,8 +423,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 					
 					Log.i(TAG, "info"+ info);
 		           
-					responseMessage.body =  RestClient.addInnerMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket);
-					//responseMessage.body =  RestClient.addLeaveMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket, curretUserInfo.roleType.toString(), mStudentId);
+					responseMessage.body =  RestClient.addLeaveMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket, curretUserInfo.roleType.toString(), mChild);
 					responseMessage.praseBody();
 				} else {
 					
@@ -626,15 +462,15 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
 			    
 			    mProgressDialog.dismiss();   
-			    Intent backIntent = new Intent(EditInnerMessageActivity.this,LeaveMessageActivity.class);
+			    Intent backIntent = new Intent(ParentEditLeaveMessageActivity.this,LeaveMessageActivity.class);
 			    startActivity(backIntent);
-			    EditInnerMessageActivity.this.finish();
+			    ParentEditLeaveMessageActivity.this.finish();
 							
 			} else {
 				mProgressDialog.dismiss();				
 			}
 			
-			Toast.makeText(EditInnerMessageActivity.this,
+			Toast.makeText(ParentEditLeaveMessageActivity.this,
 					responseMessage.message, Toast.LENGTH_LONG).show();
 
 		}
@@ -649,44 +485,22 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		if (Util.IsNetworkAvailable(EditInnerMessageActivity.this)) {
-			mProgressDialog = new ProgressDialog(EditInnerMessageActivity.this);
+		if (Util.IsNetworkAvailable(ParentEditLeaveMessageActivity.this)) {
+			mProgressDialog = new ProgressDialog(ParentEditLeaveMessageActivity.this);
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			int errorCode = -1;
 			switch (v.getId()) {
 			
-			case R.id.select_grade_button:
-					curretSearchType = SearchType.GradeInfo;
+			case R.id.select_teacher_button:
+					curretSearchType = SearchType.TeacherInfo;
 					mProgressDialog
-							.setMessage(getString(R.string.now_geting_gradeinfo));
+							.setMessage(getString(R.string.now_geting_techerinfo));
 				break;
-			case R.id.select_class_button:
-
-                if (!TextUtils.isEmpty(mGradeId)) {
-                    curretSearchType = SearchType.ClassInfo;
-                    mProgressDialog
-                            .setMessage(getString(R.string.now_geting_classinfo));
-                } else {
-                    errorCode = R.string.select_grade;
-                }
-
-                break;
-			case R.id.select_student_button:
-			    if(curretUserInfo.roleType == UserType.ROLE_PARENT){
+			case R.id.select_child_button:
+			
 	                    curretSearchType = SearchType.ChildInfo;
 	                    mProgressDialog
 	                            .setMessage(getString(R.string.now_geting_childinfo));           
-			    } else {
-			        if (!TextUtils.isEmpty(mClassId)) {
-	                    curretSearchType = SearchType.StudentInfo;
-	                    mProgressDialog
-	                            .setMessage(getString(R.string.now_geting_studentinfo));
-	                } else {
-	                    errorCode = R.string.select_class;
-	                }
-			        
-			    }
-				
 
 				break;
 			
@@ -695,7 +509,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			}
 
 			if (errorCode != -1) {
-				Toast.makeText(EditInnerMessageActivity.this, errorCode,
+				Toast.makeText(ParentEditLeaveMessageActivity.this, errorCode,
 						Toast.LENGTH_LONG).show();
 				mProgressDialog = null;
 			} else {
@@ -723,19 +537,19 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 	protected Dialog onCreateDialog(int id, Bundle args) {
 		// TODO Auto-generated method stub
 		switch (id) {
-		case R.id.select_class_button:
+		case R.id.select_teacher_button:
 
-			if (classInfoList != null && classInfoList.size() > 0) {
+			if (techerInfoList != null && techerInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditInnerMessageActivity.this);
-				builder.setTitle(R.string.select_class).setItems(
-						classNameList, new DialogInterface.OnClickListener() {
+						ParentEditLeaveMessageActivity.this);
+				builder.setTitle(R.string.select_class).setItems(//techerInfoList
+				        teacherNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								Log.d(TAG, "which " + which);
-								mClassId = classInfoList.get(which).id;
-								classNameText.setText(classInfoList.get(which).name);
-								Log.d(TAG, "mClassId " + mClassId);
+								mTeacherId = techerInfoList.get(which).id;
+								teacherNameText.setText(techerInfoList.get(which).name);
+								Log.d(TAG, "mClassId " + mTeacherId);
 								// The 'which' argument contains the index
 								// position
 								// of the selected item
@@ -744,41 +558,20 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				return builder.create();
 			}
 			break;
-		case R.id.select_grade_button:
+		case R.id.select_child_button:
 
-			if (gradeInfoList != null && gradeInfoList.size() > 0) {
+			if (childInfoList != null && childInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditInnerMessageActivity.this);
-				builder.setTitle(R.string.select_grade).setItems(
-						gradeNameList, new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Log.d(TAG, "which " + which);
-								mGradeId = gradeInfoList.get(which).id;
-								gradeNameText.setText(gradeInfoList.get(which).name);
-								Log.d(TAG, "mGradeId " + mGradeId);
-								// The 'which' argument contains the index
-								// position
-								// of the selected item
-							}
-						});
-				return builder.create();
-			}
-			break;
-		case R.id.select_student_button:
-
-			if (studentInfoList != null && studentInfoList.size() > 0) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditInnerMessageActivity.this);
+						ParentEditLeaveMessageActivity.this);
 				builder.setTitle(R.string.select_student).setItems(
-				        studentNameList, new DialogInterface.OnClickListener() {
+				        childNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								Log.d(TAG, "which " + which);
-								mStudentId = studentInfoList.get(which).id;
-								studentNameText.setText(studentInfoList
-										.get(which).stuName);
-								Log.d(TAG, "mStudentId " + mStudentId);
+								mChild = childInfoList.get(which).id;
+								childNameText.setText(childInfoList
+										.get(which).name);
+								Log.d(TAG, "mStudentId " + mChild);
 								// The 'which' argument contains the index
 								// position
 								// of the selected item

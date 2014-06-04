@@ -71,59 +71,83 @@
                 android:id="@+id/message_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLength="4"
                 android:padding="3dp"
+                android:singleLine="false"
                 android:text="TextView"
                 android:textColor="@android:color/background_dark"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/send_time_lable"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/send_time"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/message_resever"
-                android:textColor="@android:color/background_dark" />
+                android:layout_below="@+id/message_body" >
 
-            <TextView
-                android:id="@+id/send_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="10dp"
-                android:text="vvvv"
-                android:textColor="@android:color/background_dark" />
+                
 
-            <TextView
-                android:id="@+id/send_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_above="@+id/send_time"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginBottom="4dp"
-                android:text="vvvv"
-                android:textColor="@android:color/background_dark" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/send_name_layout"
+                     >
 
-            <TextView
-                android:id="@+id/send_name_lable"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-				android:layout_above="@+id/send_time"
-                android:layout_marginRight="4dp"
-                 android:layout_marginBottom="4dp"
-                android:layout_toLeftOf="@+id/send_name"
-                android:text="@string/message_sender"
-                android:textColor="@android:color/background_dark" />
+                    <TextView
+                        android:id="@+id/send_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="10dp"
+                        android:text="vvvv"
+                        android:textColor="@android:color/background_dark" />
+
+                    <TextView
+                        android:id="@+id/send_name_lable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/send_name"
+                        android:text="@string/message_sender"
+                        android:textColor="@android:color/background_dark" />
+                </RelativeLayout>
+                
+                <RelativeLayout
+                    android:id="@+id/snd_time_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/send_name_layout" >
+
+                    <TextView
+                        android:id="@+id/send_time_lable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/send_time"
+                        android:text="@string/message_resever"
+                        android:textColor="@android:color/background_dark" />
+
+                    <TextView
+                        android:id="@+id/send_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="10dp"
+                        android:text="vvvv"
+                        android:textColor="@android:color/background_dark" />
+                </RelativeLayout>
+            </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
 

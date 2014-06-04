@@ -68,6 +68,7 @@
     <string name="no_bound_phone">该学生没有绑定设备</string>
     <string name="no_home_work_data">没有家庭作业</string>
     <string name="no_attendanceinfo_data">没有考勤信息</string>
+     <string name="no_leave_message">没有留言信息</string>
     <string name="no_campus_notice_data">没有校园通知</string>
     <string name="edit_homewok_title">输入标题</string>
     <string name="edit_homewok_hint">点此录入信息正文</string>

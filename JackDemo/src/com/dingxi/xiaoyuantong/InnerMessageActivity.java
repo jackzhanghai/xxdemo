@@ -2,9 +2,7 @@ package com.dingxi.xiaoyuantong;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -17,7 +15,6 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,9 +34,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
+import com.dingxi.xiaoyuantong.dao.LeaveMessageDao;
 import com.dingxi.xiaoyuantong.model.ChildInfo;
-import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
+import com.dingxi.xiaoyuantong.model.LeaveMessage;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
+import com.dingxi.xiaoyuantong.model.LeaveMessage;
+import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
@@ -58,17 +58,18 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 public class InnerMessageActivity extends Activity {
 
     public static final String TAG = "InnerMessageActivity";
+
+    
     private static final String MESSAGE_TYPE_ALL = "0";
     private static final String MESSAGE_TYPE_SEND = "1";
     private static final String MESSAGE_TYPE_RESEVE = "2";
-
     private ImageButton mBackButton;
     private ImageButton mQueryMessageButton;
     private ImageButton mEditMessageButton;
     private Spinner mSpinner;
 
     private HomeWorkAdapter mHomeWorkAdapter;
-    private ArrayList<HomeWorkInfo> mHomeWorkList;
+    private ArrayList<LeaveMessage> mHomeWorkList;
     private ImageView loadingImageView;
     private AnimationDrawable loadingAnimation;
     private View emptyView;
@@ -86,17 +87,12 @@ public class InnerMessageActivity extends Activity {
     int curretPage;
     int pageCount = 5;
     public GetHomeWorTask mHomeWorTask;
-  
-    private String mEndTime;
-    private String mEndDate;
-    private String mStartTime;
-    private String mStartDate;
-   
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_work);
+        setContentView(R.layout.activity_leave_message);
         mPullToRefreshView = (PullToRefreshListView) findViewById(R.id.home_work_list);
 
         mPullToRefreshView.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -111,15 +107,20 @@ public class InnerMessageActivity extends Activity {
                                     | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
                     // Update the LastUpdatedLabel
                     refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+                    
+                    /*
                     if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                         TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-                       // String userId,String sOrR,String startTime,String endTime,String page,String rows
-                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
+                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                                "", "", curretUserInfo.roleType.toString(), "", "");;
                     } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                         ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
-                        
+                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                                "", "", curretUserInfo.roleType.toString(), "", "");
                     }
+                    */
+                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                            "", "", curretUserInfo.roleType.toString(), "", "");
                     mHomeWorTask.execute((Void) null);
                     isFooterRefresh = true;
                 } else {
@@ -183,7 +184,8 @@ public class InnerMessageActivity extends Activity {
                     loadingAnimation.start();
 
                     // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
+                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                            "", "", curretUserInfo.roleType.toString(), "", "");
 
                     mHomeWorTask.execute((Void) null);
                 } else {
@@ -231,9 +233,9 @@ public class InnerMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(InnerMessageActivity.this, SearchMessageActivity.class);
+                Intent intent = new Intent(InnerMessageActivity.this, SearchLeaveMessageActivity.class);
                 intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
-                startActivityForResult(intent, R.layout.activity_search_message);
+                startActivityForResult(intent, R.layout.activity_search_leave_message);
 
             }
         });
@@ -243,8 +245,7 @@ public class InnerMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(InnerMessageActivity.this, EditHomeWorkActivity.class);
+                Intent intent = new Intent(InnerMessageActivity.this, EditLeaveMessageActivity.class);
                 startActivity(intent);
 
             }
@@ -252,7 +253,7 @@ public class InnerMessageActivity extends Activity {
 
         emptyView = findViewById(R.id.empty);
         mPullToRefreshView.setEmptyView(emptyView);
-        mHomeWorkList = new ArrayList<HomeWorkInfo>();
+        mHomeWorkList = new ArrayList<LeaveMessage>();
         mHomeWorkAdapter = new HomeWorkAdapter(InnerMessageActivity.this, mHomeWorkList);
         loadingImageView = (ImageView) findViewById(R.id.loading_message_image);
         loadingImageView.setBackgroundResource(R.drawable.loading_howework_animation);
@@ -265,13 +266,13 @@ public class InnerMessageActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 // TODO Auto-generated method stub
                 Log.i(TAG, "arg2 " + arg2 + " arg3 " + arg3);
-                String id = mHomeWorkList.get(arg2 - 1).id;
+                String id = mHomeWorkList.get(arg2 - 1).messageId;
                 mHomeWorkList.get(arg2 - 1).isRead = 1;
                 Log.i(TAG, "id " + id);
-                Intent intent = new Intent(InnerMessageActivity.this, HomeWorkDetailActivity.class);
-                intent.putExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID, id);
-                intent.putExtra(HomeWorkEntry.COLUMN_NAME_OPT_TIME, mHomeWorkList.get(arg2 - 1).optTime);
-                intent.putExtra(HomeWorkEntry.COLUMN_NAME_CONTENT, mHomeWorkList.get(arg2 - 1).content);
+                Intent intent = new Intent(InnerMessageActivity.this, LeaveMessageDetailActivity.class);
+                intent.putExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID, id);
+                intent.putExtra(LeaveMessageEntry.COLUMN_NAME_DATE, mHomeWorkList.get(arg2 - 1).date);
+                intent.putExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT, mHomeWorkList.get(arg2 - 1).content);
                 startActivity(intent);
             }
 
@@ -288,54 +289,25 @@ public class InnerMessageActivity extends Activity {
         }
 
         if (Util.IsNetworkAvailable(InnerMessageActivity.this)) {
-            
-            
-            
-            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
-
-            SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-            SimpleDateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date now = new Date();
-
-
-            
-            
-            if (TextUtils.isEmpty(mStartDate)) {
-                mStartDate = date.format(now);
-            }
-
-            if (TextUtils.isEmpty(mStartTime)) {
-                mStartTime = " 00:00:00";//time.format(now);
-            }
-            
-            if (TextUtils.isEmpty(mEndDate)) {
-                mEndDate = date.format(now);
-            }
-
-            if (TextUtils.isEmpty(mEndTime)) {
-                mEndTime = time.format(now);
-            }
-
-            
-            mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
-            mHomeWorTask.execute((Void) null);
-            /*
             if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
                 TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
                 
-                // String userId,String sOrR,String startTime,String endTime,String page,String rows
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,mStartDate + mStartTime, mEndDate + mEndTime,""+curretPage, ""+pageCount,);
+// responseMessage.body = RestClient.getHomeWorks(curretUserInfo.id,curretUserInfo.ticket, curretUserInfo.roleType.toString(), info.toString(),curretPage, pageCount);
+ //GetHomeWorTask(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows)
+               
+
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                        "", "", curretUserInfo.roleType.toString(), "", "");
                 mHomeWorTask.execute((Void) null);
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-                ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
-                curretUserInfo.fkSchoolId, "",
-                "", parentInfo.defalutChild.id, "", true);
+                // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
+                // mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
+                // curretUserInfo.fkSchoolId, "",
+                // "", parentInfo.defalutChild.id, "", true);
             }
-            */
         } else {
             mPullToRefreshView.onRefreshComplete();
             Toast.makeText(InnerMessageActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
@@ -360,10 +332,12 @@ public class InnerMessageActivity extends Activity {
             loadingAnimation.start();
             if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                 TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                        "", "", curretUserInfo.roleType.toString(), "", "");
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                 ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                        "", "", curretUserInfo.roleType.toString(), "", "");
             }
 
             mHomeWorTask.execute((Void) null);
@@ -387,10 +361,10 @@ public class InnerMessageActivity extends Activity {
     class HomeWorkAdapter extends BaseAdapter {
 
         private Context context;
-        private ArrayList<HomeWorkInfo> homeWorkList;
+        private ArrayList<LeaveMessage> homeWorkList;
         private LayoutInflater inflater;
 
-        private HomeWorkAdapter(Context context, ArrayList<HomeWorkInfo> homeWorkList) {
+        private HomeWorkAdapter(Context context, ArrayList<LeaveMessage> homeWorkList) {
 
             this.context = context;
             inflater = LayoutInflater.from(context);
@@ -405,7 +379,7 @@ public class InnerMessageActivity extends Activity {
         }
 
         @Override
-        public Object getItem(int position) {// HomeWorkInfo
+        public Object getItem(int position) {// LeaveMessage
             // TODO Auto-generated method stub
 
             // homeWorkList.get(position)
@@ -415,7 +389,7 @@ public class InnerMessageActivity extends Activity {
         @Override
         public long getItemId(int position) {
             // TODO Auto-generated method stub
-            String id = homeWorkList.get(position).id;
+            String id = homeWorkList.get(position).messageId;
             // Long.parseLong(id)
             return 0;
         }
@@ -424,7 +398,7 @@ public class InnerMessageActivity extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
             HomeWorkHolder viewHolder;
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.homework_item, null);
+                convertView = inflater.inflate(R.layout.leave_message_item, null);
                 viewHolder = new HomeWorkHolder();
                 viewHolder.headerText = (TextView) convertView.findViewById(R.id.message_header);
                 viewHolder.isRead = (TextView) convertView.findViewById(R.id.is_read);
@@ -437,10 +411,11 @@ public class InnerMessageActivity extends Activity {
             }
 
             // viewHolder.headerText.setText(homeWorkList.get(position).id);
-            viewHolder.headerText.setText(R.string.home_work);
+            viewHolder.headerText.setText(R.string.inner_message);
             viewHolder.bodyText.setText(homeWorkList.get(position).content);
-            viewHolder.sendTime.setText(homeWorkList.get(position).optTime);
-            viewHolder.sendName.setText(homeWorkList.get(position).sendName);
+            viewHolder.sendTime.setText(homeWorkList.get(position).sender);
+            viewHolder.sendName.setText(homeWorkList.get(position).receiver);
+            
             if (homeWorkList.get(position).isRead == 0) {
                 viewHolder.isRead.setText(R.string.unread);
             } else {
@@ -466,7 +441,7 @@ public class InnerMessageActivity extends Activity {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == R.layout.activity_search_message) {
+        if (resultCode == RESULT_OK && requestCode == R.layout.activity_search_leave_message) {
 
             if (Util.IsNetworkAvailable(InnerMessageActivity.this)) {
                 totalCount = 0;
@@ -475,24 +450,18 @@ public class InnerMessageActivity extends Activity {
                 curretPage = 0;
                 mHomeWorkList.clear();
                 Bundle searchBundle = data.getExtras();
-                searchBundle.getString("mGradeId");
-                String classId2 = searchBundle.getString("mClassId");
-                String studentId = searchBundle.getString("mStudentId");
-                String date = searchBundle.getString("mData");
+                
+                String mTypeId = searchBundle.getString("mTypeId");
+                String mStartData = searchBundle.getString("mStartData");
+                String mEndData = searchBundle.getString("mEndData");
 
                 mHomeWorkAdapter.notifyDataSetChanged();
 
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
-                if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-                    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
-                } else {
-                    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id,MESSAGE_TYPE_ALL,"", "",""+curretPage, ""+pageCount);
-                }
+                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, mTypeId,
+                        mStartData, mEndData, curretUserInfo.roleType.toString(), "", "");
                 mHomeWorTask.execute((Void) null);
             } else {
                 mPullToRefreshView.onRefreshComplete();
@@ -509,15 +478,17 @@ public class InnerMessageActivity extends Activity {
         String sOrR;
         String startTime;
         String endTime;
+        String roleId;
         String page;
         String rows;
 
-        public GetHomeWorTask(String userId,String sOrR,String startTime,String endTime,String page,String rows) {
+        public GetHomeWorTask(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows) {
             this.userId = userId;
             this.sOrR = sOrR;
             this.startTime = startTime;
-            this.endTime = endTime;
-            this.page = page;
+            this.endTime =  endTime;
+            this.roleId = roleId;
+            this.page =page;
             this.rows = rows;
 
         }
@@ -525,18 +496,19 @@ public class InnerMessageActivity extends Activity {
         @Override
         protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            ++curretPage;
             Log.i(TAG, "totalCount " + totalCount);
             Log.i(TAG, "toatlPage " + toatlPage);
             Log.i(TAG, "curretCount " + curretCount);
             Log.i(TAG, "curretPage " + curretPage);
 
-            ++curretPage;
-
             ResponseMessage responseMessage = new ResponseMessage();
 
             try {
                 
-                responseMessage.body = RestClient.getInnerMessages(curretUserInfo.id, sOrR, startTime, endTime, ""+curretPage, ""+pageCount);
+                //addInnerMessage
+                responseMessage.body = RestClient.getInnerMessages(userId, sOrR, startTime, endTime, page, rows);
+                  //RestClient.getLeaveMessages(userId, sOrR, startTime, endTime, roleId, ""+curretPage, rows);
                 responseMessage.praseBody();
 
             } catch (ConnectTimeoutException stex) {
@@ -566,41 +538,30 @@ public class InnerMessageActivity extends Activity {
            
             // Log.i(TAG, "responseMessage.body " + responseMessage.body);
             if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-                totalCount = responseMessage.total;
+                //totalCount = responseMessage.total;
 
-                if (totalCount > 0) {
-                    toatlPage = totalCount % pageCount > 1 ? (totalCount / pageCount + 1)
-                            : totalCount / pageCount;
+              // if (totalCount > 0) {
+                    //toatlPage = totalCount % pageCount > 1 ? (totalCount / pageCount + 1): totalCount / pageCount;
 
-                    ArrayList<HomeWorkInfo> homeWorkInfoList = null;
+                    
                     try {
-                        homeWorkInfoList = JSONParser.praseHomeWorks(responseMessage.body);
+                      ArrayList<LeaveMessage>  leaveMessageoList  = JSONParser.praseLeaveMessage(responseMessage.body);
 
-                        if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
+                        if (leaveMessageoList != null && leaveMessageoList.size() > 0) {
                             
-                            HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
-                            for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
-                                HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
+                            LeaveMessageDao homeWorkDao = new LeaveMessageDao(mXiaoYunTongApplication);
+                            for (LeaveMessage leaveMessage : leaveMessageoList) {
+                                LeaveMessage info1  = homeWorkDao.queryLeaveMessageByID(leaveMessage.messageId);
                                 Log.i(TAG, "info1 " + info1);
                                 if(info1 != null){
-                                    homeWorkInfo.isRead = 1;
+                                    leaveMessage.isRead = 1;
                                 }
                                 // Log.i(TAG, "HomeWork insertResult " + insertResult);
                             }
                             homeWorkDao.colseDb();
                             homeWorkDao = null;
-                            mHomeWorkList.addAll(homeWorkInfoList);
-                            // if (isCustomSearch) {
-                            // mHomeWorkList.clear();
-                            // mHomeWorkList.addAll(homeWorkInfoList);
-                            // } else {
-                            // ArrayList<HomeWorkInfo> homeWork = homeWorkDao
-                            // .queryReadOrNotReadCountHomeWork(0);
-                            // Log.i(TAG, "homeWork.size() " + homeWork.size());
-                            // mHomeWorkList.clear();
-                            // mHomeWorkList.addAll(homeWork);
-                            //
-                            // }
+                            mHomeWorkList.addAll(leaveMessageoList);
+
                         } else {
                             --curretPage;
                             if (totalCount == curretCount) {
@@ -619,15 +580,17 @@ public class InnerMessageActivity extends Activity {
                     curretCount = mHomeWorkList.size();
 
                     
-
                     mHomeWorkAdapter.notifyDataSetChanged();
                     mHomeWorkListView.setSelection(curretPage * pageCount - 4);
-                } else {
+                    /*}else {
                     toatlPage = 0;
                     --curretPage;
                     emptyView.setVisibility(View.VISIBLE);
-                    
+                    Toast.makeText(LeaveMessageActivity.this, R.string.no_data, Toast.LENGTH_LONG)
+                            .show();
                 }
+                */
+                
 
             } else {
                 --curretPage;

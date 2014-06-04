@@ -34,7 +34,6 @@ import com.dingxi.xiaoyuantong.model.ClassInfo;
 import com.dingxi.xiaoyuantong.model.GradeInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
-import com.dingxi.xiaoyuantong.model.SubjectInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
@@ -58,10 +57,13 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 	private TextView classNameText;
 	private TextView gradeNameText;
 	private TextView studentNameText;
+	
 	private EditText contentEditText;
 	
 	private View selectGradeArea;
-	private View selectClassArea;
+	private View selectClassArea;//select_student_area
+	private View selectstudentArea;
+	
 	
 	private Button sendHomeWorkButton;
 	private Button editcancelButton;
@@ -101,7 +103,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
     public String[] childNameList;
     
 	private enum SearchType {
-		ClassInfo, GradeInfo, StudentInfo,ChildInfo
+		ClassInfo, GradeInfo, StudentInfo,ChildInfo,TeacherInfo
 	}
 
 	@Override
@@ -128,6 +130,8 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 
         selectGradeArea = findViewById(R.id.select_grade_area);
         selectClassArea =  findViewById(R.id.select_class_area);
+        selectstudentArea  =  findViewById(R.id.select_student_area);
+        
         
         selectGradeButton = (ImageButton) findViewById(R.id.select_grade_button);
         selectGradeButton.setOnClickListener(this);
@@ -141,7 +145,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 		    
 		    selectGradeArea.setVisibility(View.GONE);
 		    selectClassArea.setVisibility(View.GONE);
-		    gradeNameText.setText(R.string.please_check_child);
+		    studentNameText.setText(R.string.please_check_child);
 		    //1.选择孩子 2. 选择老师集合。
 		    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
             //parentInfo.defalutChild;
@@ -576,9 +580,9 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 					int i = 0;
 					for (ParentInfo parentInfo : parentInfos) {
 						if (i == parentInfos.size()) {
-							info.append(" + parentInfo.id + ");
+							info.append(parentInfo.id);
 						} else {					
-							info.append(" + parentInfo.id + ");
+							info.append(parentInfo.id);
 			                info.append(",");	
 						}
 						 
@@ -625,7 +629,7 @@ public class EditLeaveMessageActivity extends Activity implements OnClickListene
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
 			    
 			    mProgressDialog.dismiss();   
-			    Intent backIntent = new Intent(EditLeaveMessageActivity.this,HomeWorkActivity.class);
+			    Intent backIntent = new Intent(EditLeaveMessageActivity.this,LeaveMessageActivity.class);
 			    startActivity(backIntent);
 			    EditLeaveMessageActivity.this.finish();
 							

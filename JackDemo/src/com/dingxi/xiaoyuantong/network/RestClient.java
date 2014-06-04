@@ -32,7 +32,7 @@ public class RestClient {
    //http://skylm1234.nat123.net/M-School/messageService.ws
     //http://skylm1234.nat123.net/M-School/messageService.ws
    //private static String baseUrl = "http://skylm1234.nat123.net/M-School/";
-    private static String baseUrl = "http://114.215.170.121/M-School/";
+   private static String baseUrl = "http://114.215.170.121/M-School/";
     
    private static String phoneServicePoint = baseUrl + "phoneService.ws";
    private static String messageServicePoint = baseUrl + "messageService.ws";

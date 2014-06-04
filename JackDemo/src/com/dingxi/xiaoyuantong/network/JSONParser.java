@@ -167,29 +167,23 @@ public class JSONParser {
     
     public static ArrayList<ParentInfo>  parseParentInfo(String childInfo) throws JSONException {
         // TODO Auto-generated method stub
-    	
-    	JSONArray
-        JSONObject jsonObj = new JSONObject(childInfo);
-        //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+        
+        
+        JSONArray nameList = new JSONArray(childInfo);//获取JSONArray   
         ArrayList<ParentInfo> parentInfotList = new ArrayList<ParentInfo>();
-        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
-            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
-            for (int i = 0; i < data.length(); i++) {
+        for(int i = 0; i < nameList.length(); i++){//遍历JSONArray  
+           
+            JSONObject obj = nameList.getJSONObject(i);  
+            Log.d("debugTest",obj.getString("id"));  
+            //Log.d("debugTest",oj.getString("name"));  
+            ParentInfo parentInfo = new ParentInfo();
+            parentInfo.id = obj.getString("id");
+           
+            parentInfotList.add(parentInfo);
+        } 
 
-                ParentInfo parentInfo = new ParentInfo();
-                parentInfo.id = obj.getString("id");
-                /*
-                studentInfo.imei = obj.getString("imei");
-               
-                studentInfo.stuName = obj.getString("stuName");
-                studentInfo.fkGradeId = obj.getString("fkGradeId");
-                studentInfo.fkClassId = obj.getString("fkClassId");
-                studentInfo.fkSchoolId = obj.getString("fkSchoolId");
-                */
-                parentInfotList.add(parentInfo);
-            }
-        }
-        return null;
+
+        return parentInfotList;
 
         
     }
