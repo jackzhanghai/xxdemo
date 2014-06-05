@@ -798,8 +798,8 @@ public class RestClient {
     
     public static  String getLeaveMessages(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows) throws IOException, XmlPullParserException{
         
-
-        
+        Log.i(TAG, "getLeaveMessages()");
+        Log.i(TAG, "roleId "+roleId);
         
         SoapObject rpc = new SoapObject(nameSpace,"getMessages");
         
@@ -827,11 +827,6 @@ public class RestClient {
             SoapObject object = (SoapObject) envelope.bodyIn;
             int count = object.getPropertyCount();
             Log.i(TAG, "PropertyCount " + count);
-            for (int i = 0; i < count; i++) {
-
-                String property = object.getProperty(i).toString();
-                Log.i(TAG, "requestData property " + property);
-            }
             result = object.getProperty(0).toString();
         }
         Log.i(TAG, "request getMessages result " + result);
@@ -878,6 +873,8 @@ public class RestClient {
     
     public static  String getInnerMessages(String userId,String sOrR,String startTime,String endTime,String page,String rows) throws IOException, XmlPullParserException{
 
+        
+        Log.i(TAG, "getInnerMessages()");
         SoapObject rpc = new SoapObject(nameSpace,"getInnerMessages");
         
         rpc.addProperty("userId", userId);

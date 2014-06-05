@@ -86,13 +86,13 @@ public class InnerMessageActivity extends Activity {
     int curretCount;
     int curretPage;
     int pageCount = 5;
-    public GetHomeWorTask mHomeWorTask;
+    public GetInnerMessageTask mGetInnerMessageTask;
     
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leave_message);
+        setContentView(R.layout.activity_inner_message);
         mPullToRefreshView = (PullToRefreshListView) findViewById(R.id.home_work_list);
 
         mPullToRefreshView.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -119,9 +119,9 @@ public class InnerMessageActivity extends Activity {
                                 "", "", curretUserInfo.roleType.toString(), "", "");
                     }
                     */
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                    mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                             "", "", curretUserInfo.roleType.toString(), "", "");
-                    mHomeWorTask.execute((Void) null);
+                    mGetInnerMessageTask.execute((Void) null);
                     isFooterRefresh = true;
                 } else {
                     mPullToRefreshView.onRefreshComplete();
@@ -184,10 +184,10 @@ public class InnerMessageActivity extends Activity {
                     loadingAnimation.start();
 
                     // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                    mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                    mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                             "", "", curretUserInfo.roleType.toString(), "", "");
 
-                    mHomeWorTask.execute((Void) null);
+                    mGetInnerMessageTask.execute((Void) null);
                 } else {
                     mPullToRefreshView.onRefreshComplete();
                     Toast.makeText(InnerMessageActivity.this, R.string.not_network, Toast.LENGTH_SHORT)
@@ -233,9 +233,18 @@ public class InnerMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(InnerMessageActivity.this, SearchLeaveMessageActivity.class);
-                intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
-                startActivityForResult(intent, R.layout.activity_search_leave_message);
+                
+                if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
+                    Intent intent = new Intent(InnerMessageActivity.this, TSearchInnerMessageActivity.class);
+                    intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
+                    startActivityForResult(intent, R.layout.activity_search_leave_message);
+                    
+                } else {
+                    Intent intent = new Intent(InnerMessageActivity.this, PSearchInnerMessageActivity.class);
+                    intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
+                    startActivityForResult(intent, R.layout.activity_search_leave_message);
+                }
+                           
 
             }
         });
@@ -245,9 +254,15 @@ public class InnerMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(InnerMessageActivity.this, EditLeaveMessageActivity.class);
-                startActivity(intent);
-
+                
+                if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {                    
+                    Intent intent = new Intent(InnerMessageActivity.this, TEditInnerMessageActivity.class);
+                    startActivity(intent); 
+                } else {
+                    Intent intent = new Intent(InnerMessageActivity.this, PEditInnerMessageActivity.class);
+                    startActivity(intent);
+                    
+                }
             }
         });
 
@@ -269,7 +284,7 @@ public class InnerMessageActivity extends Activity {
                 String id = mHomeWorkList.get(arg2 - 1).messageId;
                 mHomeWorkList.get(arg2 - 1).isRead = 1;
                 Log.i(TAG, "id " + id);
-                Intent intent = new Intent(InnerMessageActivity.this, LeaveMessageDetailActivity.class);
+                Intent intent = new Intent(InnerMessageActivity.this, InnnerMessageDetailActivity.class);
                 intent.putExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID, id);
                 intent.putExtra(LeaveMessageEntry.COLUMN_NAME_DATE, mHomeWorkList.get(arg2 - 1).date);
                 intent.putExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT, mHomeWorkList.get(arg2 - 1).content);
@@ -299,9 +314,9 @@ public class InnerMessageActivity extends Activity {
  //GetHomeWorTask(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows)
                
 
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                         "", "", curretUserInfo.roleType.toString(), "", "");
-                mHomeWorTask.execute((Void) null);
+                mGetInnerMessageTask.execute((Void) null);
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                 // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                 // mHomeWorTask = new GetHomeWorTask(curretPage, pageCount,
@@ -332,15 +347,15 @@ public class InnerMessageActivity extends Activity {
             loadingAnimation.start();
             if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                 TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                         "", "", curretUserInfo.roleType.toString(), "", "");
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                 ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
+                mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                         "", "", curretUserInfo.roleType.toString(), "", "");
             }
 
-            mHomeWorTask.execute((Void) null);
+            mGetInnerMessageTask.execute((Void) null);
         } else {
             mPullToRefreshView.onRefreshComplete();
             Toast.makeText(InnerMessageActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
@@ -460,9 +475,9 @@ public class InnerMessageActivity extends Activity {
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
-                mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, mTypeId,
+                mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, mTypeId,
                         mStartData, mEndData, curretUserInfo.roleType.toString(), "", "");
-                mHomeWorTask.execute((Void) null);
+                mGetInnerMessageTask.execute((Void) null);
             } else {
                 mPullToRefreshView.onRefreshComplete();
                 Toast.makeText(InnerMessageActivity.this, R.string.not_network, Toast.LENGTH_SHORT)
@@ -472,7 +487,7 @@ public class InnerMessageActivity extends Activity {
         }
     }
 
-    public class GetHomeWorTask extends AsyncTask<Void, Void, ResponseMessage> {
+    public class GetInnerMessageTask extends AsyncTask<Void, Void, ResponseMessage> {
 
         String userId;
         String sOrR;
@@ -482,7 +497,7 @@ public class InnerMessageActivity extends Activity {
         String page;
         String rows;
 
-        public GetHomeWorTask(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows) {
+        public GetInnerMessageTask(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows) {
             this.userId = userId;
             this.sOrR = sOrR;
             this.startTime = startTime;
@@ -534,7 +549,7 @@ public class InnerMessageActivity extends Activity {
 
         @Override
         protected void onPostExecute(ResponseMessage responseMessage) {
-            mHomeWorTask = null;
+            mGetInnerMessageTask = null;
            
             // Log.i(TAG, "responseMessage.body " + responseMessage.body);
             if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
@@ -615,7 +630,7 @@ public class InnerMessageActivity extends Activity {
 
         @Override
         protected void onCancelled() {
-            mHomeWorTask = null;
+            mGetInnerMessageTask = null;
 
         }
     }

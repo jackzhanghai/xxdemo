@@ -34,7 +34,6 @@ import com.dingxi.xiaoyuantong.model.ClassInfo;
 import com.dingxi.xiaoyuantong.model.GradeInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.StudentInfo;
-import com.dingxi.xiaoyuantong.model.SubjectInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
@@ -43,7 +42,7 @@ import com.dingxi.xiaoyuantong.network.ResponseMessage;
 import com.dingxi.xiaoyuantong.network.RestClient;
 import com.dingxi.xiaoyuantong.util.Util;
 
-public class EditInnerMessageActivity extends Activity implements OnClickListener {
+public class TEditLeaveMessageActivity extends Activity implements OnClickListener {
 
 	public static final String TAG = "EditLeaveMessageActivity";
 	private ImageButton mBackButton;
@@ -58,10 +57,13 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 	private TextView classNameText;
 	private TextView gradeNameText;
 	private TextView studentNameText;
+	
 	private EditText contentEditText;
 	
 	private View selectGradeArea;
-	private View selectClassArea;
+	private View selectClassArea;//select_student_area
+	private View selectstudentArea;
+	
 	
 	private Button sendHomeWorkButton;
 	private Button editcancelButton;
@@ -101,7 +103,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
     public String[] childNameList;
     
 	private enum SearchType {
-		ClassInfo, GradeInfo, StudentInfo,ChildInfo
+		ClassInfo, GradeInfo, StudentInfo,ChildInfo,TeacherInfo
 	}
 
 	@Override
@@ -128,6 +130,8 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 
         selectGradeArea = findViewById(R.id.select_grade_area);
         selectClassArea =  findViewById(R.id.select_class_area);
+        selectstudentArea  =  findViewById(R.id.select_student_area);
+        
         
         selectGradeButton = (ImageButton) findViewById(R.id.select_grade_button);
         selectGradeButton.setOnClickListener(this);
@@ -141,7 +145,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 		    
 		    selectGradeArea.setVisibility(View.GONE);
 		    selectClassArea.setVisibility(View.GONE);
-		    gradeNameText.setText(R.string.please_check_child);
+		    studentNameText.setText(R.string.please_check_child);
 		    //1.选择孩子 2. 选择老师集合。
 		    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
             //parentInfo.defalutChild;
@@ -166,7 +170,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				EditInnerMessageActivity.this.finish();
+				TEditLeaveMessageActivity.this.finish();
 			}
 		});
 		
@@ -178,9 +182,9 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				// TODO Auto-generated method stub
 
 				if(checkText()){
-					if (Util.IsNetworkAvailable(EditInnerMessageActivity.this)) {
+					if (Util.IsNetworkAvailable(TEditLeaveMessageActivity.this)) {
 						mProgressDialog = new ProgressDialog(
-								EditInnerMessageActivity.this);
+								TEditLeaveMessageActivity.this);
 						mProgressDialog
 								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						mProgressDialog
@@ -218,13 +222,13 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 		
 		if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
 		    if (TextUtils.isEmpty(content)) {
-                Toast.makeText(EditInnerMessageActivity.this, R.string.please_input_content,
+                Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_input_content,
                         Toast.LENGTH_LONG).show();
             } else if (TextUtils.isEmpty(mStudentId)){
-                Toast.makeText(EditInnerMessageActivity.this, R.string.please_check_child,
+                Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_check_child,
                         Toast.LENGTH_LONG).show();
             } else if (TextUtils.isEmpty(mTeacherId)){
-                Toast.makeText(EditInnerMessageActivity.this, R.string.please_check_teacher,
+                Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_check_teacher,
                         Toast.LENGTH_LONG).show();
             }else {//mPrentId
                 isOk = true;
@@ -233,16 +237,16 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 		} else {
 		    
 		    if (TextUtils.isEmpty(content)) {
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.please_input_content,
+	            Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_input_content,
 	                    Toast.LENGTH_LONG).show();
 	        } else if (TextUtils.isEmpty(mClassId)) {
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.select_class,
+	            Toast.makeText(TEditLeaveMessageActivity.this, R.string.select_class,
 	                    Toast.LENGTH_LONG).show();
 	        } else if (TextUtils.isEmpty(mGradeId)) {
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.select_grade,
+	            Toast.makeText(TEditLeaveMessageActivity.this, R.string.select_grade,
 	                    Toast.LENGTH_LONG).show();
 	        } else if (TextUtils.isEmpty(mStudentId)){
-	            Toast.makeText(EditInnerMessageActivity.this, R.string.select_student,
+	            Toast.makeText(TEditLeaveMessageActivity.this, R.string.select_student,
 	                    Toast.LENGTH_LONG).show();
 	        } else {//mPrentId
 	            isOk = true;
@@ -278,7 +282,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
                     responseMessage.body = RestClient.getAllChilds(curretUserInfo.id, curretUserInfo.ticket);        
                 }
 
-				 responseMessage.praseBody(EditInnerMessageActivity.this);
+				 responseMessage.praseBody(TEditLeaveMessageActivity.this);
 
 			} catch (ConnectTimeoutException stex) {
 				responseMessage.message = getString(R.string.request_time_out);
@@ -347,7 +351,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				    if(gradeNameList!=null && gradeNameList.length>0){
 				        showDialog(R.id.select_grade_button);
 				    }else {
-				        Toast.makeText(EditInnerMessageActivity.this,
+				        Toast.makeText(TEditLeaveMessageActivity.this,
 		                        R.string.no_grade, Toast.LENGTH_LONG).show(); 
 				    }
 					
@@ -355,7 +359,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				    if(classNameList!=null && classNameList.length>0){
 				        showDialog(R.id.select_class_button);
                     }else {
-                        Toast.makeText(EditInnerMessageActivity.this,
+                        Toast.makeText(TEditLeaveMessageActivity.this,
                                 R.string.no_class, Toast.LENGTH_LONG).show(); 
                     }
 					
@@ -364,7 +368,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 					if(studentNameList!=null && studentNameList.length>0){
 					    showDialog(R.id.select_student_button);
                     }else {
-                        Toast.makeText(EditInnerMessageActivity.this,
+                        Toast.makeText(TEditLeaveMessageActivity.this,
                                 R.string.no_subject, Toast.LENGTH_LONG).show(); 
                     }
 				}else if (curretSearchType == SearchType.ChildInfo) {
@@ -372,7 +376,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
                     if(childNameList!=null && childNameList.length>0){
                         showDialog(R.id.select_student_button);
                     }else {
-                        Toast.makeText(EditInnerMessageActivity.this,
+                        Toast.makeText(TEditLeaveMessageActivity.this,
                                 R.string.no_subject, Toast.LENGTH_LONG).show(); 
                     }
                 }
@@ -381,7 +385,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 				*/
 			} else {
 				mProgressDialog.dismiss();
-				Toast.makeText(EditInnerMessageActivity.this,
+				Toast.makeText(TEditLeaveMessageActivity.this,
 						responseMessage.message, Toast.LENGTH_LONG).show();
 			}
 			
@@ -586,8 +590,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 					
 					Log.i(TAG, "info"+ info);
 		           
-					responseMessage.body =  RestClient.addInnerMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket);
-					//responseMessage.body =  RestClient.addLeaveMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket, curretUserInfo.roleType.toString(), mStudentId);
+					responseMessage.body =  RestClient.addLeaveMessage(curretUserInfo.id, info.toString(), content, curretUserInfo.ticket, curretUserInfo.roleType.toString(), mStudentId);
 					responseMessage.praseBody();
 				} else {
 					
@@ -626,15 +629,15 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
 			    
 			    mProgressDialog.dismiss();   
-			    Intent backIntent = new Intent(EditInnerMessageActivity.this,LeaveMessageActivity.class);
+			    Intent backIntent = new Intent(TEditLeaveMessageActivity.this,LeaveMessageActivity.class);
 			    startActivity(backIntent);
-			    EditInnerMessageActivity.this.finish();
+			    TEditLeaveMessageActivity.this.finish();
 							
 			} else {
 				mProgressDialog.dismiss();				
 			}
 			
-			Toast.makeText(EditInnerMessageActivity.this,
+			Toast.makeText(TEditLeaveMessageActivity.this,
 					responseMessage.message, Toast.LENGTH_LONG).show();
 
 		}
@@ -649,8 +652,8 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		if (Util.IsNetworkAvailable(EditInnerMessageActivity.this)) {
-			mProgressDialog = new ProgressDialog(EditInnerMessageActivity.this);
+		if (Util.IsNetworkAvailable(TEditLeaveMessageActivity.this)) {
+			mProgressDialog = new ProgressDialog(TEditLeaveMessageActivity.this);
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			int errorCode = -1;
 			switch (v.getId()) {
@@ -695,7 +698,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 			}
 
 			if (errorCode != -1) {
-				Toast.makeText(EditInnerMessageActivity.this, errorCode,
+				Toast.makeText(TEditLeaveMessageActivity.this, errorCode,
 						Toast.LENGTH_LONG).show();
 				mProgressDialog = null;
 			} else {
@@ -727,7 +730,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 
 			if (classInfoList != null && classInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditInnerMessageActivity.this);
+						TEditLeaveMessageActivity.this);
 				builder.setTitle(R.string.select_class).setItems(
 						classNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -748,7 +751,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 
 			if (gradeInfoList != null && gradeInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditInnerMessageActivity.this);
+						TEditLeaveMessageActivity.this);
 				builder.setTitle(R.string.select_grade).setItems(
 						gradeNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -769,7 +772,7 @@ public class EditInnerMessageActivity extends Activity implements OnClickListene
 
 			if (studentInfoList != null && studentInfoList.size() > 0) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						EditInnerMessageActivity.this);
+						TEditLeaveMessageActivity.this);
 				builder.setTitle(R.string.select_student).setItems(
 				        studentNameList, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,

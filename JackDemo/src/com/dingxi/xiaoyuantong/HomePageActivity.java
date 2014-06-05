@@ -281,10 +281,9 @@ public class HomePageActivity extends Activity {
                     Intent intent = new Intent(HomePageActivity.this, LeaveMessageActivity.class);
                     startActivity(intent);
                 } else if(position == 5){
-                    //Intent intent = new Intent(HomePageActivity.this, InnerMessageActivity.class);
-                    //startActivity(intent);
+                    Intent intent = new Intent(HomePageActivity.this, InnerMessageActivity.class);
+                    startActivity(intent);
                 } else if(position == 6){
-                	
                 	
                 	if(Util.IsNetworkAvailable(HomePageActivity.this)){
                 		ParentInfo parentInfo = (ParentInfo) userInfo;

@@ -26,7 +26,7 @@ import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
 
 @SuppressLint("SimpleDateFormat")
-public class SearchLeaveMessageActivity extends Activity {
+public class PSearchInnerMessageActivity extends Activity {
 
     public static final String TAG = "SearchMessageActivity";
     // private View parentHeader;
@@ -95,14 +95,14 @@ public class SearchLeaveMessageActivity extends Activity {
                 
                 
                 if(TextUtils.isEmpty(mStartData) ){
-                    Toast.makeText(SearchLeaveMessageActivity.this, R.string.select_start_time,
+                    Toast.makeText(PSearchInnerMessageActivity.this, R.string.select_start_time,
                             Toast.LENGTH_LONG).show();
                 }  else if(TextUtils.isEmpty(mEndData)){
-                    Toast.makeText(SearchLeaveMessageActivity.this, R.string.select_end_time,
+                    Toast.makeText(PSearchInnerMessageActivity.this, R.string.select_end_time,
                             Toast.LENGTH_LONG).show();
                     
                 }else {
-                    Intent intent = new Intent(SearchLeaveMessageActivity.this, LeaveMessageActivity.class);
+                    Intent intent = new Intent(PSearchInnerMessageActivity.this, LeaveMessageActivity.class);
 
                     Log.i(TAG, "mTypeId " + mTypeId);
                     Log.i(TAG, "mStartData " + mStartData);
@@ -126,7 +126,7 @@ public class SearchLeaveMessageActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                SearchLeaveMessageActivity.this.finish();
+                PSearchInnerMessageActivity.this.finish();
             }
         });
 
@@ -138,7 +138,7 @@ public class SearchLeaveMessageActivity extends Activity {
                 // TODO Auto-generated method stub
                 Log.d(TAG, "selectGradeButton OnClick");
                String typeNameList[] = {getString(R.string.search_type_all),getString(R.string.search_type_receiver),getString(R.string.search_type_sender)};;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SearchLeaveMessageActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PSearchInnerMessageActivity.this);
                     builder.setTitle(R.string.select_search_type).setItems(typeNameList,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
@@ -187,7 +187,7 @@ public class SearchLeaveMessageActivity extends Activity {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
                 
-              mTimePickerDialog =  new DatePickerDialog(SearchLeaveMessageActivity.this, new OnDateSetListener() {
+              mTimePickerDialog =  new DatePickerDialog(PSearchInnerMessageActivity.this, new OnDateSetListener() {
                     
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -221,7 +221,7 @@ public class SearchLeaveMessageActivity extends Activity {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
                 
-              mTimePickerDialog =  new DatePickerDialog(SearchLeaveMessageActivity.this, new OnDateSetListener() {
+              mTimePickerDialog =  new DatePickerDialog(PSearchInnerMessageActivity.this, new OnDateSetListener() {
                     
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -252,7 +252,7 @@ public class SearchLeaveMessageActivity extends Activity {
 
     private void updateDate(int time){ 
         
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
         if(time == 1){
             mStartData = simpleDateFormat.format(cal.getTime());
             selectStartTimeTextView.setText(mStartData); 

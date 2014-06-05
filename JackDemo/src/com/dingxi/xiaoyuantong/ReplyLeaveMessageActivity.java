@@ -12,15 +12,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
-import com.dingxi.xiaoyuantong.dao.LeaveMessageDao;
 import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
 import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
-import com.dingxi.xiaoyuantong.model.LeaveMessage;
-import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 
-public class LeaveMessageDetailActivity extends Activity {
+public class ReplyLeaveMessageActivity extends Activity {
 
     private View parentHeader;
     private ImageButton mBackButton;
@@ -31,13 +28,12 @@ public class LeaveMessageDetailActivity extends Activity {
     private TextView homeWorkDate;
     private TextView homeWorkContent;
     private Button confirmButton;
-    private Button mReplyButton;
     
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leave_message_detail);
+        setContentView(R.layout.activity_home_work_detail);
         
         parentHeader = findViewById(R.id.main_title_bar);
         mBackButton = (ImageButton) findViewById(R.id.back_button);
@@ -55,37 +51,27 @@ public class LeaveMessageDetailActivity extends Activity {
         homeWorkDate = (TextView) findViewById(R.id.homework_date);
         homeWorkContent = (TextView) findViewById(R.id.homework_content);
         
-        mReplyButton = (Button) findViewById(R.id.reply_button);
-        mReplyButton.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //ReplyLeaveMessageActivity
-            }
-        });
         
-        
-       String homeWorkID =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID);
-       String optTime =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_DATE);
-       String content = getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT);
-       LeaveMessageDao  campusNoticeDao = new LeaveMessageDao (
-               LeaveMessageDetailActivity.this);
+       String homeWorkID =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID);
+       String optTime =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_OPT_TIME);
+       String content = getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_CONTENT);
+       HomeWorkDao campusNoticeDao = new HomeWorkDao(
+               ReplyLeaveMessageActivity.this);
        
-       LeaveMessage  homeWorkInfo = campusNoticeDao.queryHomeWorkByID(homeWorkID);
+       HomeWorkInfo homeWorkInfo = campusNoticeDao.queryHomeWorkByID(homeWorkID);
        if(homeWorkInfo == null){
 
-           homeWorkInfo =  new LeaveMessage();
-           homeWorkInfo.messageId = homeWorkID;
+           homeWorkInfo =  new HomeWorkInfo();
+           homeWorkInfo.id = homeWorkID;
            homeWorkInfo.content = content;
-           homeWorkInfo.date = optTime;
+           homeWorkInfo.optTime = optTime;
           HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
-          long insertResult = campusNoticeDao.addLeaveMessage(homeWorkInfo);
+          long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
           HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
        }
 
-       homeWorkTite.setText(R.string.leave_message);
+       homeWorkTite.setText(R.string.home_work);
        homeWorkDate.setText(optTime);
        homeWorkContent.setText(content);
        confirmButton = (Button) findViewById(R.id.confirm_button);
@@ -94,7 +80,7 @@ public class LeaveMessageDetailActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			LeaveMessageDetailActivity.this.finish();
+			ReplyLeaveMessageActivity.this.finish();
 		}
 	});
        

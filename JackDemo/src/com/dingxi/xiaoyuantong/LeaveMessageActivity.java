@@ -246,7 +246,7 @@ public class LeaveMessageActivity extends Activity {
                 
                 if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
                     
-                    Intent intent = new Intent(LeaveMessageActivity.this, EditLeaveMessageActivity.class);
+                    Intent intent = new Intent(LeaveMessageActivity.this, TEditLeaveMessageActivity.class);
                     startActivity(intent);
                 } else {                  
                     Intent intent = new Intent(LeaveMessageActivity.this, ParentEditLeaveMessageActivity.class);
@@ -408,7 +408,7 @@ public class LeaveMessageActivity extends Activity {
                 viewHolder.headerText = (TextView) convertView.findViewById(R.id.message_header);
                 viewHolder.isRead = (TextView) convertView.findViewById(R.id.is_read);
                 viewHolder.bodyText = (TextView) convertView.findViewById(R.id.message_body);
-                viewHolder.sendTime = (TextView) convertView.findViewById(R.id.send_time);
+                viewHolder.receiver = (TextView) convertView.findViewById(R.id.revceiver_name);
                 viewHolder.sendName = (TextView) convertView.findViewById(R.id.send_name);
                 convertView.setTag(viewHolder);
             } else {
@@ -418,8 +418,8 @@ public class LeaveMessageActivity extends Activity {
             // viewHolder.headerText.setText(homeWorkList.get(position).id);
             viewHolder.headerText.setText(R.string.leave_message);
             viewHolder.bodyText.setText(homeWorkList.get(position).content);
-            viewHolder.sendTime.setText(homeWorkList.get(position).sender);
-            viewHolder.sendName.setText(homeWorkList.get(position).receiver);
+            viewHolder.receiver.setText(homeWorkList.get(position).receiver);
+            viewHolder.sendName.setText(homeWorkList.get(position).sender);
             
             if (homeWorkList.get(position).isRead == 0) {
                 viewHolder.isRead.setText(R.string.unread);
@@ -435,7 +435,7 @@ public class LeaveMessageActivity extends Activity {
             TextView headerText;
             TextView isRead;
             TextView bodyText;
-            TextView sendTime;
+            TextView receiver;
             TextView sendName;
 
         }
