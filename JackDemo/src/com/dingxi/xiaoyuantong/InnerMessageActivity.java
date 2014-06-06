@@ -120,7 +120,7 @@ public class InnerMessageActivity extends Activity {
                     }
                     */
                     mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                            "", "", curretUserInfo.roleType.toString(), "", "");
+                            "", "", curretUserInfo.roleType.toString(), "1", "5");
                     mGetInnerMessageTask.execute((Void) null);
                     isFooterRefresh = true;
                 } else {
@@ -185,7 +185,7 @@ public class InnerMessageActivity extends Activity {
 
                     // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                     mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                            "", "", curretUserInfo.roleType.toString(), "", "");
+                            "", "", curretUserInfo.roleType.toString(), "1", "5");
 
                     mGetInnerMessageTask.execute((Void) null);
                 } else {
@@ -315,7 +315,7 @@ public class InnerMessageActivity extends Activity {
                
 
                 mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                        "", "", curretUserInfo.roleType.toString(), "", "");
+                        "", "", curretUserInfo.roleType.toString(), "1", "5");
                 mGetInnerMessageTask.execute((Void) null);
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                 // ParentInfo parentInfo = (ParentInfo) curretUserInfo;
@@ -348,11 +348,11 @@ public class InnerMessageActivity extends Activity {
             if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
                 TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
                 mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                        "", "", curretUserInfo.roleType.toString(), "", "");
+                        "", "", curretUserInfo.roleType.toString(), "1", "5");
             } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
                 ParentInfo parentInfo = (ParentInfo) curretUserInfo;
                 mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                        "", "", curretUserInfo.roleType.toString(), "", "");
+                        "", "", curretUserInfo.roleType.toString(), "1", "5");
             }
 
             mGetInnerMessageTask.execute((Void) null);
@@ -476,7 +476,7 @@ public class InnerMessageActivity extends Activity {
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
                 mGetInnerMessageTask = new GetInnerMessageTask(curretUserInfo.id, mTypeId,
-                        mStartData, mEndData, curretUserInfo.roleType.toString(), "", "");
+                        mStartData, mEndData, curretUserInfo.roleType.toString(), "1", "5");
                 mGetInnerMessageTask.execute((Void) null);
             } else {
                 mPullToRefreshView.onRefreshComplete();

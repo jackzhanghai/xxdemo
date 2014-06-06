@@ -717,6 +717,8 @@ public class HomePageActivity extends Activity {
                 responseMessage.praseBody();
                 Log.i(TAG, "HomeWorks response  " + responseMessage.body);
 
+                RestClient.addInnerMessage("","","vvvvv",mXiaoYunTongApplication.userInfo.ticket);
+                
             } catch (ConnectTimeoutException stex) {
                 responseMessage.message = getString(R.string.request_time_out);
             } catch (SocketTimeoutException stex) {

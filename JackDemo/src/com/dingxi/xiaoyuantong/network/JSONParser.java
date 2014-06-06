@@ -286,7 +286,7 @@ public class JSONParser {
         JSONObject jsonObj = new JSONObject(homeWorksInfo);
         int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
 
             for (int i = 0; i < data.length(); i++) {
@@ -312,9 +312,6 @@ public class JSONParser {
                 homeWorkInfo.sendName = obj.getString("userName");
                 
                 mHomeWorkList.add(homeWorkInfo);
-            }
-            if (mHomeWorkList.size() > 0) {
-
             }
         }
 		return mHomeWorkList;
