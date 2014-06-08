@@ -53,7 +53,6 @@ public class TSearchInnerMessageActivity extends Activity {
     private Button sreachConfirmButton;
     private Button sreachCancelButton;
     private DatePickerDialog mTimePickerDialog;
-    private int curretSearch = SEARCH_TYPE_HOME_WORK;
 
     private Calendar cal = Calendar.getInstance(); 
     
@@ -66,33 +65,12 @@ public class TSearchInnerMessageActivity extends Activity {
 
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
         curretUserInfo = mXiaoYunTongApplication.userInfo;
-        if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-
-
-        }
-
         
         sreachConfirmButton = (Button) findViewById(R.id.sreach_confirm_button);
         sreachConfirmButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                
-                
-                
-                if(curretSearch  == SEARCH_TYPE_HOME_WORK){
-                    
-                  
-                    
-                } else if(curretSearch  == SEARCH_TYPE_ATTENDACE){
-                    
-                    
-                    
-                } else if(curretSearch  == SEARCH_TYPE_CAMPUS_NOTE){
-                    
-                    
-                }
-                
                 
                 if(TextUtils.isEmpty(mStartData) ){
                     Toast.makeText(TSearchInnerMessageActivity.this, R.string.select_start_time,
@@ -102,7 +80,7 @@ public class TSearchInnerMessageActivity extends Activity {
                             Toast.LENGTH_LONG).show();
                     
                 }else {
-                    Intent intent = new Intent(TSearchInnerMessageActivity.this, LeaveMessageActivity.class);
+                    Intent intent = new Intent(TSearchInnerMessageActivity.this, InnerMessageActivity.class);
 
                     Log.i(TAG, "mTypeId " + mTypeId);
                     Log.i(TAG, "mStartData " + mStartData);
@@ -170,8 +148,6 @@ public class TSearchInnerMessageActivity extends Activity {
 
             }
         });
-        
-        curretSearch = getIntent().getIntExtra(SEARCH_TYPE, SEARCH_TYPE_HOME_WORK);
 
         selectStartTimeButton = (ImageButton) findViewById(R.id.select_start_time_button);
         selectStartTimeButton.setOnClickListener(new OnClickListener() {

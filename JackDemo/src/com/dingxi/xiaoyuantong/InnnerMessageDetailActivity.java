@@ -2,7 +2,6 @@ package com.dingxi.xiaoyuantong;
 
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,13 +11,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
-import com.dingxi.xiaoyuantong.dao.LeaveMessageDao;
-import com.dingxi.xiaoyuantong.model.CampusNotice;
-import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
-import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
-import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
-import com.dingxi.xiaoyuantong.model.LeaveMessage;
-import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
+import com.dingxi.xiaoyuantong.dao.InnerMessageDao;
+import com.dingxi.xiaoyuantong.model.InnerMessage;
+import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 
 public class InnnerMessageDetailActivity extends Activity {
 
@@ -55,21 +50,20 @@ public class InnnerMessageDetailActivity extends Activity {
         homeWorkContent = (TextView) findViewById(R.id.homework_content);
         
         
-       String homeWorkID =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID);
-       String optTime =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_DATE);
-       String content = getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT);
-       LeaveMessageDao  campusNoticeDao = new LeaveMessageDao (
+       String homeWorkID =  getIntent().getStringExtra(InnerMessageEntry.COLUMN_NAME_ENTRY_ID);
+       String optTime =  getIntent().getStringExtra(InnerMessageEntry.COLUMN_NAME_DATE);
+       String content = getIntent().getStringExtra(InnerMessageEntry.COLUMN_NAME_CONTENT);
+       InnerMessageDao  campusNoticeDao = new InnerMessageDao (
                InnnerMessageDetailActivity.this);
        
-       LeaveMessage  homeWorkInfo = campusNoticeDao.queryHomeWorkByID(homeWorkID);
+       InnerMessage  homeWorkInfo = campusNoticeDao.queryInnerMessageByID(homeWorkID);
        if(homeWorkInfo == null){
 
-           homeWorkInfo =  new LeaveMessage();
+           homeWorkInfo =  new InnerMessage();
            homeWorkInfo.messageId = homeWorkID;
            homeWorkInfo.content = content;
            homeWorkInfo.date = optTime;
-          HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
-          long insertResult = campusNoticeDao.addLeaveMessage(homeWorkInfo);
+          long insertResult = campusNoticeDao.addInnerMessage(homeWorkInfo);
           HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
        }

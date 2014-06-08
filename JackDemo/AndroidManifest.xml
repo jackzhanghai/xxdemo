@@ -73,7 +73,11 @@
             android:name="com.dingxi.xiaoyuantong.LeaveMessageDetailActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        
+        <activity
+            android:name="com.dingxi.xiaoyuantong.ReplyLeaveMessageDetailActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+       
           <activity
             android:name="com.dingxi.xiaoyuantong.InnerMessageActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
@@ -137,6 +141,10 @@
             android:name="com.dingxi.xiaoyuantong.SearchMessageActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
+        
+        
+        <service android:name="com.dingxi.xiaoyuantong.LocalService" >  
+        </service>
     </application>
 
     <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" >

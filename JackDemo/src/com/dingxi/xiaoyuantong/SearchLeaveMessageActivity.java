@@ -66,32 +66,13 @@ public class SearchLeaveMessageActivity extends Activity {
 
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
         curretUserInfo = mXiaoYunTongApplication.userInfo;
-        if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-
-
-        }
-
         
         sreachConfirmButton = (Button) findViewById(R.id.sreach_confirm_button);
         sreachConfirmButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                
-                
-                
-                if(curretSearch  == SEARCH_TYPE_HOME_WORK){
-                    
-                  
-                    
-                } else if(curretSearch  == SEARCH_TYPE_ATTENDACE){
-                    
-                    
-                    
-                } else if(curretSearch  == SEARCH_TYPE_CAMPUS_NOTE){
-                    
-                    
-                }
+               
                 
                 
                 if(TextUtils.isEmpty(mStartData) ){
@@ -192,11 +173,14 @@ public class SearchLeaveMessageActivity extends Activity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // TODO Auto-generated method stub
-                        cal.set(Calendar.YEAR, year); 
+                    	
+                    	
+                    	cal.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                        //cal.set(Calendar.YEAR, year); 
+                       // cal.set(Calendar.MONTH, monthOfYear); 
+                        //cal.set(Calendar.DAY_OF_MONTH, dayOfMonth); 
+                        //cal.set(Calendar., dayOfMonth); 
                         
-                        cal.set(Calendar.MONTH, monthOfYear); 
-               
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth); 
                         
                         updateDate(1);
                     }
@@ -226,10 +210,10 @@ public class SearchLeaveMessageActivity extends Activity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // TODO Auto-generated method stub
-                        cal.set(Calendar.YEAR, year); 
-                        cal.set(Calendar.MONTH, monthOfYear);
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth); 
-                        
+                        //cal.set(Calendar.YEAR, year); 
+                        //cal.set(Calendar.MONTH, monthOfYear);
+                       // cal.set(Calendar.DAY_OF_MONTH, dayOfMonth); 
+                        cal.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                         updateDate(2);
                     }
                 }, year, month, day);
@@ -252,14 +236,15 @@ public class SearchLeaveMessageActivity extends Activity {
 
     private void updateDate(int time){ 
         
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if(time == 1){
             mStartData = simpleDateFormat.format(cal.getTime());
-            selectStartTimeTextView.setText(mStartData); 
+            selectStartTimeTextView.setText(dateFormat.format(cal.getTime())); 
             Log.i(TAG, "mStartData " + mStartData);
         } else {
             mEndData = simpleDateFormat.format(cal.getTime());
-            selectEndTimeTextView.setText(mEndData); 
+            selectEndTimeTextView.setText(dateFormat.format(cal.getTime())); 
             Log.i(TAG, "mEndData " + mEndData);
             
         }

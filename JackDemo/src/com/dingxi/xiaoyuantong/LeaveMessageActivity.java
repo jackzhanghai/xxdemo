@@ -107,18 +107,6 @@ public class LeaveMessageActivity extends Activity {
                                     | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
                     // Update the LastUpdatedLabel
                     refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-                    
-                    /*
-                    if (curretUserInfo.roleType == UserType.ROLE_TEACHER) {
-                        TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                                "", "", curretUserInfo.roleType.toString(), "", "");;
-                    } else if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-                        ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-                        mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
-                                "", "", curretUserInfo.roleType.toString(), "", "");
-                    }
-                    */
                     mHomeWorTask = new GetHomeWorTask(curretUserInfo.id, MESSAGE_TYPE_ALL,
                             "", "", curretUserInfo.roleType.toString(), "", "");
                     mHomeWorTask.execute((Void) null);

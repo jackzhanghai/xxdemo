@@ -60,10 +60,6 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 	
 	private EditText contentEditText;
 	
-	private View selectGradeArea;
-	private View selectClassArea;//select_student_area
-	private View selectstudentArea;
-	
 	
 	private Button sendHomeWorkButton;
 	private Button editcancelButton;
@@ -75,10 +71,6 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 	private String mClassId;
 	private String mGradeId;
 	private String mStudentId;
-	private String mChild;
-	//private String mSchoolId;
-	private String mPrentId;
-	private String mTeacherId;
 	
 	
 	private SearchType curretSearchType;
@@ -92,24 +84,18 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 	public List<StudentInfo> studentInfoList;
 	public String[] studentNameList;
 	
-	public List<ParentInfo> parentInfoList;
-    public String[] parentNameList;
-    
-    public List<TeacherInfo> techerInfoList;
-    public String[] teacherNameList;
-	
     
     public List<ChildInfo> childInfoList;
     public String[] childNameList;
     
 	private enum SearchType {
-		ClassInfo, GradeInfo, StudentInfo,ChildInfo,TeacherInfo
+		ClassInfo, GradeInfo, StudentInfo
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_leave_message);
+		setContentView(R.layout.activity_teacher_edit_leave_message);
 
 		mBackButton = (ImageButton) findViewById(R.id.back_button);
 		mBackButton.setOnClickListener(new OnClickListener() {
@@ -127,10 +113,6 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 		gradeNameText = (TextView) findViewById(R.id.select_grade_text);
         classNameText = (TextView) findViewById(R.id.select_class_text);
         studentNameText = (TextView) findViewById(R.id.select_student_text);
-
-        selectGradeArea = findViewById(R.id.select_grade_area);
-        selectClassArea =  findViewById(R.id.select_class_area);
-        selectstudentArea  =  findViewById(R.id.select_student_area);
         
         
         selectGradeButton = (ImageButton) findViewById(R.id.select_grade_button);
@@ -140,27 +122,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
         selectStudentButton = (ImageButton) findViewById(R.id.select_student_button);
         selectStudentButton.setOnClickListener(this);
 
-        
-		if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-		    
-		    selectGradeArea.setVisibility(View.GONE);
-		    selectClassArea.setVisibility(View.GONE);
-		    studentNameText.setText(R.string.please_check_child);
-		    //1.选择孩子 2. 选择老师集合。
-		    ParentInfo parentInfo = (ParentInfo) curretUserInfo;
-            //parentInfo.defalutChild;
-            
-            
-		} else {
-		    selectGradeArea.setVisibility(View.VISIBLE);
-		    selectClassArea.setVisibility(View.VISIBLE);
-		    studentNameText.setText(R.string.select_student);
-		    //1.获取年级集合 2. 获取班级集合  ，3.获取学生集合  4. 获取学生家长集合
-		    TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
-		    //teacherInfo.defalutClassId;
-		    
-		    
-		}
+
 		//mSchoolId = curretUserInfo.defalutSchoolId;
 
 		contentEditText = (EditText) findViewById(R.id.edit_homework_content);
@@ -219,23 +181,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 		//String title = titleEditText.getText().toString();
 		String content = contentEditText.getText().toString();
 
-		
-		if (curretUserInfo.roleType == UserType.ROLE_PARENT) {
-		    if (TextUtils.isEmpty(content)) {
-                Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_input_content,
-                        Toast.LENGTH_LONG).show();
-            } else if (TextUtils.isEmpty(mStudentId)){
-                Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_check_child,
-                        Toast.LENGTH_LONG).show();
-            } else if (TextUtils.isEmpty(mTeacherId)){
-                Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_check_teacher,
-                        Toast.LENGTH_LONG).show();
-            }else {//mPrentId
-                isOk = true;
-            } 
-		    
-		} else {
-		    
+
 		    if (TextUtils.isEmpty(content)) {
 	            Toast.makeText(TEditLeaveMessageActivity.this, R.string.please_input_content,
 	                    Toast.LENGTH_LONG).show();
@@ -251,9 +197,6 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 	        } else {//mPrentId
 	            isOk = true;
 	        } 
-		    
-		}
-		
 		
 				
 		return isOk;
@@ -278,9 +221,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 				} else if (curretSearchType == SearchType.StudentInfo) {
 					responseMessage.body = RestClient.getStudentByClassroom(
 					        mClassId);
-				}  else if (curretSearchType == SearchType.ChildInfo) {
-                    responseMessage.body = RestClient.getAllChilds(curretUserInfo.id, curretUserInfo.ticket);        
-                }
+				}
 
 				 responseMessage.praseBody(TEditLeaveMessageActivity.this);
 
@@ -336,15 +277,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}else if (curretSearchType == SearchType.ChildInfo) {
-                    try {
-                        parseChildInfo(responseMessage.body);
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-				
+				}
 				
 				mProgressDialog.dismiss();
 				if (curretSearchType == SearchType.GradeInfo) {
@@ -371,15 +304,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
                         Toast.makeText(TEditLeaveMessageActivity.this,
                                 R.string.no_subject, Toast.LENGTH_LONG).show(); 
                     }
-				}else if (curretSearchType == SearchType.ChildInfo) {
-                    
-                    if(childNameList!=null && childNameList.length>0){
-                        showDialog(R.id.select_student_button);
-                    }else {
-                        Toast.makeText(TEditLeaveMessageActivity.this,
-                                R.string.no_subject, Toast.LENGTH_LONG).show(); 
-                    }
-                }
+				}
 				
 				/*
 				*/
@@ -467,54 +392,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 				}
 			}
 		}
-		
-		private void parseTeacherInfo(String reslut) throws JSONException {
-            // TODO Auto-generated method stub
-            if (!TextUtils.isEmpty(reslut)) {
-                Log.d(TAG, "result schoolsInfo " + reslut);
-
-                if (JSONParser.getIntByTag(reslut,
-                        ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-                    techerInfoList = JSONParser.parseTeacherInfo(reslut);
-                } else {
-                    JSONParser.getStringByTag(reslut,
-                            ResponseMessage.RESULT_TAG_MESSAGE);
-                }
-
-            }
-            if (techerInfoList != null && techerInfoList.size() > 0) {
-                teacherNameList = new String[techerInfoList.size()];
-
-                for (int i = 0; i < techerInfoList.size(); i++) {
-                    teacherNameList[i] = techerInfoList.get(i).name;
-                }
-            }
-        }
-
-		private void parseParentInfo(String reslut) throws JSONException {
-            // TODO Auto-generated method stub
-            if (!TextUtils.isEmpty(reslut)) {
-                Log.d(TAG, "result schoolsInfo " + reslut);
-
-                if (JSONParser.getIntByTag(reslut,
-                        ResponseMessage.RESULT_TAG_CODE) == ResponseMessage.RESULT_TAG_SUCCESS) {
-
-                    parentInfoList = JSONParser.parseParentInfo(reslut);
-                } else {
-                    JSONParser.getStringByTag(reslut,
-                            ResponseMessage.RESULT_TAG_MESSAGE);
-                }
-
-            }
-            if (parentInfoList != null && parentInfoList.size() > 0) {
-                parentNameList = new String[parentInfoList.size()];
-
-                for (int i = 0; i < parentInfoList.size(); i++) {
-                    parentNameList[i] = parentInfoList.get(i).name;
-                }
-            }
-        }
+	
 		
 		private void parseChildInfo(String reslut) throws JSONException {
 		    
@@ -675,11 +553,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 
                 break;
 			case R.id.select_student_button:
-			    if(curretUserInfo.roleType == UserType.ROLE_PARENT){
-	                    curretSearchType = SearchType.ChildInfo;
-	                    mProgressDialog
-	                            .setMessage(getString(R.string.now_geting_childinfo));           
-			    } else {
+	
 			        if (!TextUtils.isEmpty(mClassId)) {
 	                    curretSearchType = SearchType.StudentInfo;
 	                    mProgressDialog
@@ -687,10 +561,6 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 	                } else {
 	                    errorCode = R.string.select_class;
 	                }
-			        
-			    }
-				
-
 				break;
 			
 			default:

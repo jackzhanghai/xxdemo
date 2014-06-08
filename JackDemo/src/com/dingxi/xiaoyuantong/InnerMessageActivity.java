@@ -33,15 +33,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
-import com.dingxi.xiaoyuantong.dao.LeaveMessageDao;
+import com.dingxi.xiaoyuantong.dao.InnerMessageDao;
 import com.dingxi.xiaoyuantong.model.ChildInfo;
-import com.dingxi.xiaoyuantong.model.LeaveMessage;
-import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
-import com.dingxi.xiaoyuantong.model.LeaveMessage;
-import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
+import com.dingxi.xiaoyuantong.model.InnerMessage;
+import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
-import com.dingxi.xiaoyuantong.model.StudentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo.UserType;
@@ -69,7 +65,7 @@ public class InnerMessageActivity extends Activity {
     private Spinner mSpinner;
 
     private HomeWorkAdapter mHomeWorkAdapter;
-    private ArrayList<LeaveMessage> mHomeWorkList;
+    private ArrayList<InnerMessage> mHomeWorkList;
     private ImageView loadingImageView;
     private AnimationDrawable loadingAnimation;
     private View emptyView;
@@ -236,12 +232,10 @@ public class InnerMessageActivity extends Activity {
                 
                 if (curretUserInfo.roleType.equals(UserType.ROLE_TEACHER)) {
                     Intent intent = new Intent(InnerMessageActivity.this, TSearchInnerMessageActivity.class);
-                    intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
                     startActivityForResult(intent, R.layout.activity_search_leave_message);
                     
                 } else {
                     Intent intent = new Intent(InnerMessageActivity.this, PSearchInnerMessageActivity.class);
-                    intent.putExtra(SearchMessageActivity.SEARCH_TYPE, SearchMessageActivity.SEARCH_TYPE_HOME_WORK);
                     startActivityForResult(intent, R.layout.activity_search_leave_message);
                 }
                            
@@ -268,7 +262,7 @@ public class InnerMessageActivity extends Activity {
 
         emptyView = findViewById(R.id.empty);
         mPullToRefreshView.setEmptyView(emptyView);
-        mHomeWorkList = new ArrayList<LeaveMessage>();
+        mHomeWorkList = new ArrayList<InnerMessage>();
         mHomeWorkAdapter = new HomeWorkAdapter(InnerMessageActivity.this, mHomeWorkList);
         loadingImageView = (ImageView) findViewById(R.id.loading_message_image);
         loadingImageView.setBackgroundResource(R.drawable.loading_howework_animation);
@@ -285,9 +279,9 @@ public class InnerMessageActivity extends Activity {
                 mHomeWorkList.get(arg2 - 1).isRead = 1;
                 Log.i(TAG, "id " + id);
                 Intent intent = new Intent(InnerMessageActivity.this, InnnerMessageDetailActivity.class);
-                intent.putExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID, id);
-                intent.putExtra(LeaveMessageEntry.COLUMN_NAME_DATE, mHomeWorkList.get(arg2 - 1).date);
-                intent.putExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT, mHomeWorkList.get(arg2 - 1).content);
+                intent.putExtra(InnerMessageEntry.COLUMN_NAME_ENTRY_ID, id);
+                intent.putExtra(InnerMessageEntry.COLUMN_NAME_DATE, mHomeWorkList.get(arg2 - 1).date);
+                intent.putExtra(InnerMessageEntry.COLUMN_NAME_CONTENT, mHomeWorkList.get(arg2 - 1).content);
                 startActivity(intent);
             }
 
@@ -308,7 +302,6 @@ public class InnerMessageActivity extends Activity {
                 loadingImageView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 loadingAnimation.start();
-                TeacherInfo teacherInfo = (TeacherInfo) curretUserInfo;
                 
 // responseMessage.body = RestClient.getHomeWorks(curretUserInfo.id,curretUserInfo.ticket, curretUserInfo.roleType.toString(), info.toString(),curretPage, pageCount);
  //GetHomeWorTask(String userId,String sOrR,String startTime,String endTime,String roleId,String page,String rows)
@@ -376,10 +369,10 @@ public class InnerMessageActivity extends Activity {
     class HomeWorkAdapter extends BaseAdapter {
 
         private Context context;
-        private ArrayList<LeaveMessage> homeWorkList;
+        private ArrayList<InnerMessage> homeWorkList;
         private LayoutInflater inflater;
 
-        private HomeWorkAdapter(Context context, ArrayList<LeaveMessage> homeWorkList) {
+        private HomeWorkAdapter(Context context, ArrayList<InnerMessage> homeWorkList) {
 
             this.context = context;
             inflater = LayoutInflater.from(context);
@@ -512,6 +505,7 @@ public class InnerMessageActivity extends Activity {
         protected ResponseMessage doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
             ++curretPage;
+            Log.i(TAG, "GetInnerMessageTask()");
             Log.i(TAG, "totalCount " + totalCount);
             Log.i(TAG, "toatlPage " + toatlPage);
             Log.i(TAG, "curretCount " + curretCount);
@@ -560,22 +554,22 @@ public class InnerMessageActivity extends Activity {
 
                     
                     try {
-                      ArrayList<LeaveMessage>  leaveMessageoList  = JSONParser.praseLeaveMessage(responseMessage.body);
+                      ArrayList<InnerMessage>  innerMessageoList  = JSONParser.praseInnerMessage(responseMessage.body);
 
-                        if (leaveMessageoList != null && leaveMessageoList.size() > 0) {
+                        if (innerMessageoList != null && innerMessageoList.size() > 0) {
                             
-                            LeaveMessageDao homeWorkDao = new LeaveMessageDao(mXiaoYunTongApplication);
-                            for (LeaveMessage leaveMessage : leaveMessageoList) {
-                                LeaveMessage info1  = homeWorkDao.queryLeaveMessageByID(leaveMessage.messageId);
+                            InnerMessageDao homeWorkDao = new InnerMessageDao(mXiaoYunTongApplication);
+                            for (InnerMessage innerMessage : innerMessageoList) {
+                                InnerMessage info1  = homeWorkDao.queryInnerMessageByID(innerMessage.messageId);
                                 Log.i(TAG, "info1 " + info1);
                                 if(info1 != null){
-                                    leaveMessage.isRead = 1;
+                                	innerMessage.isRead = 1;
                                 }
                                 // Log.i(TAG, "HomeWork insertResult " + insertResult);
                             }
                             homeWorkDao.colseDb();
                             homeWorkDao = null;
-                            mHomeWorkList.addAll(leaveMessageoList);
+                            mHomeWorkList.addAll(innerMessageoList);
 
                         } else {
                             --curretPage;

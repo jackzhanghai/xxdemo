@@ -1,6 +1,7 @@
 package com.dingxi.xiaoyuantong.db;
 
 import com.dingxi.xiaoyuantong.model.AttendanceInfo.AttendanceInfoEntry;
+import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 
 import android.content.Context;
@@ -14,7 +15,7 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 
 	// If you change the database schema, you must increment the database
 	// version.
-	public static final int DATABASE_VERSION = 2;
+	public static final int DATABASE_VERSION = 3;
 	public static final String DATABASE_NAME = "xiaoyuantong.db";
 
 	private static final String TAG = "XiaoyuantongDbHelper";
@@ -80,6 +81,25 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
                     + LeaveMessageEntry.COLUMN_NAME_DATE
                     + " varchar(60),"
                     + LeaveMessageEntry.COLUMN_NAME_IS_READ
+                    + " integer)"
+			        );
+			
+			
+			db.execSQL("CREATE TABLE IF NOT EXISTS "
+                    + InnerMessageEntry.TABLE_NAME
+                    + " (id integer primary key autoincrement, "
+                    + InnerMessageEntry.COLUMN_NAME_ENTRY_ID + " varchar(60) unique, "
+                    + InnerMessageEntry.COLUMN_NAME_CONTENT
+                    + " varchar(60), "
+                    + InnerMessageEntry.COLUMN_NAME_SENDER
+                    + " varchar(60), "
+                    + InnerMessageEntry.COLUMN_NAME_RECEIVER
+                    + " varchar(60), "
+                    + InnerMessageEntry.COLUMN_NAME_STUDENT
+                    + " varchar(60), "
+                    + InnerMessageEntry.COLUMN_NAME_DATE
+                    + " varchar(60),"
+                    + InnerMessageEntry.COLUMN_NAME_IS_READ
                     + " integer)"
 			        );
 			

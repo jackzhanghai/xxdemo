@@ -20,6 +20,7 @@ import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.ClassInfo;
 import com.dingxi.xiaoyuantong.model.GradeInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
+import com.dingxi.xiaoyuantong.model.InnerMessage;
 import com.dingxi.xiaoyuantong.model.LeaveMessage;
 import com.dingxi.xiaoyuantong.model.LocationInfo;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
@@ -513,6 +514,37 @@ public class JSONParser {
         return mLeaveMessageList;
 
     }
+
+	public static ArrayList<InnerMessage> praseInnerMessage(String body) throws JSONException {
+		 ArrayList<InnerMessage> mLeaveMessageList = new ArrayList<InnerMessage>();
+	        JSONObject jsonObj = new JSONObject(body);
+	       // int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+
+	        if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
+	            JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
+
+	            for (int i = 0; i < data.length(); i++) {
+	                JSONObject obj = (JSONObject) data.get(i);
+	               // {"content":"dasgdag","sender":"张三4","id":"402880e64603f5eb014603f734a40001","receiver":"张老师","student":"","date":"2014-05-16 15:37:50"},
+	                InnerMessage leaveMessage = new InnerMessage();
+
+	                
+	                leaveMessage.content= obj.getString("content");
+	                leaveMessage.sender= obj.getString("sender");
+	                //leaveMessage.messageId= obj.getString("id");
+	                leaveMessage.receiver= obj.getString("receiver");
+	                //leaveMessage.student= obj.getString("student");
+	                leaveMessage.date= obj.getString("date");
+
+	                
+	                mLeaveMessageList.add(leaveMessage);
+	            }
+	            if (mLeaveMessageList.size() > 0) {
+
+	            }
+	        }
+	        return mLeaveMessageList;
+	}
 	
 //    private void praseMessageInfos(String homeWorksInfo) throws JSONException {
 //        // TODO Auto-generated method stub

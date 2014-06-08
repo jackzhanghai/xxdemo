@@ -1,12 +1,10 @@
 package com.dingxi.xiaoyuantong.network;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
@@ -31,11 +29,13 @@ public class RestClient {
    // http://htht.nat123.net/M-School/phoneService.ws
    //http://skylm1234.nat123.net/M-School/messageService.ws
     //http://skylm1234.nat123.net/M-School/messageService.ws
-   private static String baseUrl = "http://skylm1234.nat123.net/M-School/";
-   //private static String baseUrl = "http://114.215.170.121/M-School/";
+   //private static String baseUrl = "http://skylm1234.nat123.net/M-School/";
+   private static String baseUrl = "http://114.215.170.121/M-School/";
     
    private static String phoneServicePoint = baseUrl + "phoneService.ws";
    private static String messageServicePoint = baseUrl + "messageService.ws";
+   private static String innerServicePoint = baseUrl + "innerMessageService.ws";
+   
 
     public static String getAllSchool() throws IOException, XmlPullParserException {
 
@@ -850,7 +850,7 @@ public class RestClient {
 
         envelope.bodyOut = rpc;
 
-        HttpTransportSE transport = new HttpTransportSE(messageServicePoint);
+        HttpTransportSE transport = new HttpTransportSE(innerServicePoint);
 
         transport.call(soapAction, envelope);
         
@@ -898,7 +898,7 @@ public class RestClient {
 
         envelope.bodyOut = rpc;
 
-        HttpTransportSE transport = new HttpTransportSE(messageServicePoint);
+        HttpTransportSE transport = new HttpTransportSE(innerServicePoint);
 
         transport.call(soapAction, envelope);
         

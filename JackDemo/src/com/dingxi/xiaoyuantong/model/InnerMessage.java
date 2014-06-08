@@ -4,20 +4,22 @@ import android.provider.BaseColumns;
 
 public class InnerMessage {
     
-    public static abstract class HomeWorkEntry implements BaseColumns {
-        public static final String TABLE_NAME = "home_work";
-        public static final String COLUMN_NAME_ENTRY_ID = "hid";
+	public String content;
+    public String sender;
+    public String messageId;
+    public String receiver;
+    public String student;
+    public String date;
+    public int isRead;
+	
+    public static abstract class InnerMessageEntry implements BaseColumns {
+    	public static final String TABLE_NAME = "inner_message";
+        public static final String COLUMN_NAME_ENTRY_ID = "lid";
         public static final String COLUMN_NAME_CONTENT = "content";
-        public static final String COLUMN_NAME_OPT_TIME = "optTime";
-        public static final String COLUMN_NAME_GRADE_ID = "fkGradeId";
-        public static final String COLUMN_NAME_STATUS = "status";
-        public static final String COLUMN_NAME_CLASS_ID = "fkClassId";
-        public static final String COLUMN_NAME_SUBJECT_ID = "fkSubjectId";
-        public static final String COLUMN_NAME_SMS_TYPE = "smsType";
-        public static final String COLUMN_NAME_SCHOOL_ID = "fkSchoolId";
-        public static final String COLUMN_NAME_CLASS_NAME = "className";
-        public static final String COLUMN_NAME_SEND_TYPE = "sendType";
-        public static final String COLUMN_NAME_STUDDENT_ID = "fkStudentId";
+        public static final String COLUMN_NAME_SENDER = "sender";
+        public static final String COLUMN_NAME_RECEIVER = "receiver";
+        public static final String COLUMN_NAME_STUDENT = "student";
+        public static final String COLUMN_NAME_DATE = "date";
         public static final String COLUMN_NAME_IS_READ = "is_read";
         public static final String COLUMN_NAME_NULLABLE = null;
 

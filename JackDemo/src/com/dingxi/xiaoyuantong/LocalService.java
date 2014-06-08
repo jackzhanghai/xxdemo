@@ -36,9 +36,11 @@ import android.util.Log;
 import com.dingxi.xiaoyuantong.HomePageActivity.RollTextThread;
 import com.dingxi.xiaoyuantong.dao.CampusNoticeDao;
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
+import com.dingxi.xiaoyuantong.dao.InnerMessageDao;
 import com.dingxi.xiaoyuantong.dao.LeaveMessageDao;
 import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
+import com.dingxi.xiaoyuantong.model.InnerMessage;
 import com.dingxi.xiaoyuantong.model.LeaveMessage;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
@@ -75,6 +77,7 @@ public class LocalService extends Service {
     private final IBinder mBinder = new LocalBinder();
     private XiaoYunTongApplication mXiaoYunTongApplication;
     private UserInfo userInfo;
+    private boolean isStop = false;
 
     /**
      * Class for clients to access.  Because we know this service always
@@ -99,6 +102,7 @@ public class LocalService extends Service {
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+    	Log.d(TAG, "LocalService start()");
         Log.i("LocalService", "Received start id " + startId + ": " + intent);
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
@@ -112,7 +116,12 @@ public class LocalService extends Service {
 
     @Override
     public void onDestroy() {
-        // Cancel the persistent notification.
+    	Log.d(TAG, "LocalService stop()");
+    	isStop = true;
+    	if(rollTextThread !=null && rollTextThread.isAlive()){
+    		
+    		rollTextThread.interrupt();
+    	}
 
     }
 
@@ -175,71 +184,105 @@ public class LocalService extends Service {
             Log.d(TAG, " HomeWorks info.toString() " + info.toString());
             
             
-            try {
-                responseMessage = new ResponseMessage();
-                responseMessage.body = RestClient.getHomeWorks(mXiaoYunTongApplication.userInfo.id,
-                        mXiaoYunTongApplication.userInfo.ticket, userInfo.roleType.toString(),
-                        info.toString(), 1, 5);
-                responseMessage.praseBody();
+            while(!isStop){
+            	
+            	try {
+                    Thread.sleep(50000);
+                } catch (InterruptedException e) {
+                    
+                    // TODO Auto-generated catch block
+                	
+                    e.printStackTrace();
+                    break;
+                }
                 
-                if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-                         ArrayList<HomeWorkInfo> homeWorkInfoList = JSONParser
-                                 .praseHomeWorks(responseMessage.body);
-                         if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
-                             HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
-                             for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
-                                 HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
-                                 Log.i(TAG, "info1 " + info1);
-                                 if(info1 == null){
-                                     //homeWorkTotal += 1;
+                try {
+                    responseMessage = new ResponseMessage();
+                    responseMessage.body = RestClient.getHomeWorks(mXiaoYunTongApplication.userInfo.id,
+                            mXiaoYunTongApplication.userInfo.ticket, userInfo.roleType.toString(),
+                            info.toString(), 1, 5);
+                    responseMessage.praseBody();
+                    
+                    if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
+                             ArrayList<HomeWorkInfo> homeWorkInfoList = JSONParser
+                                     .praseHomeWorks(responseMessage.body);
+                             if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
+                                 HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+                                 for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
+                                     HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
+                                     Log.i(TAG, "info1 " + info1);
+                                     if(info1 == null){
+                                         //homeWorkTotal += 1;
+                                     }
+                                     //Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
+//                                     long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
+//                                     Log.i(TAG, "HomeWork insertResult " + insertResult);
                                  }
-                                 //Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
-//                                 long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
-//                                 Log.i(TAG, "HomeWork insertResult " + insertResult);
+                                 homeWorkDao.colseDb();
+                                 homeWorkDao = null;
                              }
-                             homeWorkDao.colseDb();
-                             homeWorkDao = null;
-                         }
-                 }
-                
-                Log.i(TAG, "HomeWorks response  " + responseMessage.body);
-                
-            } catch (ConnectTimeoutException stex) {
-                responseMessage.message = getString(R.string.request_time_out);
-            } catch (SocketTimeoutException stex) {
-                responseMessage.message = getString(R.string.server_time_out);
-            } catch (HttpHostConnectException hhce) {
-                responseMessage.message = getString(R.string.connection_server_error);
-            } catch (JSONException e) {
-                responseMessage.message = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                responseMessage.message = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (IOException e) {
-                responseMessage.message = getString(R.string.connection_error);
-                e.printStackTrace();
-            }
-           
+                     }
+                    
+                    Log.i(TAG, "HomeWorks response  " + responseMessage.body);
+                    
+                } catch (Exception e) {
+                	
+                	 e.printStackTrace();
+                	Log.e(TAG, "getHomeWorks "+ e.getMessage());
+  
+                }
+               
 
-            responseMessage = null;
-            
-            try {
-                responseMessage = new ResponseMessage();
-                responseMessage.body = RestClient.getMessageInfos(
-                        mXiaoYunTongApplication.userInfo.id,
-                        mXiaoYunTongApplication.userInfo.ticket, userInfo.roleType.toString(),
-                        info.toString(), 1, 5);
-                Log.i(TAG, "MessageInfos response  " + responseMessage.body);
-                responseMessage.praseBody();
-                if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-                        ArrayList<CampusNotice> campusNoticeList = JSONParser
-                                .praseCampusNotice(responseMessage.body);
+                responseMessage = null;
+                
+                try {
+                    responseMessage = new ResponseMessage();
+                    responseMessage.body = RestClient.getMessageInfos(
+                            mXiaoYunTongApplication.userInfo.id,
+                            mXiaoYunTongApplication.userInfo.ticket, userInfo.roleType.toString(),
+                            info.toString(), 1, 5);
+                    Log.i(TAG, "MessageInfos response  " + responseMessage.body);
+                    responseMessage.praseBody();
+                    if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
+                            ArrayList<CampusNotice> campusNoticeList = JSONParser
+                                    .praseCampusNotice(responseMessage.body);
 
+                            if (campusNoticeList != null && campusNoticeList.size() > 0) {
+                                CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
+                                for (CampusNotice campusNotice : campusNoticeList) {                          
+                                    CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
+                                    Log.i(TAG, "campus " + campus);
+                                    if(campus==null){
+                                        
+                                        //campusNotieTotal += 1;
+                                        //campusNoticeLists.add(0, campusNotice);
+                                    }
+                                    //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
+                                }
+                                campusNoticeDao.colseDb();
+                                campusNoticeDao = null;
+                            };
+                    }
+
+                } catch (Exception e) {
+                	 e.printStackTrace();
+                 	Log.e(TAG, "etMessageInfos "+ e.getMessage());
+                }
+                
+                responseMessage = null;
+                
+                try {
+                    responseMessage = new ResponseMessage();
+                    responseMessage.body = RestClient.getLeaveMessages(mXiaoYunTongApplication.userInfo.id, "1", "", "", mXiaoYunTongApplication.userInfo.roleType.toString(), "1", "6");
+                    Log.i(TAG, "LeaveMessages response  " + responseMessage.body);
+                    responseMessage.praseBody();
+                    if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
+                        ArrayList<LeaveMessage> campusNoticeList = JSONParser
+                                .praseLeaveMessage(responseMessage.body);
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                            CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
-                            for (CampusNotice campusNotice : campusNoticeList) {                          
-                                CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
+                            LeaveMessageDao campusNoticeDao = new LeaveMessageDao(mXiaoYunTongApplication);
+                            for (LeaveMessage leaveMessage : campusNoticeList) {                          
+                                LeaveMessage campus = campusNoticeDao.queryLeaveMessageByID(leaveMessage.messageId);
                                 Log.i(TAG, "campus " + campus);
                                 if(campus==null){
                                     
@@ -251,99 +294,51 @@ public class LocalService extends Service {
                             campusNoticeDao.colseDb();
                             campusNoticeDao = null;
                         };
-                }
-
-            } catch (ConnectTimeoutException stex) {
-                responseMessage.message = getString(R.string.request_time_out);
-            } catch (SocketTimeoutException stex) {
-                responseMessage.message = getString(R.string.server_time_out);
-            } catch (HttpHostConnectException hhce) {
-                responseMessage.message = getString(R.string.connection_server_error);
-            } catch (JSONException e) {
-                responseMessage.message = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                responseMessage.message = getString(R.string.connection_error);
-                e.printStackTrace();
-            } catch (IOException e) {
-                responseMessage.message = getString(R.string.connection_error);
-                e.printStackTrace();
-            }
-            
-            responseMessage = null;
-            
-            try {
-                responseMessage = new ResponseMessage();
-                responseMessage.body = RestClient.getInnerMessages(mXiaoYunTongApplication.userInfo.id, "1", "", "", "1", "6");
-                responseMessage.praseBody();
-                if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-                    ArrayList<LeaveMessage> campusNoticeList = JSONParser
-                            .praseLeaveMessage(responseMessage.body);
-                    if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                        LeaveMessageDao campusNoticeDao = new LeaveMessageDao(mXiaoYunTongApplication);
-                        for (LeaveMessage leaveMessage : campusNoticeList) {                          
-                            LeaveMessage campus = campusNoticeDao.queryLeaveMessageByID(leaveMessage.messageId);
-                            Log.i(TAG, "campus " + campus);
-                            if(campus==null){
-                                
-                                //campusNotieTotal += 1;
-                                //campusNoticeLists.add(0, campusNotice);
-                            }
-                            //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
-                        }
-                        campusNoticeDao.colseDb();
-                        campusNoticeDao = null;
-                    };
+                        
+                    }
                     
-                }
-                
-            } catch (Exception e) {
-                
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-            responseMessage = null;
-            try {
-                responseMessage = new ResponseMessage();
-                responseMessage.body = RestClient.getLeaveMessages(mXiaoYunTongApplication.userInfo.id, "1", "", "", mXiaoYunTongApplication.userInfo.roleType.toString(), "1", "6");
-                responseMessage.praseBody();
-                if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
-                    ArrayList<LeaveMessage> campusNoticeList = JSONParser
-                            .praseLeaveMessage(responseMessage.body);
+                } catch (Exception e) {
                     
-                    if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                        CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
-                        for (CampusNotice campusNotice : campusNoticeList) {                          
-                            CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
-                            Log.i(TAG, "campus " + campus);
-                            if(campus==null){
-                                
-                                //campusNotieTotal += 1;
-                                //campusNoticeLists.add(0, campusNotice);
-                            }
-                            //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
-                        }
-                        campusNoticeDao.colseDb();
-                        campusNoticeDao = null;
-                    };
+                	 e.printStackTrace();
+                 	Log.e(TAG, "getLeaveMessages "+ e.getMessage());
                 }
-            } catch (Exception e) {
                 
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                responseMessage = null;
+                try {
+                    responseMessage = new ResponseMessage();
+                    responseMessage.body = RestClient.getInnerMessages(mXiaoYunTongApplication.userInfo.id, "1", "", "", "1", "6");
+                    //responseMessage.body = RestClient.getLeaveMessages(mXiaoYunTongApplication.userInfo.id, "1", "", "", mXiaoYunTongApplication.userInfo.roleType.toString(), "1", "6");
+                    Log.i(TAG, "InnerMessages response  " + responseMessage.body);
+                    responseMessage.praseBody();
+                    if (responseMessage.code == ResponseMessage.RESULT_TAG_SUCCESS) {
+                        ArrayList<InnerMessage> campusNoticeList = JSONParser
+                                .praseInnerMessage(responseMessage.body);
+                        
+                        if (campusNoticeList != null && campusNoticeList.size() > 0) {
+                        	InnerMessageDao campusNoticeDao = new InnerMessageDao(mXiaoYunTongApplication);
+                            for (InnerMessage campusNotice : campusNoticeList) {                          
+                            	InnerMessage campus = campusNoticeDao.queryInnerMessageByID(campusNotice.messageId);
+                             
+                            	Log.i(TAG, "campus " + campus);
+                                if(campus==null){
+                                    
+                                    //campusNotieTotal += 1;
+                                    //campusNoticeLists.add(0, campusNotice);
+                                }
+                                //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
+                            }
+                            campusNoticeDao.colseDb();
+                            campusNoticeDao = null;
+                        };
+                    }
+                } catch (Exception e) {
+                	 e.printStackTrace();
+                  	Log.e(TAG, "getInnerMessages "+ e.getMessage());
+                }
             }
+                  
             
             
-            
-            
-            try {
-                Thread.sleep(50000);
-            } catch (InterruptedException e) {
-                
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
     }
     

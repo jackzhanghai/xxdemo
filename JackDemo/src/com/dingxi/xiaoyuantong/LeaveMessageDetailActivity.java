@@ -3,6 +3,7 @@ package com.dingxi.xiaoyuantong;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,21 +55,22 @@ public class LeaveMessageDetailActivity extends Activity {
         homeWorkTite = (TextView) findViewById(R.id.homework_header);
         homeWorkDate = (TextView) findViewById(R.id.homework_date);
         homeWorkContent = (TextView) findViewById(R.id.homework_content);
-        
+        final String homeWorkID =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID);
+        String optTime =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_DATE);
+        String content = getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT);
         mReplyButton = (Button) findViewById(R.id.reply_button);
         mReplyButton.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                //ReplyLeaveMessageActivity
+            	Intent backIntent = new Intent(LeaveMessageDetailActivity.this,
+            			ReplyLeaveMessageDetailActivity.class);
+            			backIntent.putExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID, homeWorkID);
+				 startActivity(backIntent);
             }
         });
         
         
-       String homeWorkID =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID);
-       String optTime =  getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_DATE);
-       String content = getIntent().getStringExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT);
        LeaveMessageDao  campusNoticeDao = new LeaveMessageDao (
                LeaveMessageDetailActivity.this);
        
@@ -79,7 +81,6 @@ public class LeaveMessageDetailActivity extends Activity {
            homeWorkInfo.messageId = homeWorkID;
            homeWorkInfo.content = content;
            homeWorkInfo.date = optTime;
-          HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
           long insertResult = campusNoticeDao.addLeaveMessage(homeWorkInfo);
           HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
