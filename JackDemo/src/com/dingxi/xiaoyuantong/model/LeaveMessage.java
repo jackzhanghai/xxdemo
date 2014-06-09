@@ -1,5 +1,6 @@
 package com.dingxi.xiaoyuantong.model;
 
+import android.content.ContentValues;
 import android.provider.BaseColumns;
 
 
@@ -28,4 +29,6 @@ public class LeaveMessage {
         public static final String COLUMN_NAME_NULLABLE = null;
 
     }
+
+
 }

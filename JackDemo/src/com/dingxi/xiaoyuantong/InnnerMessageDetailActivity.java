@@ -2,6 +2,7 @@ package com.dingxi.xiaoyuantong;
 
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
 import com.dingxi.xiaoyuantong.dao.InnerMessageDao;
 import com.dingxi.xiaoyuantong.model.InnerMessage;
+import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 
 public class InnnerMessageDetailActivity extends Activity {
@@ -62,8 +64,13 @@ public class InnnerMessageDetailActivity extends Activity {
            homeWorkInfo.content = content;
            homeWorkInfo.date = optTime;
           long insertResult = campusNoticeDao.addInnerMessage(homeWorkInfo);
-          HomePageActivity.homeWorkTotal -= 1;
+
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
+       } else {
+    	   
+    	   ContentValues values = new ContentValues();
+    	   values.put(InnerMessageEntry.COLUMN_NAME_IS_READ, "1");
+    	   campusNoticeDao.updateInnerMessage(values,homeWorkID);
        }
 
        homeWorkTite.setText(R.string.leave_message);

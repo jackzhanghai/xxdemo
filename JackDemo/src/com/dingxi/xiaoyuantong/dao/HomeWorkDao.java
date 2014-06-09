@@ -210,12 +210,9 @@ public class HomeWorkDao {
     public int queryReadOrNotReadCount(int isread) {
 
         int count = 0;
-        // select count(distinct subject) from t where grade = 'xxx';
+ 
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
         String[] projection = { HomeWorkEntry.COLUMN_NAME_ENTRY_ID,
                 HomeWorkEntry.COLUMN_NAME_CONTENT, HomeWorkEntry.COLUMN_NAME_OPT_TIME };
         String selection = HomeWorkEntry.COLUMN_NAME_IS_READ + " = ?";
@@ -249,15 +246,6 @@ public class HomeWorkDao {
         return count;
 
     }
-
-    /* (非 Javadoc) 
-     * <p>Title: queryReadOrNotReadCountHomeWork</p> 
-     * <p>Description: </p> 
-     * @param isread
-     * @return 
-     * @see com.dingxi.xiaoyuantong.dao.PublicDao#queryReadOrNotReadCountHomeWork(int) 
-     */ 
-    
     
 
     public ArrayList<HomeWorkInfo> queryReadOrNotReadCountHomeWork(int isread) {

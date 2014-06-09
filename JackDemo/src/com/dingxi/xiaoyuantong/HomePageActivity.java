@@ -75,9 +75,7 @@ public class HomePageActivity extends Activity {
     private ImageAdapter mImageAdapter;
     private GetAllNoteTask mGetAllNoteTask;
     private GetAllChildTask mGetAllChildTask;
-    public static int homeWorkTotal;
-    public static int campusNotieTotal;
-    private RollTextThread rollTextThread;
+   private RollTextThread rollTextThread;
     GridView gridview;
     private View adsView;
     private TextView rollNoteText;
@@ -90,7 +88,7 @@ public class HomePageActivity extends Activity {
     private Button exitAccountButton;
 
     boolean isFinish = false;
-    boolean isCreate  = false;
+    boolean isFirstStart  = false;
     HomeWorkDao homeWorkDao;
     CampusNoticeDao campusNoticeDao;
     LeaveMessageDao leaveMessageDao;
@@ -178,8 +176,8 @@ public class HomePageActivity extends Activity {
 
                 mImageAdapter = null;
 
-                homeWorkTotal = 0;
-                campusNotieTotal = 0;
+                //homeWorkTotal = 0;
+                //campusNotieTotal = 0;
                 userInfo = null;
                 gridview = null;
                 
@@ -213,8 +211,8 @@ public class HomePageActivity extends Activity {
                 // TODO Auto-generated method stub
                 Log.i(TAG, "mStudentList position " + position + " id " + id);
 
-                homeWorkTotal = 0;
-                campusNotieTotal = 0;
+               // homeWorkTotal = 0;
+                //campusNotieTotal = 0;
                 campusNoticeLists.clear();
                 if(rollTextThread!=null && rollTextThread.isAlive()){
                     rollTextThread.interrupt(); 
@@ -389,9 +387,9 @@ public class HomePageActivity extends Activity {
         super.onStart();
        // mImageAdapter.notifyDataSetChanged();
        
-        if(!isCreate){
+        if(!isFirstStart){
             getNotReadCount();
-            isCreate =  true;
+            isFirstStart =  true;
         }
 
     }
@@ -411,7 +409,7 @@ public class HomePageActivity extends Activity {
             ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
             if (notReadCount > 0) {
                 viewHolder.numberText.setVisibility(View.VISIBLE);
-                viewHolder.numberText.setText(String.valueOf(homeWorkTotal));
+                viewHolder.numberText.setText(String.valueOf(notReadCount));
                 homeWorkView.setBackgroundResource(R.drawable.button_down);
             } else {
                 viewHolder.numberText.setVisibility(View.GONE);
@@ -430,7 +428,7 @@ public class HomePageActivity extends Activity {
             if (notReadCount > 0) {
 
                 convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
+                convertViewHolder.numberText.setText(String.valueOf(notReadCount));
                 campusNoteView.setBackgroundResource(R.drawable.button_down);
             } else {
                 convertViewHolder.numberText.setVisibility(View.GONE);
@@ -459,7 +457,7 @@ public class HomePageActivity extends Activity {
             if (notReadCount > 0) {
 
                 convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
+                convertViewHolder.numberText.setText(String.valueOf(notReadCount));
                 leaveMessageView.setBackgroundResource(R.drawable.button_down);
             } else {
                 convertViewHolder.numberText.setVisibility(View.GONE);
@@ -486,7 +484,7 @@ public class HomePageActivity extends Activity {
             if (notReadCount > 0) {
 
                 convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
+                convertViewHolder.numberText.setText(String.valueOf(notReadCount));
                 innerMeassageView.setBackgroundResource(R.drawable.button_down);
             } else {
                 convertViewHolder.numberText.setVisibility(View.GONE);
@@ -599,6 +597,7 @@ public class HomePageActivity extends Activity {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
+            /*
             if (homeWorkTotal > 0 && position == 0) {
 
                 viewHolder.numberText.setVisibility(View.VISIBLE);
@@ -620,6 +619,8 @@ public class HomePageActivity extends Activity {
                 convertView.setBackgroundResource(R.drawable.button_ordinary);
                 viewHolder.numberText.setVisibility(View.GONE);
             }
+            
+            */
 
             if (userInfo.roleType == UserType.ROLE_PARENT) {
                 viewHolder.title.setText(parentTitles[position]);
@@ -802,11 +803,11 @@ public class HomePageActivity extends Activity {
                                 HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
                                 Log.i(TAG, "info1 " + info1);
                                 if(info1 == null){
-                                    homeWorkTotal += 1;
+                                   // homeWorkTotal += 1;
                                   long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
                                   Log.i(TAG, "HomeWork insertResult " + insertResult);
                                 }
-                                Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
+                               // Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
 
                             }
                             //homeWorkDao.colseDb();
@@ -854,12 +855,12 @@ public class HomePageActivity extends Activity {
                                 if(campus==null){
                                     
                                     
-                                    campusNotieTotal += 1;
+                                    //campusNotieTotal += 1;
                                     campusNoticeLists.add(0, campusNotice);
                                     long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
                                     Log.i(TAG, "HomeWork insertResult " + insertResult);
                                 }
-                                Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
+                               // Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                             }
 
                         };
@@ -953,8 +954,8 @@ public class HomePageActivity extends Activity {
         @Override
         protected void onPostExecute(ResponseMessage ResponseMessage) {
             mGetAllNoteTask = null;
-            Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
-            Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
+            //Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
+            //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
             Log.i(TAG, "campusNoticeContentList.size() " + campusNoticeLists.size());
            
             if (campusNoticeLists != null && campusNoticeLists.size() > 0) {

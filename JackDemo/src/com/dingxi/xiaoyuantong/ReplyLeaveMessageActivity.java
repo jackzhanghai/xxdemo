@@ -64,7 +64,6 @@ public class ReplyLeaveMessageActivity extends Activity {
            homeWorkInfo.optTime = optTime;
            HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
           long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
-          HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
        }
 

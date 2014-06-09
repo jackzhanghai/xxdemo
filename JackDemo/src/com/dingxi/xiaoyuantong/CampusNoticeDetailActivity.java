@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.dingxi.xiaoyuantong.dao.CampusNoticeDao;
 import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
+import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 import com.dingxi.xiaoyuantong.model.UserInfo;
 
 public class CampusNoticeDetailActivity extends Activity {
@@ -81,8 +82,12 @@ public class CampusNoticeDetailActivity extends Activity {
            campusNotice.content = content;
            campusNotice.optTime = optTime;
            long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
-           HomePageActivity.campusNotieTotal -=1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);  
+       } else {
+    	   
+    	   ContentValues values = new ContentValues();
+    	   values.put(CampusNoticeEntry.COLUMN_NAME_IS_READ, "1");
+    	   campusNoticeDao.updateLeaveMessage(values,noticeID);
        }
        
       

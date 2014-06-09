@@ -196,5 +196,19 @@ public class InnerMessageDao {
         return count;
     }
 
+	public int updateInnerMessage(ContentValues values, String rowId) {
+		// TODO Auto-generated method stub
+		 SQLiteDatabase db = mDbHelper.getReadableDatabase();
+	        String selection = InnerMessageEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+	        String[] selectionArgs = { rowId };
+
+	        int count = db.update(InnerMessageEntry.TABLE_NAME, values, selection, selectionArgs);
+
+	        if (db != null) {
+	            db.close();
+	        }
+	        return count;
+	}
+
 
 }

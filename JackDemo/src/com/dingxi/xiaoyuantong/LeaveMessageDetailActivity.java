@@ -82,8 +82,14 @@ public class LeaveMessageDetailActivity extends Activity {
            homeWorkInfo.content = content;
            homeWorkInfo.date = optTime;
           long insertResult = campusNoticeDao.addLeaveMessage(homeWorkInfo);
-          HomePageActivity.homeWorkTotal -= 1;
+          //HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
+       } else {
+    	   
+
+    	   ContentValues values = new ContentValues();
+    	   values.put(LeaveMessageEntry.COLUMN_NAME_IS_READ, "1");
+    	   campusNoticeDao.updateLeaveMessage(values,homeWorkID);
        }
 
        homeWorkTite.setText(R.string.leave_message);

@@ -13,6 +13,7 @@ import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
 import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
+import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 
 public class CampusNoticeDao {
 
@@ -321,5 +322,19 @@ public class CampusNoticeDao {
 	            db.close();
 	        }
 		return campusNotices;
+	}
+
+	public int updateLeaveMessage(ContentValues values, String noticeID) {
+		// TODO Auto-generated method stub
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String selection = CampusNoticeEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+        String[] selectionArgs = { noticeID };
+
+        int count = db.update(CampusNoticeEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        if (db != null) {
+            db.close();
+        }
+        return count;
 	}
 }

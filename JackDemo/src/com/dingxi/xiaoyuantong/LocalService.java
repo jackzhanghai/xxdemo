@@ -16,24 +16,15 @@
 
 package com.dingxi.xiaoyuantong;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.HttpHostConnectException;
-import org.json.JSONException;
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
-import com.dingxi.xiaoyuantong.HomePageActivity.RollTextThread;
 import com.dingxi.xiaoyuantong.dao.CampusNoticeDao;
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
 import com.dingxi.xiaoyuantong.dao.InnerMessageDao;
@@ -79,6 +70,10 @@ public class LocalService extends Service {
     private UserInfo userInfo;
     private boolean isStop = false;
 
+    HomeWorkDao homeWorkDao;
+    CampusNoticeDao campusNoticeDao;
+    LeaveMessageDao leaveMessageDao;
+    InnerMessageDao innerMessageDao;
     /**
      * Class for clients to access.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with
@@ -95,6 +90,10 @@ public class LocalService extends Service {
   
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
         userInfo = mXiaoYunTongApplication.userInfo;
+        homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+        campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
+        leaveMessageDao = new LeaveMessageDao(mXiaoYunTongApplication);
+        innerMessageDao = new InnerMessageDao(mXiaoYunTongApplication);
        
        
     }
@@ -207,12 +206,13 @@ public class LocalService extends Service {
                              ArrayList<HomeWorkInfo> homeWorkInfoList = JSONParser
                                      .praseHomeWorks(responseMessage.body);
                              if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
-                                 HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+                               homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
                                  for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
                                      HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
                                      Log.i(TAG, "info1 " + info1);
                                      if(info1 == null){
                                          //homeWorkTotal += 1;
+                                    	 long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
                                      }
                                      //Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
 //                                     long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
@@ -248,11 +248,11 @@ public class LocalService extends Service {
                                     .praseCampusNotice(responseMessage.body);
 
                             if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                                CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
+                               campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
                                 for (CampusNotice campusNotice : campusNoticeList) {                          
                                     CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
                                     if(campus==null){
-                                        
+                                    	 long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
                                         //campusNotieTotal += 1;
                                         //campusNoticeLists.add(0, campusNotice);
                                     }
@@ -279,18 +279,18 @@ public class LocalService extends Service {
                         ArrayList<LeaveMessage> campusNoticeList = JSONParser
                                 .praseLeaveMessage(responseMessage.body);
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                            LeaveMessageDao campusNoticeDao = new LeaveMessageDao(mXiaoYunTongApplication);
+                        	leaveMessageDao = new LeaveMessageDao(mXiaoYunTongApplication);
                             for (LeaveMessage leaveMessage : campusNoticeList) {                          
-                                LeaveMessage campus = campusNoticeDao.queryLeaveMessageByID(leaveMessage.messageId);
+                                LeaveMessage campus = leaveMessageDao.queryLeaveMessageByID(leaveMessage.messageId);
                                 if(campus==null){
-                                    
+                                	 long insertResult = leaveMessageDao.addLeaveMessage(leaveMessage);
                                     //campusNotieTotal += 1;
                                     //campusNoticeLists.add(0, campusNotice);
                                 }
                                 //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                             }
-                            campusNoticeDao.colseDb();
-                            campusNoticeDao = null;
+                            leaveMessageDao.colseDb();
+                            leaveMessageDao = null;
                         };
                         
                     }
@@ -313,18 +313,19 @@ public class LocalService extends Service {
                                 .praseInnerMessage(responseMessage.body);
                         
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                        	InnerMessageDao campusNoticeDao = new InnerMessageDao(mXiaoYunTongApplication);
-                            for (InnerMessage campusNotice : campusNoticeList) {                          
-                            	InnerMessage campus = campusNoticeDao.queryInnerMessageByID(campusNotice.messageId);
+                        	innerMessageDao = new InnerMessageDao(mXiaoYunTongApplication);
+                            for (InnerMessage innerMessage : campusNoticeList) {                          
+                            	InnerMessage campus = innerMessageDao.queryInnerMessageByID(innerMessage.messageId);
                                 if(campus==null){
-                                    
+
+                                	 long insertResult = innerMessageDao.addInnerMessage(innerMessage);
                                     //campusNotieTotal += 1;
                                     //campusNoticeLists.add(0, campusNotice);
                                 }
                                 //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                             }
-                            campusNoticeDao.colseDb();
-                            campusNoticeDao = null;
+                            innerMessageDao.colseDb();
+                            innerMessageDao = null;
                         };
                     }
                 } catch (Exception e) {

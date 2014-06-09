@@ -154,13 +154,7 @@ public class RestClient {
         if (envelope.getResponse() != null) {
 
             SoapObject object = (SoapObject) envelope.bodyIn;
-            int count = object.getPropertyCount();
-            Log.i(TAG, "PropertyCount " + count);
-            for (int i = 0; i < count; i++) {
 
-                String property = object.getProperty(i).toString();
-                Log.i(TAG, "requestData property " + property);
-            }
             result = object.getProperty(0).toString();
         }
         Log.i(TAG, "modifyPwd result " + result);

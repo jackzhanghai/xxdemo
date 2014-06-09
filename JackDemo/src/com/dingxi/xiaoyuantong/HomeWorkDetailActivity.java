@@ -55,20 +55,26 @@ public class HomeWorkDetailActivity extends Activity {
        String homeWorkID =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID);
        String optTime =  getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_OPT_TIME);
        String content = getIntent().getStringExtra(HomeWorkEntry.COLUMN_NAME_CONTENT);
-       HomeWorkDao campusNoticeDao = new HomeWorkDao(
+       HomeWorkDao homeWorkDao = new HomeWorkDao(
                HomeWorkDetailActivity.this);
        
-       HomeWorkInfo homeWorkInfo = campusNoticeDao.queryHomeWorkByID(homeWorkID);
+       HomeWorkInfo homeWorkInfo = homeWorkDao.queryHomeWorkByID(homeWorkID);
        if(homeWorkInfo == null){
 
            homeWorkInfo =  new HomeWorkInfo();
            homeWorkInfo.id = homeWorkID;
            homeWorkInfo.content = content;
            homeWorkInfo.optTime = optTime;
-           HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+           //HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
           long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
-          HomePageActivity.homeWorkTotal -= 1;
+         // HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
+       } else {
+    	   
+    	   ContentValues values = new ContentValues();
+    	   values.put(HomeWorkEntry.COLUMN_NAME_IS_READ, "1");
+    	   homeWorkDao.updateHomeWorkById(values, homeWorkID);
+    	   
        }
 
        homeWorkTite.setText(R.string.home_work);

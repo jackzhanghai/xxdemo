@@ -9,6 +9,7 @@ import android.util.Log;
 import com.dingxi.xiaoyuantong.db.XiaoyuantongDbHelper;
 import com.dingxi.xiaoyuantong.model.LeaveMessage;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
+import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 
 
@@ -198,4 +199,18 @@ public class LeaveMessageDao {
         Log.i(TAG, "ReadOrNotReadCount " + count);
         return count;
     }
+
+	public int updateLeaveMessage(ContentValues values, String rowId) {
+		// TODO Auto-generated method stub
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String selection = LeaveMessageEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+        String[] selectionArgs = { rowId };
+
+        int count = db.update(LeaveMessageEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        if (db != null) {
+            db.close();
+        }
+        return count;
+	}
 }
