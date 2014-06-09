@@ -20,8 +20,6 @@ public class InnnerMessageDetailActivity extends Activity {
     private View parentHeader;
     private ImageButton mBackButton;
     private XiaoYunTongApplication mXiaoYunTongApplication;
-    //private HomeWorkInfo curretHomeWorkInfo;
-    //private HomeWorkDao curretHomeDao;
     private TextView homeWorkTite;
     private TextView homeWorkDate;
     private TextView homeWorkContent;

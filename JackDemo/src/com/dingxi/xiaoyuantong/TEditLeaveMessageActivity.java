@@ -150,7 +150,7 @@ public class TEditLeaveMessageActivity extends Activity implements OnClickListen
 						mProgressDialog
 								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						mProgressDialog
-								.setMessage(getString(R.string.now_adding_homework));
+								.setMessage(getString(R.string.now_adding_leave_message));
 						mProgressDialog.setOnCancelListener(new OnCancelListener() {
 
 							@Override

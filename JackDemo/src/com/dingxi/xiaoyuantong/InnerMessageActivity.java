@@ -411,8 +411,8 @@ public class InnerMessageActivity extends Activity {
                 viewHolder.headerText = (TextView) convertView.findViewById(R.id.message_header);
                 viewHolder.isRead = (TextView) convertView.findViewById(R.id.is_read);
                 viewHolder.bodyText = (TextView) convertView.findViewById(R.id.message_body);
-                viewHolder.sendTime = (TextView) convertView.findViewById(R.id.send_time);
-                viewHolder.sendName = (TextView) convertView.findViewById(R.id.send_name);
+                viewHolder.sendTime = (TextView) convertView.findViewById(R.id.send_name);
+                viewHolder.sendName = (TextView) convertView.findViewById(R.id.revceiver_name);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (HomeWorkHolder) convertView.getTag();
@@ -463,6 +463,8 @@ public class InnerMessageActivity extends Activity {
                 String mStartData = searchBundle.getString("mStartData");
                 String mEndData = searchBundle.getString("mEndData");
 
+                
+                
                 mHomeWorkAdapter.notifyDataSetChanged();
 
                 loadingImageView.setVisibility(View.VISIBLE);
@@ -561,7 +563,6 @@ public class InnerMessageActivity extends Activity {
                             InnerMessageDao homeWorkDao = new InnerMessageDao(mXiaoYunTongApplication);
                             for (InnerMessage innerMessage : innerMessageoList) {
                                 InnerMessage info1  = homeWorkDao.queryInnerMessageByID(innerMessage.messageId);
-                                Log.i(TAG, "info1 " + info1);
                                 if(info1 != null){
                                 	innerMessage.isRead = 1;
                                 }

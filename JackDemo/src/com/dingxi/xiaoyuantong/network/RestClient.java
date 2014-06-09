@@ -29,8 +29,8 @@ public class RestClient {
    // http://htht.nat123.net/M-School/phoneService.ws
    //http://skylm1234.nat123.net/M-School/messageService.ws
     //http://skylm1234.nat123.net/M-School/messageService.ws
-   //private static String baseUrl = "http://skylm1234.nat123.net/M-School/";
-   private static String baseUrl = "http://114.215.170.121/M-School/";
+   private static String baseUrl = "http://skylm1234.nat123.net/M-School/";
+   //private static String baseUrl = "http://114.215.170.121/M-School/";
     
    private static String phoneServicePoint = baseUrl + "phoneService.ws";
    private static String messageServicePoint = baseUrl + "messageService.ws";
@@ -877,20 +877,19 @@ public class RestClient {
 
         
         Log.i(TAG, "getInnerMessages()");
-        Log.i(TAG, "userId " + userId);
-        Log.i(TAG, "sOrR " + sOrR);//sOrR
-        Log.i(TAG, "startTime " + startTime);
-        Log.i(TAG, "endTime " + endTime);
-        Log.i(TAG, "page " + page);
-        Log.i(TAG, "rows " + rows);
         SoapObject rpc = new SoapObject(nameSpace,"getInnerMessages");
         
+        
+        
+        Log.i(TAG, "userId" + userId);
+        
+        
         rpc.addProperty("userId", userId);
-        rpc.addProperty("sOrR", "0");//sOrR
-        rpc.addProperty("startTime", "");
-        rpc.addProperty("endTime", "");
-        rpc.addProperty("page", "1");
-        rpc.addProperty("rows", "5");
+        rpc.addProperty("sOrR", sOrR);//sOrR
+        rpc.addProperty("startTime", startTime);
+        rpc.addProperty("endTime", endTime);
+        rpc.addProperty("page", page);
+        rpc.addProperty("rows", rows);
 
         String soapAction = nameSpace + "/" + "getInnerMessages";
 

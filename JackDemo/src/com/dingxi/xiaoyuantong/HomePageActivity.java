@@ -314,12 +314,9 @@ public class HomePageActivity extends Activity {
                             }
                             
                         } 
-					} else {
-						
+					} else {		
 						 Toast.makeText(HomePageActivity.this, R.string.not_network, Toast.LENGTH_SHORT).show();
 					}
-                	
-                    
                     
                 }
 
@@ -377,18 +374,8 @@ public class HomePageActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "onResume()");
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
-        Log.i(TAG, "OnStart()");
-        Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
-        Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
-
        // mImageAdapter.notifyDataSetChanged();
        
 
@@ -404,7 +391,6 @@ public class HomePageActivity extends Activity {
 
             ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
             if (homeWorkTotal > 0) {
-
                 viewHolder.numberText.setVisibility(View.VISIBLE);
                 viewHolder.numberText.setText(String.valueOf(homeWorkTotal));
                 homeWorkView.setBackgroundResource(R.drawable.button_down);
@@ -412,21 +398,20 @@ public class HomePageActivity extends Activity {
                 viewHolder.numberText.setVisibility(View.GONE);
                 homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
             }
-
         }
 
-        View convertView = gridview.getChildAt(1);
-        if (convertView != null) {
+        View campusNoteView = gridview.getChildAt(1);
+        if (campusNoteView != null) {
 
-            ViewHolder convertViewHolder = (ViewHolder) convertView.getTag();
+            ViewHolder convertViewHolder = (ViewHolder) campusNoteView.getTag();
             if (campusNotieTotal > 0) {
 
                 convertViewHolder.numberText.setVisibility(View.VISIBLE);
                 convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
-                convertView.setBackgroundResource(R.drawable.button_down);
+                campusNoteView.setBackgroundResource(R.drawable.button_down);
             } else {
                 convertViewHolder.numberText.setVisibility(View.GONE);
-                convertView.setBackgroundResource(R.drawable.button_ordinary);
+                campusNoteView.setBackgroundResource(R.drawable.button_ordinary);
                 
                 rollTextHandler.sendEmptyMessage(MSG_NO_DATA);
                 campusNoticeLists.clear();

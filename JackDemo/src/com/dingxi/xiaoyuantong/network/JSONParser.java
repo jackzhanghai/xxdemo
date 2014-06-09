@@ -285,7 +285,7 @@ public class JSONParser {
         // TODO Auto-generated method stub
     	ArrayList<HomeWorkInfo> mHomeWorkList = new ArrayList<HomeWorkInfo>();
         JSONObject jsonObj = new JSONObject(homeWorksInfo);
-        int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+       // int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
         if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
             JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
@@ -327,9 +327,9 @@ public class JSONParser {
         try {
             jsonObj = new JSONObject(messageInfos);
             
-            int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
+            //int total = jsonObj.getInt(ResponseMessage.RESULT_TAG_TOTAL);
 
-            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS) && total > 0) {
+            if (jsonObj.has(ResponseMessage.RESULT_TAG_DATAS)) {
                 JSONArray data = jsonObj.getJSONArray(ResponseMessage.RESULT_TAG_DATAS);
                
                 for (int i = 0; i < data.length(); i++) {
@@ -531,7 +531,7 @@ public class JSONParser {
 	                
 	                leaveMessage.content= obj.getString("content");
 	                leaveMessage.sender= obj.getString("sender");
-	                //leaveMessage.messageId= obj.getString("id");
+	                leaveMessage.messageId= obj.getString("id");
 	                leaveMessage.receiver= obj.getString("receiver");
 	                //leaveMessage.student= obj.getString("student");
 	                leaveMessage.date= obj.getString("date");

@@ -66,6 +66,7 @@
         
         <activity
             android:name="com.dingxi.xiaoyuantong.LeaveMessageActivity"
+             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         
@@ -80,9 +81,15 @@
        
           <activity
             android:name="com.dingxi.xiaoyuantong.InnerMessageActivity"
+             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         
+          <activity
+            android:name="com.dingxi.xiaoyuantong.InnnerMessageDetailActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+          
           <activity
             android:name="com.dingxi.xiaoyuantong.TEditLeaveMessageActivity"
             android:theme="@android:style/Theme.NoTitleBar" >

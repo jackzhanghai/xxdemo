@@ -124,6 +124,10 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 		SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + LeaveMessageEntry.TABLE_NAME;
         db.execSQL(SQL_DELETE_ENTRIES);
 		onCreate(db);
+		
+		SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + InnerMessageEntry.TABLE_NAME;
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
 	}
 
 }

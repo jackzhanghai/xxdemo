@@ -251,7 +251,6 @@ public class LocalService extends Service {
                                 CampusNoticeDao campusNoticeDao = new CampusNoticeDao(mXiaoYunTongApplication);
                                 for (CampusNotice campusNotice : campusNoticeList) {                          
                                     CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
-                                    Log.i(TAG, "campus " + campus);
                                     if(campus==null){
                                         
                                         //campusNotieTotal += 1;
@@ -283,7 +282,6 @@ public class LocalService extends Service {
                             LeaveMessageDao campusNoticeDao = new LeaveMessageDao(mXiaoYunTongApplication);
                             for (LeaveMessage leaveMessage : campusNoticeList) {                          
                                 LeaveMessage campus = campusNoticeDao.queryLeaveMessageByID(leaveMessage.messageId);
-                                Log.i(TAG, "campus " + campus);
                                 if(campus==null){
                                     
                                     //campusNotieTotal += 1;
@@ -318,8 +316,6 @@ public class LocalService extends Service {
                         	InnerMessageDao campusNoticeDao = new InnerMessageDao(mXiaoYunTongApplication);
                             for (InnerMessage campusNotice : campusNoticeList) {                          
                             	InnerMessage campus = campusNoticeDao.queryInnerMessageByID(campusNotice.messageId);
-                             
-                            	Log.i(TAG, "campus " + campus);
                                 if(campus==null){
                                     
                                     //campusNotieTotal += 1;
