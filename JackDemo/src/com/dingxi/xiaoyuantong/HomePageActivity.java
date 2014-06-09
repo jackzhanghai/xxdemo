@@ -82,7 +82,6 @@ public class HomePageActivity extends Activity {
     private View adsView;
     private TextView rollNoteText;
     private ArrayList<ChildInfo> mChildInfoList;
-    //private ArrayList<String> campusNoticeContentList;
    private ArrayList<CampusNotice> campusNoticeLists;
    private CampusNotice curretNotice;
     
@@ -91,6 +90,12 @@ public class HomePageActivity extends Activity {
     private Button exitAccountButton;
 
     boolean isFinish = false;
+    boolean isCreate  = false;
+    HomeWorkDao homeWorkDao;
+    CampusNoticeDao campusNoticeDao;
+    LeaveMessageDao leaveMessageDao;
+    InnerMessageDao innerMessageDao;
+    
     private Handler rollTextHandler = new Handler() {
 
         @Override
@@ -322,7 +327,13 @@ public class HomePageActivity extends Activity {
 
             }
         });
-
+        
+        
+        homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+        campusNoticeDao = new CampusNoticeDao(HomePageActivity.this);
+        leaveMessageDao = new LeaveMessageDao(mXiaoYunTongApplication);
+        innerMessageDao = new InnerMessageDao(mXiaoYunTongApplication);
+        
         mProgressDialog = new ProgressDialog(HomePageActivity.this);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         if (userInfo.roleType == UserType.ROLE_PARENT) {
@@ -378,19 +389,27 @@ public class HomePageActivity extends Activity {
         super.onStart();
        // mImageAdapter.notifyDataSetChanged();
        
-
-        getPoPoCount();
+        if(!isCreate){
+            getNotReadCount();
+            isCreate =  true;
+        }
 
     }
     
     
     
-    private void getPoPoCount(){
+    
+    
+    private void getNotReadCount(){
+        
+        int notReadCount = 0;
+        notReadCount =  homeWorkDao.queryReadOrNotReadCount(0);
+        Log.i(TAG, "HomeWork  notReadCount " +notReadCount);
         View homeWorkView = gridview.getChildAt(0);
         if (homeWorkView != null) {
 
             ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
-            if (homeWorkTotal > 0) {
+            if (notReadCount > 0) {
                 viewHolder.numberText.setVisibility(View.VISIBLE);
                 viewHolder.numberText.setText(String.valueOf(homeWorkTotal));
                 homeWorkView.setBackgroundResource(R.drawable.button_down);
@@ -399,12 +418,16 @@ public class HomePageActivity extends Activity {
                 homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
             }
         }
-
+        
+        
+        notReadCount = 0;
+        notReadCount =  campusNoticeDao.queryReadOrNotReadCount(0);
+        Log.i(TAG, "CampusNotice  notReadCount " +notReadCount);
         View campusNoteView = gridview.getChildAt(1);
         if (campusNoteView != null) {
 
             ViewHolder convertViewHolder = (ViewHolder) campusNoteView.getTag();
-            if (campusNotieTotal > 0) {
+            if (notReadCount > 0) {
 
                 convertViewHolder.numberText.setVisibility(View.VISIBLE);
                 convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
@@ -418,6 +441,62 @@ public class HomePageActivity extends Activity {
             }
 
         }
+        
+        notReadCount = 0;
+        notReadCount =  leaveMessageDao.queryReadOrNotReadCount(0);
+        Log.i(TAG, "LeaveMessage  notReadCount " +notReadCount);
+        View leaveMessageView = null;
+        
+        if (userInfo.roleType == UserType.ROLE_PARENT) {
+            leaveMessageView = gridview.getChildAt(5);
+        }else{
+            leaveMessageView = gridview.getChildAt(5);        
+        }
+        
+        if (leaveMessageView != null) {
+
+            ViewHolder convertViewHolder = (ViewHolder) leaveMessageView.getTag();
+            if (notReadCount > 0) {
+
+                convertViewHolder.numberText.setVisibility(View.VISIBLE);
+                convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
+                leaveMessageView.setBackgroundResource(R.drawable.button_down);
+            } else {
+                convertViewHolder.numberText.setVisibility(View.GONE);
+                leaveMessageView.setBackgroundResource(R.drawable.button_ordinary);
+                
+            }
+
+        }
+        
+        notReadCount = 0;
+        
+        
+        View innerMeassageView = null;
+        if (userInfo.roleType == UserType.ROLE_PARENT) {
+            innerMeassageView = gridview.getChildAt(6);
+        }else{
+            innerMeassageView = gridview.getChildAt(6);         
+        }
+        notReadCount =  innerMessageDao.queryReadOrNotReadCount(0);
+        Log.i(TAG, "InnerMessage  notReadCount " +notReadCount);
+        if (innerMeassageView!= null) {
+
+            ViewHolder convertViewHolder = (ViewHolder) innerMeassageView.getTag();
+            if (notReadCount > 0) {
+
+                convertViewHolder.numberText.setVisibility(View.VISIBLE);
+                convertViewHolder.numberText.setText(String.valueOf(campusNotieTotal));
+                innerMeassageView.setBackgroundResource(R.drawable.button_down);
+            } else {
+                convertViewHolder.numberText.setVisibility(View.GONE);
+                innerMeassageView.setBackgroundResource(R.drawable.button_ordinary);               
+            }
+
+        }
+        
+        
+        
     }
 
     @Override
@@ -717,20 +796,21 @@ public class HomePageActivity extends Activity {
                         ArrayList<HomeWorkInfo> homeWorkInfoList = JSONParser
                                 .praseHomeWorks(responseMessage.body);
                         if (homeWorkInfoList != null && homeWorkInfoList.size() > 0) {
-                            HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+                           
                             for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
                                 Log.i(TAG, "homeWorkInfo.id " + homeWorkInfo.id);
                                 HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
                                 Log.i(TAG, "info1 " + info1);
                                 if(info1 == null){
                                     homeWorkTotal += 1;
+                                  long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
+                                  Log.i(TAG, "HomeWork insertResult " + insertResult);
                                 }
                                 Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
-//                                long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
-//                                Log.i(TAG, "HomeWork insertResult " + insertResult);
+
                             }
-                            homeWorkDao.colseDb();
-                            homeWorkDao = null;
+                            //homeWorkDao.colseDb();
+                            //homeWorkDao = null;
                         }
                    
 
@@ -766,20 +846,22 @@ public class HomePageActivity extends Activity {
                                 .praseCampusNotice(responseMessage.body);
 
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                            CampusNoticeDao campusNoticeDao = new CampusNoticeDao(HomePageActivity.this);
+                           
                             for (CampusNotice campusNotice : campusNoticeList) {
                                 Log.i(TAG, "campusid " + campusNotice.id);
                                 CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
                                 Log.i(TAG, "campus " + campus);
                                 if(campus==null){
                                     
+                                    
                                     campusNotieTotal += 1;
                                     campusNoticeLists.add(0, campusNotice);
+                                    long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
+                                    Log.i(TAG, "HomeWork insertResult " + insertResult);
                                 }
                                 Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                             }
-                            campusNoticeDao.colseDb();
-                            campusNoticeDao = null;
+
                         };
 
                     
@@ -801,19 +883,19 @@ public class HomePageActivity extends Activity {
                     ArrayList<LeaveMessage> campusNoticeList = JSONParser
                             .praseLeaveMessage(responseMessage.body);
                     if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                        LeaveMessageDao campusNoticeDao = new LeaveMessageDao(mXiaoYunTongApplication);
+                        
                         for (LeaveMessage leaveMessage : campusNoticeList) {                          
-                            LeaveMessage campus = campusNoticeDao.queryLeaveMessageByID(leaveMessage.messageId);
+                            LeaveMessage campus = leaveMessageDao.queryLeaveMessageByID(leaveMessage.messageId);
                             Log.i(TAG, "campus " + campus);
                             if(campus==null){
                                 
+                                long insertResult = leaveMessageDao.addLeaveMessage(leaveMessage);
                                 //campusNotieTotal += 1;
                                 //campusNoticeLists.add(0, campusNotice);
                             }
                             //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                         }
-                        campusNoticeDao.colseDb();
-                        campusNoticeDao = null;
+
                     };
                     
                 }
@@ -836,20 +918,19 @@ public class HomePageActivity extends Activity {
                             .praseInnerMessage(responseMessage.body);
                     
                     if (campusNoticeList != null && campusNoticeList.size() > 0) {
-                    	InnerMessageDao campusNoticeDao = new InnerMessageDao(mXiaoYunTongApplication);
-                        for (InnerMessage campusNotice : campusNoticeList) {                          
-                        	InnerMessage campus = campusNoticeDao.queryInnerMessageByID(campusNotice.messageId);
+                    	
+                        for (InnerMessage innerMessage : campusNoticeList) {                          
+                        	InnerMessage campus = innerMessageDao.queryInnerMessageByID(innerMessage.messageId);
                          
                         	Log.i(TAG, "campus " + campus);
                             if(campus==null){
                                 
+                                long insertResult = innerMessageDao.addInnerMessage(innerMessage);
                                 //campusNotieTotal += 1;
                                 //campusNoticeLists.add(0, campusNotice);
                             }
                             //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                         }
-                        campusNoticeDao.colseDb();
-                        campusNoticeDao = null;
                     };
                 }
             } catch (Exception e) {
@@ -893,10 +974,9 @@ public class HomePageActivity extends Activity {
 //                }
 
             }
-            if (homeWorkTotal > 0 || campusNotieTotal > 0) {               
-                //mImageAdapter.notifyDataSetChanged();
-                getPoPoCount();
-            }
+              
+                getNotReadCount();
+  
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
              }

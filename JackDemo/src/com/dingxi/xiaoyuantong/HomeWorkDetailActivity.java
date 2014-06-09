@@ -65,7 +65,7 @@ public class HomeWorkDetailActivity extends Activity {
            homeWorkInfo.id = homeWorkID;
            homeWorkInfo.content = content;
            homeWorkInfo.optTime = optTime;
-          HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+           HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
           long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
           HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);

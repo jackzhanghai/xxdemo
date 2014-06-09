@@ -27,6 +27,16 @@ public class HomeWorkDao {
         mDbHelper = new XiaoyuantongDbHelper(mContext);
     }
 
+    /* (非 Javadoc) 
+     * <p>Title: addHomeWork</p> 
+     * <p>Description: </p> 
+     * @param homeWork
+     * @return 
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#addHomeWork(com.dingxi.xiaoyuantong.model.HomeWorkInfo) 
+     */ 
+    
+    
+ 
     public long addHomeWork(HomeWorkInfo homeWork) {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -54,6 +64,17 @@ public class HomeWorkDao {
         return result;
     }
 
+    /* (非 Javadoc) 
+     * <p>Title: updateHomeWorkById</p> 
+     * <p>Description: </p> 
+     * @param values
+     * @param rowId
+     * @return 
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#updateHomeWorkById(android.content.ContentValues, java.lang.String) 
+     */ 
+    
+    
+
     public int updateHomeWorkById(ContentValues values, String rowId) {
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -67,6 +88,14 @@ public class HomeWorkDao {
         }
         return count;
     }
+
+    /* (非 Javadoc) 
+     * <p>Title: queryHomeWorkByDate</p> 
+     * <p>Description: </p>  
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#queryHomeWorkByDate() 
+     */ 
+    
+    
 
     public void queryHomeWorkByDate() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -96,6 +125,16 @@ public class HomeWorkDao {
             db.close();
         }
     }
+
+    /* (非 Javadoc) 
+     * <p>Title: queryHomeWorkByID</p> 
+     * <p>Description: </p> 
+     * @param hid
+     * @return 
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#queryHomeWorkByID(java.lang.String) 
+     */ 
+    
+    
 
     public HomeWorkInfo queryHomeWorkByID(String hid) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -159,6 +198,15 @@ public class HomeWorkDao {
 
     }
 
+    /* (非 Javadoc) 
+     * <p>Title: queryReadOrNotReadCount</p> 
+     * <p>Description: </p> 
+     * @param isread
+     * @return 
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#queryReadOrNotReadCount(int) 
+     */ 
+    
+
     public int queryReadOrNotReadCount(int isread) {
 
         int count = 0;
@@ -201,6 +249,16 @@ public class HomeWorkDao {
         return count;
 
     }
+
+    /* (非 Javadoc) 
+     * <p>Title: queryReadOrNotReadCountHomeWork</p> 
+     * <p>Description: </p> 
+     * @param isread
+     * @return 
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#queryReadOrNotReadCountHomeWork(int) 
+     */ 
+    
+    
 
     public ArrayList<HomeWorkInfo> queryReadOrNotReadCountHomeWork(int isread) {
 
@@ -273,6 +331,13 @@ public class HomeWorkDao {
         int updateRestult = db.update(HomeWorkEntry.TABLE_NAME, values, selection, selectionArgs);
     };
 
+    /* (非 Javadoc) 
+     * <p>Title: colseDb</p> 
+     * <p>Description: </p>  
+     * @see com.dingxi.xiaoyuantong.dao.PublicDao#colseDb() 
+     */ 
+    
+    
     public void colseDb() {
         if (mDbHelper != null) {
             mDbHelper.close();

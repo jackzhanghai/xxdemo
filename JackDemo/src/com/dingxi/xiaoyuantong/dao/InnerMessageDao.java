@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.dingxi.xiaoyuantong.db.XiaoyuantongDbHelper;
 import com.dingxi.xiaoyuantong.model.InnerMessage;
+import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 
 
@@ -151,6 +153,47 @@ public class InnerMessageDao {
             db.close();
         }
         return result;
+    }
+
+    public int queryReadOrNotReadCount(int isread) {
+        int count = 0;
+        // select count(distinct subject) from t where grade = 'xxx';
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = { InnerMessageEntry.COLUMN_NAME_ENTRY_ID,
+                InnerMessageEntry.COLUMN_NAME_CONTENT, InnerMessageEntry.COLUMN_NAME_DATE};
+        String selection = InnerMessageEntry.COLUMN_NAME_IS_READ + " = ?";
+        String[] selectionArgs = { String.valueOf(isread) };
+        String sortOrder = InnerMessageEntry.COLUMN_NAME_ENTRY_ID + " DESC";
+        // How you want the results sorted in the resulting Cursor
+        // String sortOrder = FeedEntry.COLUMN_NAME_UPDATED + " DESC";
+
+        Cursor c = db.query(InnerMessageEntry.TABLE_NAME, // The table to query
+                projection, // The columns to return
+                selection, // The columns for the WHERE clause
+                selectionArgs, // The values for the WHERE clause
+                null, // don't group the rows
+                null, // don't filter by row groups
+                sortOrder // The sort order
+                );
+
+        if (c != null && c.getCount() > 0) {
+            count = c.getCount();
+
+        }
+
+        if (c != null) {
+            c.close();
+        }
+
+        if (db != null) {
+            db.close();
+        }
+        Log.i("InnerMessageDao", "ReadOrNotReadCount " + count);
+        return count;
     }
 
 

@@ -2,7 +2,6 @@ package com.dingxi.xiaoyuantong;
 
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,9 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dingxi.xiaoyuantong.dao.HomeWorkDao;
-import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
-import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 
 public class ReplyLeaveMessageActivity extends Activity {
@@ -65,7 +62,7 @@ public class ReplyLeaveMessageActivity extends Activity {
            homeWorkInfo.id = homeWorkID;
            homeWorkInfo.content = content;
            homeWorkInfo.optTime = optTime;
-          HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
+           HomeWorkDao homeWorkDao = new HomeWorkDao(mXiaoYunTongApplication);
           long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
           HomePageActivity.homeWorkTotal -= 1;
            Log.i("CampusNoticeDetailActivity", "updateResult " + insertResult);
