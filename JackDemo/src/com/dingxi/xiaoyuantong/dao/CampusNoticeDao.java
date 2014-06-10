@@ -46,6 +46,8 @@ public class CampusNoticeDao {
         values.put(CampusNoticeEntry.COLUMN_NAME_SCHOOL_ID, campusNotice.sendType);
         values.put(CampusNoticeEntry.COLUMN_NAME_STUDDENT_ID, campusNotice.fkStudentId);
         values.put(CampusNoticeEntry.COLUMN_NAME_IS_READ, campusNotice.isRead);
+        values.put(CampusNoticeEntry.COLUMN_NAME_USER_NAME, campusNotice.userName);
+
 
         long result = db.insert(CampusNoticeEntry.TABLE_NAME,
                 CampusNoticeEntry.COLUMN_NAME_NULLABLE, values);

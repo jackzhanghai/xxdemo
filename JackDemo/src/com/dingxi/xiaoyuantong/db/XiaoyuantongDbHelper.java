@@ -36,7 +36,9 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 					+ "smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkGradeId integer,stuName varchar(60),fkStudentId integer,is_read integer)");
 
 			db.execSQL("CREATE TABLE IF NOT EXISTS home_work (id integer primary key autoincrement,hid integer unique, content varchar(600), optTime varchar(60), sendType integer,status varchar(60), "
-					+ "smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkSubjectId integer,fkGradeId integer,fkStudentId integer ,is_read integer)");
+					+ "smsType integer,className varchar(60),fkSchoolId integer,fkClassId integer,fkSubjectId integer,fkGradeId integer,fkStudentId integer, user_name varchar(60),is_read integer)");
+			
+			
 			db.execSQL("CREATE TABLE IF NOT EXISTS "
 					+ AttendanceInfoEntry.TABLE_NAME
 					+ " (id integer primary key autoincrement, "

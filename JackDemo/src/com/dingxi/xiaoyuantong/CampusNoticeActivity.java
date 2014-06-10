@@ -378,6 +378,8 @@ public class CampusNoticeActivity extends Activity {
                 viewHolder.headerText = (TextView) convertView.findViewById(R.id.message_header);
                 viewHolder.isRead = (TextView) convertView.findViewById(R.id.is_read);
                 viewHolder.bodyText = (TextView) convertView.findViewById(R.id.message_body);
+                viewHolder.sendTime = (TextView) convertView.findViewById(R.id.send_time);
+                viewHolder.sendName = (TextView) convertView.findViewById(R.id.send_name);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (HomeWorkHolder) convertView.getTag();
@@ -387,6 +389,8 @@ public class CampusNoticeActivity extends Activity {
             viewHolder.headerText.setText(R.string.system_note);
 
             viewHolder.bodyText.setText(campusNoticeList.get(position).content);
+            viewHolder.sendTime.setText(campusNoticeList.get(position).optTime);
+            viewHolder.sendName.setText(campusNoticeList.get(position).userName);
             if (campusNoticeList.get(position).isRead == 0) {
                 viewHolder.isRead.setText(R.string.unread);
             } else {
@@ -398,6 +402,8 @@ public class CampusNoticeActivity extends Activity {
 
         class HomeWorkHolder {
 
+           TextView sendName;
+           TextView sendTime;
             TextView headerText;
             TextView isRead;
             TextView bodyText;

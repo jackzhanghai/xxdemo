@@ -335,6 +335,10 @@ public class JSONParser {
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject obj = (JSONObject) data.get(i);
 
+                    //{"datas":[{"optTime":"2014-06-10 11:09:58","fkGradeId":"0","fkClassId":"0","status":"",
+                    //"fkSubjectId":null,"smsType":"0","fkSchoolId":"55","sendType":"0","id":"402880ed46839110014683c0f6170001",
+                    //"content":"ergyrw","fkUserId":"8a22e56c463cff6d01463d2600990004","userName":"成都一中管理员","className":"",
+                    //"fkStudentId":""}],"total":1,"message":"查询成功！","code":0}
                     CampusNotice campusNotice = new CampusNotice();
                     campusNotice.content = obj.getString("content");
                     campusNotice.id = obj.getString("id");
@@ -347,6 +351,7 @@ public class JSONParser {
                     campusNotice.className = obj.getString("className");
                     campusNotice.sendType = obj.getInt("sendType");                       
                     campusNotice.fkStudentId = obj.getString("fkStudentId");
+                    campusNotice.userName = obj.getString("userName");
                    // campusNotice.stuName = obj.getString("stuName");
                     
 

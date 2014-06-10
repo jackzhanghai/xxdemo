@@ -18,6 +18,7 @@ public class CampusNotice {
     public String stuName;
     public int fkGradeId;
     public int isRead = 0;
+    public String userName;
 
 
     
@@ -36,6 +37,7 @@ public class CampusNotice {
         public static final String  COLUMN_NAME_STU_NAME = "stuName";
         public static final String COLUMN_NAME_GRADE_ID = "fkGradeId";
         public static final String COLUMN_NAME_IS_READ = "is_read";
+        public static final String COLUMN_NAME_USER_NAME = "user_name";
        
         //public static final String COLUMN_NAME_SUBJECT_ID = "fkSubjectId";
 

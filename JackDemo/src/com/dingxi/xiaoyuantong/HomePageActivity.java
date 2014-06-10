@@ -75,13 +75,13 @@ public class HomePageActivity extends Activity {
     private ImageAdapter mImageAdapter;
     private GetAllNoteTask mGetAllNoteTask;
     private GetAllChildTask mGetAllChildTask;
-   private RollTextThread rollTextThread;
+    private RollTextThread rollTextThread;
     GridView gridview;
     private View adsView;
     private TextView rollNoteText;
     private ArrayList<ChildInfo> mChildInfoList;
-   private ArrayList<CampusNotice> campusNoticeLists;
-   private CampusNotice curretNotice;
+    private ArrayList<CampusNotice> campusNoticeLists;
+    private CampusNotice curretNotice;
     
     private XiaoyuantongDbHelper xiaoyuantongDbHelpers;
     private XiaoYunTongApplication mXiaoYunTongApplication;
@@ -926,11 +926,8 @@ public class HomePageActivity extends Activity {
                             if(inner==null){
                                 
                                 long insertResult = innerMessageDao.addInnerMessage(innerMessage);
-                                //campusNotieTotal += 1;
-                                //campusNoticeLists.add(0, campusNotice);
                                 Log.i(TAG, "InnerMessage insertResult " + insertResult);
                             }
-                            //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
                         }
                     };
                 }
