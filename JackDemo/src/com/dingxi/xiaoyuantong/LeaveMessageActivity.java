@@ -543,9 +543,16 @@ public class LeaveMessageActivity extends Activity {
                             for (LeaveMessage leaveMessage : leaveMessageoList) {
                                 LeaveMessage info1  = homeWorkDao.queryLeaveMessageByID(leaveMessage.messageId);
                                 Log.i(TAG, "info1 " + info1);
-                                if(info1 != null){
-                                    leaveMessage.isRead = 1;
+                                if(info1==null){
+                                    
+                                    long insertResult = homeWorkDao.addLeaveMessage(leaveMessage);
+                                    Log.i(TAG, "LeaveMessage insertResult " + insertResult);
+                                    //campusNotieTotal += 1;
+                                    //campusNoticeLists.add(0, campusNotice);
+                                } else {
+                                    leaveMessage.isRead = info1.isRead;
                                 }
+                                
                                 // Log.i(TAG, "HomeWork insertResult " + insertResult);
                             }
                             homeWorkDao.colseDb();

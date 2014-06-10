@@ -604,8 +604,11 @@ public class HomeWorkActivity extends Activity {
                             for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
                                 HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
                                 Log.i(TAG, "info1 " + info1);
-                                if(info1 != null){
-                                    homeWorkInfo.isRead = 1;
+                                if(info1 == null){
+                                    long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
+                                    //homeWorkInfo.isRead = 1;
+                                } else {
+                                    homeWorkInfo.isRead = info1.isRead;
                                 }
                                 // Log.i(TAG, "HomeWork insertResult " + insertResult);
                             }

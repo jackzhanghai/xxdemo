@@ -561,8 +561,12 @@ public class CampusNoticeActivity extends Activity {
                             for (CampusNotice campusNotice : campusNoticeList) {
                                 CampusNotice campus = campusNoticeDao.queryCampusNoticeByID(campusNotice.id);
                                 Log.i(TAG, "campus " + campus);
-                                if(campus != null){
-                                    campusNotice.isRead = 1;
+                                if(campus == null){
+                                    long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
+                                    //campusNotice.isRead = 1;
+                                } else {
+                                    
+                                    campusNotice.isRead = campus.isRead;
                                 }
 
                             }

@@ -198,14 +198,6 @@ public class HomeWorkDao {
 
     }
 
-    /* (非 Javadoc) 
-     * <p>Title: queryReadOrNotReadCount</p> 
-     * <p>Description: </p> 
-     * @param isread
-     * @return 
-     * @see com.dingxi.xiaoyuantong.dao.PublicDao#queryReadOrNotReadCount(int) 
-     */ 
-    
 
     public int queryReadOrNotReadCount(int isread) {
 
@@ -242,7 +234,6 @@ public class HomeWorkDao {
         if (db != null) {
             db.close();
         }
-        Log.i(TAG, "ReadOrNotReadCount " + count);
         return count;
 
     }

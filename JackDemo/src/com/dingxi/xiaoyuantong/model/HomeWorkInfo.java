@@ -32,7 +32,7 @@ public class HomeWorkInfo {
 
     public String className;
 
-    public Integer isRead = 0;
+    public Integer isRead = 0;  //0是未读  1是已读
 
     public static abstract class HomeWorkEntry implements BaseColumns {
         public static final String TABLE_NAME = "home_work";

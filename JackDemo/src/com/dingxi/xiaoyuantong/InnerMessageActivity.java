@@ -560,16 +560,22 @@ public class InnerMessageActivity extends Activity {
 
                         if (innerMessageoList != null && innerMessageoList.size() > 0) {
                             
-                            InnerMessageDao homeWorkDao = new InnerMessageDao(mXiaoYunTongApplication);
+                            InnerMessageDao innerMessageDao = new InnerMessageDao(mXiaoYunTongApplication);
                             for (InnerMessage innerMessage : innerMessageoList) {
-                                InnerMessage info1  = homeWorkDao.queryInnerMessageByID(innerMessage.messageId);
-                                if(info1 != null){
-                                	innerMessage.isRead = 1;
+                                InnerMessage inner  = innerMessageDao.queryInnerMessageByID(innerMessage.messageId);
+                                if(inner==null){
+                                    
+                                    long insertResult = innerMessageDao.addInnerMessage(innerMessage);
+                                    //campusNotieTotal += 1;
+                                    //campusNoticeLists.add(0, campusNotice);
+                                    Log.i(TAG, "InnerMessage insertResult " + insertResult);
+                                } else {
+                                    innerMessage.isRead = inner.isRead;
                                 }
                                 // Log.i(TAG, "HomeWork insertResult " + insertResult);
                             }
-                            homeWorkDao.colseDb();
-                            homeWorkDao = null;
+                            innerMessageDao.colseDb();
+                            innerMessageDao = null;
                             mHomeWorkList.addAll(innerMessageoList);
 
                         } else {

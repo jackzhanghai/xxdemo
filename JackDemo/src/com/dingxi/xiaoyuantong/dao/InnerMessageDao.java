@@ -192,7 +192,6 @@ public class InnerMessageDao {
         if (db != null) {
             db.close();
         }
-        Log.i("InnerMessageDao", "ReadOrNotReadCount " + count);
         return count;
     }
 

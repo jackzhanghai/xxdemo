@@ -197,7 +197,6 @@ public class CampusNoticeDao {
         if (db != null) {
             db.close();
         }
-        Log.i(TAG, "ReadOrNotReadCount " + count);
         return count;
 
     }
@@ -244,7 +243,6 @@ public class CampusNoticeDao {
         if (db != null) {
             db.close();
         }
-        Log.i(TAG, "ReadOrNotReadCount " + count);
         return campusNoticeContents;
 
     }
