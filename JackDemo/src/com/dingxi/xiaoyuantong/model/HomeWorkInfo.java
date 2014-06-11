@@ -2,11 +2,11 @@ package com.dingxi.xiaoyuantong.model;
 
 import android.provider.BaseColumns;
 
-public class HomeWorkInfo {
+public class HomeWorkInfo extends Notice {
 
     private static final long serialVersionUID = -5452191060956188291L;
 
-    public String id;
+    //public String id;
 
     public Integer smsType;// 短信类型
 
@@ -22,7 +22,7 @@ public class HomeWorkInfo {
 
     public Integer fkSubjectId;// 科目
 
-    public String content;// 短信内容
+    //public String content;// 短信内容
 
     public String optTime;// 操作时间
     public String sendName;// 操作时间

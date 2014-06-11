@@ -504,7 +504,7 @@ public class JSONParser {
                 
                 leaveMessage.content= obj.getString("content");
                 leaveMessage.sender= obj.getString("sender");
-                leaveMessage.messageId= obj.getString("id");
+                leaveMessage.id= obj.getString("id");
                 leaveMessage.receiver= obj.getString("receiver");
                 leaveMessage.student= obj.getString("student");
                 leaveMessage.date= obj.getString("date");
@@ -536,7 +536,7 @@ public class JSONParser {
 	                
 	                leaveMessage.content= obj.getString("content");
 	                leaveMessage.sender= obj.getString("sender");
-	                leaveMessage.messageId= obj.getString("id");
+	                leaveMessage.id= obj.getString("id");
 	                leaveMessage.receiver= obj.getString("receiver");
 	                //leaveMessage.student= obj.getString("student");
 	                leaveMessage.date= obj.getString("date");

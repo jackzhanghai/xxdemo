@@ -259,7 +259,7 @@ public class LeaveMessageActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 // TODO Auto-generated method stub
                 Log.i(TAG, "arg2 " + arg2 + " arg3 " + arg3);
-                String id = mHomeWorkList.get(arg2 - 1).messageId;
+                String id = mHomeWorkList.get(arg2 - 1).id;
                 mHomeWorkList.get(arg2 - 1).isRead = 1;
                 Log.i(TAG, "id " + id);
                 Intent intent = new Intent(LeaveMessageActivity.this, LeaveMessageDetailActivity.class);
@@ -382,7 +382,7 @@ public class LeaveMessageActivity extends Activity {
         @Override
         public long getItemId(int position) {
             // TODO Auto-generated method stub
-            String id = homeWorkList.get(position).messageId;
+            String id = homeWorkList.get(position).id;
             // Long.parseLong(id)
             return 0;
         }
@@ -541,7 +541,7 @@ public class LeaveMessageActivity extends Activity {
                             
                             LeaveMessageDao homeWorkDao = new LeaveMessageDao(mXiaoYunTongApplication);
                             for (LeaveMessage leaveMessage : leaveMessageoList) {
-                                LeaveMessage info1  = homeWorkDao.queryLeaveMessageByID(leaveMessage.messageId);
+                                LeaveMessage info1  = homeWorkDao.queryLeaveMessageByID(leaveMessage.id);
                                 Log.i(TAG, "info1 " + info1);
                                 if(info1==null){
                                     

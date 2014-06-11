@@ -49,8 +49,12 @@ import com.dingxi.xiaoyuantong.model.CampusNotice;
 import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.ChildInfo;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
+import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 import com.dingxi.xiaoyuantong.model.InnerMessage;
+import com.dingxi.xiaoyuantong.model.InnerMessage.InnerMessageEntry;
 import com.dingxi.xiaoyuantong.model.LeaveMessage;
+import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
+import com.dingxi.xiaoyuantong.model.Notice;
 import com.dingxi.xiaoyuantong.model.ParentInfo;
 import com.dingxi.xiaoyuantong.model.TeacherInfo;
 import com.dingxi.xiaoyuantong.model.UserInfo;
@@ -80,8 +84,8 @@ public class HomePageActivity extends Activity {
     private View adsView;
     private TextView rollNoteText;
     private ArrayList<ChildInfo> mChildInfoList;
-    private ArrayList<CampusNotice> campusNoticeLists;
-    private CampusNotice curretNotice;
+    private ArrayList<Notice> mNoticesLists;
+    private Notice curretNotice;
     
     private XiaoyuantongDbHelper xiaoyuantongDbHelpers;
     private XiaoYunTongApplication mXiaoYunTongApplication;
@@ -104,10 +108,11 @@ public class HomePageActivity extends Activity {
             switch (msg.what) {
             case MSG_ROLL_TEXT:
                 adsView.setVisibility(View.VISIBLE);
-                String text = (String) msg.obj;
-                Log.d(TAG, "text " + text);
+                curretNotice = (Notice) msg.obj;
+               String content = curretNotice.content;
+                Log.d(TAG, "curretNotice.content " + content);
                 rollNoteText.setClickable(true);
-                rollNoteText.setText(text);
+                rollNoteText.setText(content);
                 break;
             case MSG_NO_DATA:  
                 adsView.setVisibility(View.GONE);
@@ -127,7 +132,7 @@ public class HomePageActivity extends Activity {
 
         mXiaoYunTongApplication = (XiaoYunTongApplication) getApplication();
         userInfo = mXiaoYunTongApplication.userInfo;
-
+        xiaoyuantongDbHelpers = new XiaoyuantongDbHelper(getApplicationContext());
         gridview = (GridView) findViewById(R.id.gridview);
         adsView = (View)findViewById(R.id.ads_view);
         rollNoteText = (TextView) findViewById(R.id.roll_note_text);
@@ -135,14 +140,51 @@ public class HomePageActivity extends Activity {
             
             @Override
             public void onClick(View v) {
+                
+
+                if(curretNotice  instanceof CampusNotice){
+                    Log.i(TAG, "instanceof CampusNotice " );
+                    Intent intent = new Intent(HomePageActivity.this,
+                            CampusNoticeDetailActivity.class);
+                    intent.putExtra(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID, curretNotice.id);
+                    intent.putExtra(CampusNoticeEntry.COLUMN_NAME_CONTENT, curretNotice.content);
+                    //intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, curretNotice.optTime);
+                    startActivity(intent);
+                } else if(curretNotice  instanceof HomeWorkInfo){
+                    Log.i(TAG, "instanceof HomeWorkInfo " ); 
+                    Intent intent = new Intent(HomePageActivity.this,
+                            HomeWorkDetailActivity.class);
+                    intent.putExtra(HomeWorkEntry.COLUMN_NAME_ENTRY_ID, curretNotice.id);
+                    intent.putExtra(HomeWorkEntry.COLUMN_NAME_CONTENT, curretNotice.content);
+                    //intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, curretNotice.optTime);
+                    startActivity(intent);
+
+                } else if(curretNotice  instanceof InnerMessage){
+                    
+                    Log.i(TAG, "instanceof InnerMessage " );
+                    Intent intent = new Intent(HomePageActivity.this,
+                            InnnerMessageDetailActivity.class);
+                    intent.putExtra(InnerMessageEntry.COLUMN_NAME_ENTRY_ID, curretNotice.id);
+                    intent.putExtra(InnerMessageEntry.COLUMN_NAME_CONTENT, curretNotice.content);
+                    //intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, curretNotice.optTime);
+                    startActivity(intent);
+                } else if(curretNotice  instanceof LeaveMessage){
+                    
+                    Log.i(TAG, "instanceof LeaveMessage " );
+                    Intent intent = new Intent(HomePageActivity.this,
+                            LeaveMessageDetailActivity.class);
+                    intent.putExtra(LeaveMessageEntry.COLUMN_NAME_ENTRY_ID, curretNotice.id);
+                    intent.putExtra(LeaveMessageEntry.COLUMN_NAME_CONTENT, curretNotice.content);
+                    //intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, curretNotice.optTime);
+                    startActivity(intent);
+                } else {
+                    Log.i(TAG, "instanceof Object " );
+                    
+                }
+                
+
                 // TODO Auto-generated method stub
-                Intent intent = new Intent(HomePageActivity.this,
-                        CampusNoticeDetailActivity.class);
-                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID, curretNotice.id);
-                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_CONTENT, curretNotice.content);
-                intent.putExtra(CampusNoticeEntry.COLUMN_NAME_OPT_TIME, curretNotice.optTime);
-                startActivity(intent);
-//                /
+                
                 
             }
         });
@@ -152,7 +194,7 @@ public class HomePageActivity extends Activity {
         mSpinnerInfo = new ArrayList<String>();
         mChildInfoList = new ArrayList<ChildInfo>();
         //campusNoticeContentList = new ArrayList<String>();
-        campusNoticeLists = new ArrayList<CampusNotice>();
+        mNoticesLists = new ArrayList<Notice>();
   
         
         gridview.setAdapter(mImageAdapter);
@@ -175,7 +217,7 @@ public class HomePageActivity extends Activity {
                 }
 
                 mImageAdapter = null;
-
+                mNoticesLists = null;
                 //homeWorkTotal = 0;
                 //campusNotieTotal = 0;
                 userInfo = null;
@@ -201,7 +243,7 @@ public class HomePageActivity extends Activity {
             }
         });
 
-        xiaoyuantongDbHelpers = new XiaoyuantongDbHelper(getApplicationContext());
+       
 
         mSpinner = (Spinner) findViewById(R.id.main_spinner);
         mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -213,7 +255,7 @@ public class HomePageActivity extends Activity {
 
                // homeWorkTotal = 0;
                 //campusNotieTotal = 0;
-                campusNoticeLists.clear();
+                mNoticesLists.clear();
                 if(rollTextThread!=null && rollTextThread.isAlive()){
                     rollTextThread.interrupt(); 
                 }
@@ -425,7 +467,7 @@ public class HomePageActivity extends Activity {
         if(isFirstStart){
             isFirstStart =  false;
         } else {
-            getNotReadCount();
+            getNotReadCounts();
         }
 
     }
@@ -434,105 +476,156 @@ public class HomePageActivity extends Activity {
     
     
     
-    private void getNotReadCount(){
+    private void getNotReadCounts(){
         
-        int notReadCount = 0;
-        notReadCount =  homeWorkDao.queryReadOrNotReadCount(0);
-        Log.i(TAG, "HomeWork  notReadCount " +notReadCount);
-        View homeWorkView = gridview.getChildAt(0);
-        if (homeWorkView != null) {
+        
+        
+        mNoticesLists.clear();
+        isFinish = true;
+        
+        ArrayList<HomeWorkInfo> homeWorks = homeWorkDao.queryReadOrNotReadCountHomeWork(0);
+        if(homeWorks!=null && homeWorks.size()>0){
+            
+            
+            Log.i(TAG, "HomeWork  notReadCount " + homeWorks.size());
+            View homeWorkView = gridview.getChildAt(0);
+            if (homeWorkView != null) {
 
-            ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
-            if (notReadCount > 0) {
-                viewHolder.numberText.setVisibility(View.VISIBLE);
-                viewHolder.numberText.setText(String.valueOf(notReadCount));
-                homeWorkView.setBackgroundResource(R.drawable.button_down);
-            } else {
-                viewHolder.numberText.setVisibility(View.GONE);
-                homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
+                ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
+                if (homeWorks.size() > 0) {
+                    viewHolder.numberText.setVisibility(View.VISIBLE);
+                    viewHolder.numberText.setText(String.valueOf(homeWorks.size()));
+                    homeWorkView.setBackgroundResource(R.drawable.button_down);
+                } else {
+                    viewHolder.numberText.setVisibility(View.GONE);
+                    homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
+                }
             }
-        }
-        
-        
-        notReadCount = 0;
-        notReadCount =  campusNoticeDao.queryReadOrNotReadCount(0);
-        Log.i(TAG, "CampusNotice  notReadCount " +notReadCount);
-        View campusNoteView = gridview.getChildAt(1);
-        if (campusNoteView != null) {
-
-            ViewHolder convertViewHolder = (ViewHolder) campusNoteView.getTag();
-            if (notReadCount > 0) {
-
-                convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                convertViewHolder.numberText.setText(String.valueOf(notReadCount));
-                campusNoteView.setBackgroundResource(R.drawable.button_down);
-            } else {
-                convertViewHolder.numberText.setVisibility(View.GONE);
-                campusNoteView.setBackgroundResource(R.drawable.button_ordinary);
-                
-                rollTextHandler.sendEmptyMessage(MSG_NO_DATA);
-                campusNoticeLists.clear();
+            for (HomeWorkInfo homeWorkInfo2 : homeWorks) {
+                mNoticesLists.add(0, homeWorkInfo2);
             }
-
+            
         }
-        
-        notReadCount = 0;
-        notReadCount =  leaveMessageDao.queryReadOrNotReadCount(0);
-        Log.i(TAG, "LeaveMessage  notReadCount " +notReadCount);
-        View leaveMessageView = null;
-        
-        if (userInfo.roleType == UserType.ROLE_PARENT) {
-            leaveMessageView = gridview.getChildAt(4);
-        }else{
-            leaveMessageView = gridview.getChildAt(4);        
-        }
-        
-        if (leaveMessageView != null) {
 
-            ViewHolder convertViewHolder = (ViewHolder) leaveMessageView.getTag();
-            if (notReadCount > 0) {
+        
+        //notReadCount = 0;
+        //notReadCount =  campusNoticeDao.queryReadOrNotReadCount(0);
+        ArrayList<CampusNotice> campusNotices  =  campusNoticeDao.queryNotReadCampusNoticeCount(0);
+        
+        if(campusNotices !=null && campusNotices.size() > 0){
+            Log.i(TAG, "CampusNotice  notReadCount " + campusNotices.size());
+            View campusNoteView = gridview.getChildAt(1);
+            if (campusNoteView != null) {
 
-                convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                convertViewHolder.numberText.setText(String.valueOf(notReadCount));
-                leaveMessageView.setBackgroundResource(R.drawable.button_down);
-            } else {
-                convertViewHolder.numberText.setVisibility(View.GONE);
-                leaveMessageView.setBackgroundResource(R.drawable.button_ordinary);
-                
-            }
-
-        }
-        
-        notReadCount = 0;
-        
-        
-        /*
-        if (userInfo.roleType == UserType.ROLE_PARENT) {
-            innerMeassageView = gridview.getChildAt(5);
-        }else{
-            innerMeassageView = gridview.getChildAt(5);         
-        }
-        */
-        
-        
-        if(userInfo.roleType == UserType.ROLE_TEACHER){
-            View innerMeassageView = gridview.getChildAt(5);
-            notReadCount =  innerMessageDao.queryReadOrNotReadCount(0);
-            Log.i(TAG, "InnerMessage  notReadCount " +notReadCount);
-            if (innerMeassageView!= null) {
-
-                ViewHolder convertViewHolder = (ViewHolder) innerMeassageView.getTag();
-                if (notReadCount > 0) {
+                ViewHolder convertViewHolder = (ViewHolder) campusNoteView.getTag();
+                if (campusNotices.size() > 0) {
 
                     convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                    convertViewHolder.numberText.setText(String.valueOf(notReadCount));
-                    innerMeassageView.setBackgroundResource(R.drawable.button_down);
+                    convertViewHolder.numberText.setText(String.valueOf(campusNotices.size()));
+                    campusNoteView.setBackgroundResource(R.drawable.button_down);
                 } else {
                     convertViewHolder.numberText.setVisibility(View.GONE);
-                    innerMeassageView.setBackgroundResource(R.drawable.button_ordinary);               
+                    campusNoteView.setBackgroundResource(R.drawable.button_ordinary);
+                    
+                    rollTextHandler.sendEmptyMessage(MSG_NO_DATA);
+                    mNoticesLists.clear();
                 }
 
-            }           
+            }
+            
+            for (CampusNotice campusNotice : campusNotices) {
+                mNoticesLists.add(0, campusNotice);
+            }
+
+        }
+       
+        
+        //notReadCount = 0;
+        //notReadCount =  leaveMessageDao.queryReadOrNotReadCount(0);
+        ArrayList<LeaveMessage> leaveMessages = leaveMessageDao.queryNotReadLeaveMessageCount(0);
+        
+        if(leaveMessages!=null && leaveMessages.size() > 0){
+            Log.i(TAG, "LeaveMessage  notReadCount " + leaveMessages.size());
+            View leaveMessageView = null;
+            
+            if (userInfo.roleType == UserType.ROLE_PARENT) {
+                leaveMessageView = gridview.getChildAt(4);
+            }else{
+                leaveMessageView = gridview.getChildAt(4);        
+            }
+            
+            if (leaveMessageView != null) {
+
+                ViewHolder convertViewHolder = (ViewHolder) leaveMessageView.getTag();
+                if (leaveMessages.size() > 0) {
+
+                    convertViewHolder.numberText.setVisibility(View.VISIBLE);
+                    convertViewHolder.numberText.setText(String.valueOf(leaveMessages.size()));
+                    leaveMessageView.setBackgroundResource(R.drawable.button_down);
+                } else {
+                    convertViewHolder.numberText.setVisibility(View.GONE);
+                    leaveMessageView.setBackgroundResource(R.drawable.button_ordinary);
+                    
+                }
+
+            }
+            
+            for (LeaveMessage leaveMessage : leaveMessages) {
+                mNoticesLists.add(0, leaveMessage);
+            }
+        }
+        
+       
+        if(userInfo.roleType == UserType.ROLE_TEACHER){
+            
+            ArrayList<InnerMessage> innerMessages =  innerMessageDao.queryNotReadInnerMessageCount(0);
+            if(innerMessages != null && innerMessages.size() > 0){
+                Log.i(TAG, "InnerMessage  notReadCount " + innerMessages.size());
+                View innerMeassageView = gridview.getChildAt(5);
+                if (innerMeassageView!= null) {
+
+                    ViewHolder convertViewHolder = (ViewHolder) innerMeassageView.getTag();
+                    if (innerMessages.size() > 0) {
+
+                        convertViewHolder.numberText.setVisibility(View.VISIBLE);
+                        convertViewHolder.numberText.setText(String.valueOf(innerMessages.size()));
+                        innerMeassageView.setBackgroundResource(R.drawable.button_down);
+                    } else {
+                        convertViewHolder.numberText.setVisibility(View.GONE);
+                        innerMeassageView.setBackgroundResource(R.drawable.button_ordinary);               
+                    }
+
+                }  
+                
+                for (InnerMessage innerMessage : innerMessages) {
+                    mNoticesLists.add(0, innerMessage);
+                }
+                
+            }
+                     
+        }
+        
+        
+        if (mNoticesLists != null && mNoticesLists.size() > 0) {
+
+            if (mNoticesLists.size() > 0) {
+
+                if (rollTextThread != null && rollTextThread.isAlive()) {
+                    rollTextThread.interrupt();
+                    isFinish = true;
+                    rollTextThread = null;
+                }
+                
+                rollTextThread = new RollTextThread();
+                rollTextThread.start();
+                
+            } 
+//            else if (campusNoticeList.size() == 1) {
+//                String content = campusNoticeList.get(0).content;
+//                Log.i(TAG, "content " + content);
+//                rollNoteText.setText(content);
+//            }
+
         }
     }
 
@@ -555,22 +648,26 @@ public class HomePageActivity extends Activity {
         @Override
         public void run() {
             super.run();
-
+            Log.d(TAG, "RollTextThread run()" );
             Thread.currentThread().setName("RollTextThread");
-            while (campusNoticeLists != null && campusNoticeLists.size() > 0
+            while (mNoticesLists != null && mNoticesLists.size() > 0
                     && (!isFinish)) {
-                for (int i = 0; i < campusNoticeLists.size(); i++) {
+                for (int i = 0; i < mNoticesLists.size(); i++) {
 
+                    
+                    Notice notice = mNoticesLists.get(i);
+                    Log.d(TAG, "rollText " + notice.content);
                     Message message = Message.obtain();
                     message.what = MSG_ROLL_TEXT;
-                    message.obj = campusNoticeLists.get(i).content;
-                    curretNotice = campusNoticeLists.get(i);
+                    message.obj = notice;
                     //message.arg1 = campusNoticeList.get(i).id;
-                    Log.d(TAG, "rollText " + campusNoticeLists.get(i).content);
+                    
                     rollTextHandler.sendMessage(message);
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
+                        
+                        isFinish = true;
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
@@ -731,10 +828,10 @@ public class HomePageActivity extends Activity {
                            
                             for (HomeWorkInfo homeWorkInfo : homeWorkInfoList) {
                                
-                                HomeWorkInfo info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
-                                Log.i(TAG, "homeWorkInfo " + info1);
+                                Notice info1  = homeWorkDao.queryHomeWorkByID(homeWorkInfo.id);
                                 if(info1 == null){
                                    // homeWorkTotal += 1;
+                                    mNoticesLists.add(0, homeWorkInfo);
                                   long insertResult = homeWorkDao.addHomeWork(homeWorkInfo);
                                   Log.i(TAG, "HomeWork insertResult " + insertResult);
                                 }
@@ -784,7 +881,7 @@ public class HomePageActivity extends Activity {
                                 Log.i(TAG, "campus " + campus);
                                 if(campus==null){
                                     //campusNotieTotal += 1;
-                                    campusNoticeLists.add(0, campusNotice);
+                                    mNoticesLists.add(0, campusNotice);
                                     long insertResult = campusNoticeDao.addCampusNotice(campusNotice);
                                     Log.i(TAG, "MessageInfos insertResult " + insertResult);
                                 }
@@ -815,10 +912,10 @@ public class HomePageActivity extends Activity {
                     if (campusNoticeList != null && campusNoticeList.size() > 0) {
                         
                         for (LeaveMessage leaveMessage : campusNoticeList) {                          
-                            LeaveMessage leave = leaveMessageDao.queryLeaveMessageByID(leaveMessage.messageId);
+                            LeaveMessage leave = leaveMessageDao.queryLeaveMessageByID(leaveMessage.id);
                             Log.i(TAG, "leave " + leave);
                             if(leave==null){
-                                
+                                mNoticesLists.add(0, leaveMessage);
                                 long insertResult = leaveMessageDao.addLeaveMessage(leaveMessage);
                                 Log.i(TAG, "LeaveMessage insertResult " + insertResult);
                                 //campusNotieTotal += 1;
@@ -851,10 +948,10 @@ public class HomePageActivity extends Activity {
                     if (campusNoticeList != null && campusNoticeList.size() > 0) {
                     	
                         for (InnerMessage innerMessage : campusNoticeList) {                          
-                        	InnerMessage inner = innerMessageDao.queryInnerMessageByID(innerMessage.messageId);
+                        	InnerMessage inner = innerMessageDao.queryInnerMessageByID(innerMessage.id);
                         	  Log.i(TAG, "inner " + inner);
                             if(inner==null){
-                                
+                                mNoticesLists.add(0, innerMessage);
                                 long insertResult = innerMessageDao.addInnerMessage(innerMessage);
                                 Log.i(TAG, "InnerMessage insertResult " + insertResult);
                             }
@@ -883,29 +980,13 @@ public class HomePageActivity extends Activity {
             mGetAllNoteTask = null;
             //Log.i(TAG, "homeWorkTotal " + homeWorkTotal);
             //Log.i(TAG, "campusNotieTotal " + campusNotieTotal);
-            Log.i(TAG, "campusNoticeContentList.size() " + campusNoticeLists.size());
-           
-            if (campusNoticeLists != null && campusNoticeLists.size() > 0) {
-
-                if (campusNoticeLists.size() > 0) {
-                    
-                    if (rollTextThread != null && rollTextThread.isAlive()) {
-
-                    } else {
-                        rollTextThread = new RollTextThread();
-                        rollTextThread.start();
-                    }
-                    
-                } 
-//                else if (campusNoticeList.size() == 1) {
-//                    String content = campusNoticeList.get(0).content;
-//                    Log.i(TAG, "content " + content);
-//                    rollNoteText.setText(content);
-//                }
-
-            }
+            Log.i(TAG, "mNoticesLists.size() " + mNoticesLists.size());
+            getNotReadCounts();
+            
+            
+            
               
-                getNotReadCount();
+                
   
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();

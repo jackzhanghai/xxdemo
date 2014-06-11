@@ -78,7 +78,7 @@ public class LeaveMessageDetailActivity extends Activity {
        if(homeWorkInfo == null){
 
            homeWorkInfo =  new LeaveMessage();
-           homeWorkInfo.messageId = homeWorkID;
+           homeWorkInfo.id = homeWorkID;
            homeWorkInfo.content = content;
            homeWorkInfo.date = optTime;
           long insertResult = campusNoticeDao.addLeaveMessage(homeWorkInfo);

@@ -2,11 +2,11 @@ package com.dingxi.xiaoyuantong.model;
 
 import android.provider.BaseColumns;
 
-public class CampusNotice {
+public class CampusNotice extends Notice {
 
     
-    public String id;
-    public String content;
+   // public String id;
+   // public String content;
     public int sendType;
     public String status;   
     public int smsType;

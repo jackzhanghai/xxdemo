@@ -275,7 +275,7 @@ public class InnerMessageActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 // TODO Auto-generated method stub
                 Log.i(TAG, "arg2 " + arg2 + " arg3 " + arg3);
-                String id = mHomeWorkList.get(arg2 - 1).messageId;
+                String id = mHomeWorkList.get(arg2 - 1).id;
                 mHomeWorkList.get(arg2 - 1).isRead = 1;
                 Log.i(TAG, "id " + id);
                 Intent intent = new Intent(InnerMessageActivity.this, InnnerMessageDetailActivity.class);
@@ -397,7 +397,7 @@ public class InnerMessageActivity extends Activity {
         @Override
         public long getItemId(int position) {
             // TODO Auto-generated method stub
-            String id = homeWorkList.get(position).messageId;
+            String id = homeWorkList.get(position).id;
             // Long.parseLong(id)
             return 0;
         }
@@ -562,7 +562,7 @@ public class InnerMessageActivity extends Activity {
                             
                             InnerMessageDao innerMessageDao = new InnerMessageDao(mXiaoYunTongApplication);
                             for (InnerMessage innerMessage : innerMessageoList) {
-                                InnerMessage inner  = innerMessageDao.queryInnerMessageByID(innerMessage.messageId);
+                                InnerMessage inner  = innerMessageDao.queryInnerMessageByID(innerMessage.id);
                                 if(inner==null){
                                     
                                     long insertResult = innerMessageDao.addInnerMessage(innerMessage);

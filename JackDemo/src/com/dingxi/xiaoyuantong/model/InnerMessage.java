@@ -2,11 +2,11 @@ package com.dingxi.xiaoyuantong.model;
 
 import android.provider.BaseColumns;
 
-public class InnerMessage {
+public class InnerMessage  extends Notice{
     
-	public String content;
+	//public String content;
     public String sender;
-    public String messageId;
+    //public String messageId;
     public String receiver;
     public String student;
     public String date;

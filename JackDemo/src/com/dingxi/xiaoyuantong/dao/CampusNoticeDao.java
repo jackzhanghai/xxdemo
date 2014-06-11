@@ -6,14 +6,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import com.dingxi.xiaoyuantong.db.XiaoyuantongDbHelper;
 import com.dingxi.xiaoyuantong.model.CampusNotice;
-import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
 import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
-import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
-import com.dingxi.xiaoyuantong.model.LeaveMessage.LeaveMessageEntry;
 
 public class CampusNoticeDao {
 
@@ -202,6 +197,65 @@ public class CampusNoticeDao {
         return count;
 
     }
+    
+    
+    public ArrayList<CampusNotice> queryNotReadCampusNoticeCount(int isread) {
+
+        // select count(distinct subject) from t where grade = 'xxx';
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = { CampusNoticeEntry.COLUMN_NAME_ENTRY_ID,
+                CampusNoticeEntry.COLUMN_NAME_CONTENT, CampusNoticeEntry.COLUMN_NAME_OPT_TIME ,CampusNoticeEntry.COLUMN_NAME_IS_READ};
+        String selection = CampusNoticeEntry.COLUMN_NAME_IS_READ + " = ?";
+        String[] selectionArgs = { String.valueOf(isread) };
+        String sortOrder = CampusNoticeEntry.COLUMN_NAME_ENTRY_ID + " DESC";
+        // How you want the results sorted in the resulting Cursor
+        // String sortOrder = FeedEntry.COLUMN_NAME_UPDATED + " DESC";
+
+        Cursor cursor = db.query(CampusNoticeEntry.TABLE_NAME, // The table to query
+                projection, // The columns to return
+                selection, // The columns for the WHERE clause
+                selectionArgs, // The values for the WHERE clause
+                null, // don't group the rows
+                null, // don't filter by row groups
+                sortOrder // The sort order
+                );
+
+        ArrayList<CampusNotice> campusNotices = new ArrayList<CampusNotice>();
+
+        if (cursor != null && cursor.getCount() > 0) {
+
+            while (cursor.moveToNext()) {
+                CampusNotice campusNotice = new CampusNotice();
+                campusNotice.id = cursor.getString(cursor
+                        .getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_ENTRY_ID));
+                campusNotice.content = cursor.getString(cursor
+                        .getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_CONTENT));
+                campusNotice.optTime = cursor.getString(cursor
+                        .getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_OPT_TIME));
+                campusNotice.isRead = cursor.getInt(cursor
+                        .getColumnIndexOrThrow(CampusNoticeEntry.COLUMN_NAME_IS_READ));
+                campusNotices.add(campusNotice);
+            }
+
+        }
+
+        if (db != null) {
+            db.close();
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return campusNotices;
+
+    }
+    
+    
 
     public ArrayList<String> queryNotReadCampusNoticeContents() {
 

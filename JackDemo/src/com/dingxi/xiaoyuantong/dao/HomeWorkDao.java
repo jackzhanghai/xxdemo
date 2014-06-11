@@ -1,18 +1,14 @@
 package com.dingxi.xiaoyuantong.dao;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import com.dingxi.xiaoyuantong.db.XiaoyuantongDbHelper;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo;
-import com.dingxi.xiaoyuantong.model.CampusNotice.CampusNoticeEntry;
 import com.dingxi.xiaoyuantong.model.HomeWorkInfo.HomeWorkEntry;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class HomeWorkDao {
 

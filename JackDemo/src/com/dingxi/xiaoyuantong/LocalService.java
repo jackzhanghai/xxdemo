@@ -106,7 +106,7 @@ public class LocalService extends Service {
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
         
-        intent.getStringExtra("");
+       // intent.getStringExtra("");
         rollTextThread = new GetAllMessageThread();
         rollTextThread.start();
         
@@ -281,7 +281,7 @@ public class LocalService extends Service {
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
                         	leaveMessageDao = new LeaveMessageDao(mXiaoYunTongApplication);
                             for (LeaveMessage leaveMessage : campusNoticeList) {                          
-                                LeaveMessage campus = leaveMessageDao.queryLeaveMessageByID(leaveMessage.messageId);
+                                LeaveMessage campus = leaveMessageDao.queryLeaveMessageByID(leaveMessage.id);
                                 if(campus==null){
                                 	 long insertResult = leaveMessageDao.addLeaveMessage(leaveMessage);
                                     //campusNotieTotal += 1;
@@ -315,7 +315,7 @@ public class LocalService extends Service {
                         if (campusNoticeList != null && campusNoticeList.size() > 0) {
                         	innerMessageDao = new InnerMessageDao(mXiaoYunTongApplication);
                             for (InnerMessage innerMessage : campusNoticeList) {                          
-                            	InnerMessage campus = innerMessageDao.queryInnerMessageByID(innerMessage.messageId);
+                            	InnerMessage campus = innerMessageDao.queryInnerMessageByID(innerMessage.id);
                                 if(campus==null){
 
                                 	 long insertResult = innerMessageDao.addInnerMessage(innerMessage);

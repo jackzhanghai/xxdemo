@@ -1,16 +1,15 @@
 package com.dingxi.xiaoyuantong.model;
 
-import android.content.ContentValues;
 import android.provider.BaseColumns;
 
 
 //{"content":"dasgdag","sender":"张三4","id":"402880e64603f5eb014603f734a40001","receiver":"张老师","student":"","date":"2014-05-16 15:37:50"},
-public class LeaveMessage {
+public class LeaveMessage extends Notice {
 
     
-    public String content;
+    //public String content;
     public String sender;
-    public String messageId;
+    //public String messageId;
     public String receiver;
     public String student;
     public String date;
