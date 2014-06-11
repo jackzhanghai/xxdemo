@@ -59,14 +59,7 @@ public class XiaoyuantongDbHelper extends SQLiteOpenHelper {
 					+ " integer, "
 					+ AttendanceInfoEntry.COLUMN_NAME_STU_NAME
 					+ " varchar(60))");
-			
-			
-			/*
-             public static final String COLUMN_NAME_CONTENT = "content";
-        public static final String COLUMN_NAME_SENDER = "sender";
-        public static final String COLUMN_NAME_RECEIVER = "receiver";
-        public static final String COLUMN_NAME_STUDENT = "student";
-        public static final String COLUMN_NAME_DATE = "date";*/
+		
 
 			db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + LeaveMessageEntry.TABLE_NAME
