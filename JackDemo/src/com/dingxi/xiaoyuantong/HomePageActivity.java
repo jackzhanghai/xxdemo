@@ -477,55 +477,56 @@ public class HomePageActivity extends Activity {
     
     
     private void getNotReadCounts(){
-        
-        
-        
+           
         mNoticesLists.clear();
         isFinish = true;
         
         ArrayList<HomeWorkInfo> homeWorks = homeWorkDao.queryReadOrNotReadCountHomeWork(0);
+        View homeWorkView = gridview.getChildAt(0);
+        ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
+        Log.i(TAG, "HomeWork  notReadCount " + homeWorks.size());
         if(homeWorks!=null && homeWorks.size()>0){
             
-            
-            Log.i(TAG, "HomeWork  notReadCount " + homeWorks.size());
-            View homeWorkView = gridview.getChildAt(0);
-            if (homeWorkView != null) {
-
-                ViewHolder viewHolder = (ViewHolder) homeWorkView.getTag();
-                if (homeWorks.size() > 0) {
-                    viewHolder.numberText.setVisibility(View.VISIBLE);
-                    viewHolder.numberText.setText(String.valueOf(homeWorks.size()));
-                    homeWorkView.setBackgroundResource(R.drawable.button_down);
-                } else {
-                    viewHolder.numberText.setVisibility(View.GONE);
-                    homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
-                }
-            }
+            viewHolder.numberText.setVisibility(View.VISIBLE);
+            viewHolder.numberText.setText(String.valueOf(homeWorks.size()));
+            homeWorkView.setBackgroundResource(R.drawable.button_down);
             for (HomeWorkInfo homeWorkInfo2 : homeWorks) {
                 mNoticesLists.add(0, homeWorkInfo2);
             }
+                   
             
+        } else {
+            viewHolder.numberText.setVisibility(View.GONE);
+            homeWorkView.setBackgroundResource(R.drawable.button_ordinary);
         }
 
         
         //notReadCount = 0;
         //notReadCount =  campusNoticeDao.queryReadOrNotReadCount(0);
         ArrayList<CampusNotice> campusNotices  =  campusNoticeDao.queryNotReadCampusNoticeCount(0);
+        Log.i(TAG, "CampusNotice  notReadCount " + campusNotices.size());
+        View campusNoteView = gridview.getChildAt(1);
+        ViewHolder convertViewHolder = (ViewHolder) campusNoteView.getTag();
         
         if(campusNotices !=null && campusNotices.size() > 0){
-            Log.i(TAG, "CampusNotice  notReadCount " + campusNotices.size());
-            View campusNoteView = gridview.getChildAt(1);
+             
+            convertViewHolder.numberText.setVisibility(View.VISIBLE);
+            convertViewHolder.numberText.setText(String.valueOf(campusNotices.size()));
+            campusNoteView.setBackgroundResource(R.drawable.button_down);
+            
+            for (CampusNotice campusNotice : campusNotices) {
+                mNoticesLists.add(0, campusNotice);
+            }
+            
+            /*
             if (campusNoteView != null) {
 
-                ViewHolder convertViewHolder = (ViewHolder) campusNoteView.getTag();
+               
                 if (campusNotices.size() > 0) {
 
-                    convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                    convertViewHolder.numberText.setText(String.valueOf(campusNotices.size()));
-                    campusNoteView.setBackgroundResource(R.drawable.button_down);
+                  
                 } else {
-                    convertViewHolder.numberText.setVisibility(View.GONE);
-                    campusNoteView.setBackgroundResource(R.drawable.button_ordinary);
+                    
                     
                     rollTextHandler.sendEmptyMessage(MSG_NO_DATA);
                     mNoticesLists.clear();
@@ -533,74 +534,64 @@ public class HomePageActivity extends Activity {
 
             }
             
-            for (CampusNotice campusNotice : campusNotices) {
-                mNoticesLists.add(0, campusNotice);
-            }
+            */
 
+        } else {
+            
+            convertViewHolder.numberText.setVisibility(View.GONE);
+            campusNoteView.setBackgroundResource(R.drawable.button_ordinary);
         }
        
         
         //notReadCount = 0;
         //notReadCount =  leaveMessageDao.queryReadOrNotReadCount(0);
         ArrayList<LeaveMessage> leaveMessages = leaveMessageDao.queryNotReadLeaveMessageCount(0);
+        Log.i(TAG, "LeaveMessage  notReadCount " + leaveMessages.size());
+        View leaveMessageView = null;
         
+        if (userInfo.roleType == UserType.ROLE_PARENT) {
+            leaveMessageView = gridview.getChildAt(4);
+        }else{
+            leaveMessageView = gridview.getChildAt(4);        
+        }
+        
+        ViewHolder leaveMessageViewHolder = (ViewHolder) leaveMessageView.getTag();
         if(leaveMessages!=null && leaveMessages.size() > 0){
-            Log.i(TAG, "LeaveMessage  notReadCount " + leaveMessages.size());
-            View leaveMessageView = null;
-            
-            if (userInfo.roleType == UserType.ROLE_PARENT) {
-                leaveMessageView = gridview.getChildAt(4);
-            }else{
-                leaveMessageView = gridview.getChildAt(4);        
-            }
-            
-            if (leaveMessageView != null) {
-
-                ViewHolder convertViewHolder = (ViewHolder) leaveMessageView.getTag();
-                if (leaveMessages.size() > 0) {
-
-                    convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                    convertViewHolder.numberText.setText(String.valueOf(leaveMessages.size()));
-                    leaveMessageView.setBackgroundResource(R.drawable.button_down);
-                } else {
-                    convertViewHolder.numberText.setVisibility(View.GONE);
-                    leaveMessageView.setBackgroundResource(R.drawable.button_ordinary);
-                    
-                }
-
-            }
+           
+            leaveMessageViewHolder.numberText.setVisibility(View.VISIBLE);
+            leaveMessageViewHolder.numberText.setText(String.valueOf(leaveMessages.size()));
+            leaveMessageView.setBackgroundResource(R.drawable.button_down);      
             
             for (LeaveMessage leaveMessage : leaveMessages) {
                 mNoticesLists.add(0, leaveMessage);
             }
+        } else {
+            leaveMessageViewHolder.numberText.setVisibility(View.GONE);
+            leaveMessageView.setBackgroundResource(R.drawable.button_ordinary);
+            
         }
         
        
         if(userInfo.roleType == UserType.ROLE_TEACHER){
             
             ArrayList<InnerMessage> innerMessages =  innerMessageDao.queryNotReadInnerMessageCount(0);
+            
+            Log.i(TAG, "InnerMessage  notReadCount " + innerMessages.size());
+            View innerMeassageView = gridview.getChildAt(5);
+            ViewHolder innerMeassageHolder = (ViewHolder) innerMeassageView.getTag();
             if(innerMessages != null && innerMessages.size() > 0){
-                Log.i(TAG, "InnerMessage  notReadCount " + innerMessages.size());
-                View innerMeassageView = gridview.getChildAt(5);
-                if (innerMeassageView!= null) {
-
-                    ViewHolder convertViewHolder = (ViewHolder) innerMeassageView.getTag();
-                    if (innerMessages.size() > 0) {
-
-                        convertViewHolder.numberText.setVisibility(View.VISIBLE);
-                        convertViewHolder.numberText.setText(String.valueOf(innerMessages.size()));
-                        innerMeassageView.setBackgroundResource(R.drawable.button_down);
-                    } else {
-                        convertViewHolder.numberText.setVisibility(View.GONE);
-                        innerMeassageView.setBackgroundResource(R.drawable.button_ordinary);               
-                    }
-
-                }  
+                
+                innerMeassageHolder.numberText.setVisibility(View.VISIBLE);
+                innerMeassageHolder.numberText.setText(String.valueOf(innerMessages.size()));
+                innerMeassageView.setBackgroundResource(R.drawable.button_down);
                 
                 for (InnerMessage innerMessage : innerMessages) {
                     mNoticesLists.add(0, innerMessage);
                 }
                 
+            } else {            
+                innerMeassageHolder.numberText.setVisibility(View.GONE);
+                innerMeassageView.setBackgroundResource(R.drawable.button_ordinary);
             }
                      
         }
@@ -615,7 +606,7 @@ public class HomePageActivity extends Activity {
                     isFinish = true;
                     rollTextThread = null;
                 }
-                
+                isFinish = false;
                 rollTextThread = new RollTextThread();
                 rollTextThread.start();
                 
@@ -650,6 +641,7 @@ public class HomePageActivity extends Activity {
             super.run();
             Log.d(TAG, "RollTextThread run()" );
             Thread.currentThread().setName("RollTextThread");
+            
             while (mNoticesLists != null && mNoticesLists.size() > 0
                     && (!isFinish)) {
                 for (int i = 0; i < mNoticesLists.size(); i++) {
